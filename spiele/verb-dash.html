@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="Verb Dash">
+  <meta name="lernspiel:thema"        content="Regular & Irregular Verbs">
+  <meta name="lernspiel:stufe"        content="6. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Renn los und unterscheide regelmäßige von unregelmäßigen Verben.">
+<title>Verb Dash — Irregular & Regular Verbs | School Games 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEMES — School Games Style Guide (programmers_style)
+   ============================================================ */
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  /* Spiel-spezifisch (Blau-Grün = Standard/MS-Kennung) */
+  --sky-top:#7DD3FC; --sky-bottom:#FDE68A;
+  --ground:#16A34A; --ground-dark:#0F7A36;
+  --hero:#0D9488; --hero-dark:#0a6e64;
+  --spike:#DC2626; --spike-dark:#991B1B;
+  --block:#2563EB; --block-dark:#1E40AF;
+  --glow:transparent;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033;
+  --text-dark:#F9FAFB; --text-light:#FFFFFF; --border:#BF00FF;
+  --sky-top:#0D001A; --sky-bottom:#001A0D;
+  --ground:#FF00FF; --ground-dark:#BF00FF;
+  --hero:#00FFFF; --hero-dark:#00FF41;
+  --spike:#FF0033; --spike-dark:#FF6600;
+  --block:#FFFF00; --block-dark:#FF6600;
+  --glow:#00FFFF;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:"Nunito",sans-serif;
+  background:var(--bg-main);
+  color:var(--text-dark);
+  display:flex; flex-direction:column;
+  min-height:100vh; overflow:hidden;
+  letter-spacing:.01em;
+  transition:background .4s;
+}
+:root[data-theme="psychedelic"] body{ animation:bgpulse 6s infinite alternate; }
+@keyframes bgpulse{ 0%{background:#0D001A;} 50%{background:#001A0D;} 100%{background:#000000;} }
+
+h1,h2,h3,.fred{ font-family:"Fredoka",sans-serif; font-weight:600; }
+
+/* ---------- HEADER ---------- */
+header{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:8px; padding:8px 16px; min-height:64px;
+  background:var(--bg-dark); color:var(--text-light);
+  flex-wrap:wrap;
+}
+header .title{ text-align:center; flex:1; min-width:160px; }
+header .title h1{ font-size:22px; line-height:1.1; color:var(--text-light);
+  text-shadow:0 0 8px var(--glow); }
+header .title .lvl{ font-size:13px; opacity:.9; font-weight:700; }
+.badge-ms{ display:inline-block; background:var(--teal); color:#fff;
+  padding:2px 10px; border-radius:999px; font-size:12px; font-weight:800; margin-left:6px;}
+
+.hbtn{
+  font-family:"Fredoka",sans-serif; font-size:16px;
+  min-height:48px; min-width:48px; padding:0 14px;
+  border:none; border-radius:999px; cursor:pointer;
+  background:var(--bg-card); color:var(--text-dark);
+  display:flex; align-items:center; gap:6px; font-weight:600;
+  box-shadow:0 3px 0 rgba(0,0,0,.2);
+}
+.hbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.2); }
+.score-pill{
+  background:var(--yellow); color:#1F2937; font-weight:800;
+  border-radius:999px; padding:6px 14px; min-height:48px;
+  display:flex; align-items:center; gap:6px; font-family:"Fredoka",sans-serif;
+  box-shadow:0 0 10px var(--glow);
+}
+.lives{ font-size:20px; letter-spacing:2px; }
+
+/* ---------- GAME AREA ---------- */
+.stage{
+  flex:1; display:flex; align-items:center; justify-content:center;
+  padding:8px; position:relative; min-height:0;
+}
+.game-wrap{
+  width:100%; max-width:900px; position:relative;
+  border:4px solid var(--bg-dark); border-radius:24px; overflow:hidden;
+  box-shadow:0 8px 0 rgba(0,0,0,.15), 0 0 24px var(--glow);
+  background:#000;
+}
+canvas{ display:block; width:100%; height:auto; touch-action:none; }
+
+.hint{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  background:rgba(30,27,75,.78); color:#fff; padding:6px 16px;
+  border-radius:999px; font-weight:700; font-size:14px; pointer-events:none;
+  transition:opacity .4s;
+}
+
+/* ---------- FOOTER (Fortschritt) ---------- */
+footer{ padding:8px 16px 14px; background:var(--bg-dark); }
+.progress-label{ color:var(--text-light); font-size:12px; font-weight:700;
+  display:flex; justify-content:space-between; margin-bottom:4px; }
+.progress-track{
+  height:16px; background:rgba(255,255,255,.18); border-radius:999px; overflow:hidden;
+  border:2px solid rgba(255,255,255,.25);
+}
+.progress-fill{
+  height:100%; width:0%;
+  background:linear-gradient(90deg,var(--teal),var(--yellow));
+  border-radius:999px; transition:width .12s linear;
+}
+
+/* ---------- OVERLAYS ---------- */
+.overlay{
+  position:fixed; inset:0; z-index:30;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(30,27,75,.55); backdrop-filter:blur(3px);
+  padding:16px; overflow-y:auto;
+}
+.overlay[hidden]{ display:none; }
+.card{
+  background:var(--bg-card); color:var(--text-dark);
+  border:4px solid var(--bg-dark); border-radius:24px;
+  padding:24px; width:100%; max-width:520px; text-align:center;
+  box-shadow:0 10px 0 rgba(0,0,0,.2), 0 0 32px var(--glow);
+  animation:pop .25s cubic-bezier(.2,1.4,.5,1);
+  margin:auto;                 /* zentriert, aber scrollbar wenn höher als Screen */
+  max-height:none;
+}
+@keyframes pop{ from{transform:scale(.8);opacity:0;} to{transform:scale(1);opacity:1;} }
+.card h2{ font-size:30px; margin-bottom:8px; }
+.card p{ font-size:16px; margin-bottom:16px; line-height:1.4; }
+
+.verb-type{ display:inline-block; padding:3px 12px; border-radius:999px;
+  font-weight:800; font-size:13px; margin-bottom:10px; color:#fff; }
+.t-irr{ background:var(--purple); }
+.t-reg{ background:var(--green); }
+
+.prompt-de{ font-family:"Fredoka",sans-serif; font-size:34px; color:var(--blue);
+  margin:6px 0 4px; text-shadow:0 0 8px var(--glow); }
+.prompt-sub{ font-size:15px; color:var(--text-dark); opacity:.8; margin-bottom:18px; }
+
+.qfields{ display:flex; flex-direction:column; gap:12px; margin-bottom:18px; text-align:left;}
+.field label{ display:block; font-weight:800; font-size:14px; margin-bottom:4px; }
+.field input{
+  width:100%; min-height:48px; padding:10px 14px; font-size:18px;
+  font-family:"Nunito",sans-serif; font-weight:700;
+  border:3px solid var(--border); border-radius:16px; background:#fff; color:#1F2937;
+}
+.field input:focus{ outline:none; border-color:var(--blue); }
+.field input.ok{ border-color:var(--success); background:#F0FFF4; }
+.field input.bad{ border-color:var(--error); background:#FFF5F5; }
+.field .sol{ font-size:13px; font-weight:800; color:var(--success); margin-top:3px; min-height:16px;}
+
+.mc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.mc-btn{
+  min-height:56px; font-family:"Fredoka",sans-serif; font-size:20px; font-weight:600;
+  border:3px solid var(--border); border-radius:16px; background:#fff; color:#1F2937;
+  cursor:pointer; padding:8px;
+}
+.mc-btn:hover{ border-color:var(--blue); }
+.mc-btn.ok{ background:var(--success); color:#fff; border-color:var(--success); }
+.mc-btn.bad{ background:var(--error); color:#fff; border-color:var(--error); }
+
+.btn-primary{
+  font-family:"Fredoka",sans-serif; font-size:22px; font-weight:600;
+  min-height:56px; width:100%; border:none; border-radius:16px; cursor:pointer;
+  background:var(--blue); color:#fff; box-shadow:0 4px 0 rgba(0,0,0,.25);
+}
+.btn-primary:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.25); }
+.btn-primary.go{ background:var(--success); }
+.feedback{ font-weight:800; min-height:24px; margin-bottom:8px; font-size:17px; }
+.feedback.good{ color:var(--success); }
+.feedback.bad{ color:var(--error); }
+
+/* shake / bounce */
+.shake{ animation:shake .4s; }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 20%{transform:translateX(-10px);}
+  40%{transform:translateX(10px);} 60%{transform:translateX(-7px);} 80%{transform:translateX(7px);} }
+.bounce{ animation:bounce .5s; }
+@keyframes bounce{ 0%{transform:scale(1);} 40%{transform:scale(1.12);} 100%{transform:scale(1);} }
+
+/* ---------- SPLASH ---------- */
+#splash{
+  position:fixed; inset:0; z-index:100; background:var(--bg-dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff; gap:10px; transition:opacity .5s;
+}
+#splash .logo{ font-family:"Fredoka",sans-serif; font-size:46px; }
+#splash .sub{ font-size:16px; opacity:.85; font-weight:700; }
+
+/* Start / GameOver big buttons */
+.big-btn{
+  font-family:"Fredoka",sans-serif; font-size:24px; min-height:60px;
+  padding:0 28px; border:none; border-radius:18px; cursor:pointer;
+  background:var(--yellow); color:#1F2937; box-shadow:0 5px 0 rgba(0,0,0,.25);
+  margin-top:8px;
+}
+.big-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.25); }
+.hs{ font-weight:800; margin-top:10px; color:var(--purple); }
+.controls-note{ font-size:14px; opacity:.85; margin-top:14px; line-height:1.5; }
+
+@media (max-width:560px){
+  header .title h1{ font-size:18px; }
+  .card{ padding:16px; }
+  .card h2{ font-size:24px; }
+  .prompt-de{ font-size:28px; }
+  .prompt-sub{ margin-bottom:10px; }
+  .qfields{ gap:8px; margin-bottom:12px; }
+  .field input{ min-height:44px; font-size:16px; }
+  .mc-grid{ grid-template-columns:1fr; }
+}
+/* Niedrige Bildschirme: Karte oben andocken, sauberes Scrollen */
+@media (max-height:620px){
+  .overlay{ align-items:flex-start; }
+  .card{ margin:8px auto; }
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001s !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- BRANDING SPLASH (1 Sek) -->
+<div id="splash">
+  <div class="logo">School Games 🎓</div>
+  <div class="sub">Verb Dash lädt …</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <button class="hbtn" id="btnBack" title="Zurück zur Übersicht">⬅️ Zurück</button>
+  <div class="title">
+    <h1>🏃 Verb Dash</h1>
+    <div class="lvl">Irregular &amp; Regular Verbs <span class="badge-ms">7. Klasse · Standard</span></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div class="score-pill">⭐ <span id="scoreVal">0</span></div>
+    <div class="score-pill"><span class="lives" id="livesVal">❤️❤️❤️</span></div>
+    <button class="hbtn" id="btnTheme" title="Psychedelic Mode">🌈</button>
+  </div>
+</header>
+
+<!-- GAME -->
+<div class="stage">
+  <div class="game-wrap" id="gameWrap">
+    <canvas id="game" width="900" height="380"></canvas>
+    <div class="hint" id="hint">Leertaste / Tippen = Springen</div>
+
+    <!-- START OVERLAY -->
+    <div class="overlay" id="ovStart">
+      <div class="card">
+        <h2>🏃 Verb Dash</h2>
+        <p>Spring über die Hindernisse! An jedem <b>Checkpoint 🚩</b> wartet ein Verb —
+           beantworte es richtig, um weiterzulaufen.<br>
+           Alle drei Formen + deutsche Bedeutung. Regular &amp; Irregular gemischt.</p>
+        <button class="big-btn" id="btnStart">▶ Los geht's!</button>
+        <div class="hs" id="startHs"></div>
+        <div class="controls-note">
+          🖱️ <b>Klick</b> · ⌨️ <b>Leertaste</b> · 📱 <b>Tippen</b> = Springen<br>
+          3 Leben — bei 0 startest du von vorn.
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ OVERLAY -->
+    <div class="overlay" id="ovQuiz" hidden>
+      <div class="card" id="quizCard">
+        <div class="verb-type" id="qType">IRREGULAR</div>
+        <div class="feedback" id="qFeedback">🚩 Checkpoint!</div>
+        <div id="qBody"></div>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div class="overlay" id="ovOver" hidden>
+      <div class="card">
+        <h2>💥 Game Over</h2>
+        <p id="overMsg">Keine Leben mehr!</p>
+        <div class="hs" id="overScore"></div>
+        <div class="hs" id="overHs"></div>
+        <button class="big-btn" id="btnRetry">🔄 Nochmal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="progress-label">
+    <span>🚩 Nächster Checkpoint</span>
+    <span id="distLabel">0 m · Streak: 0🔥</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+</footer>
+
+<script>
+"use strict";
+/* =====================================================================
+   VERB DASH — Geometry-Dash-Style Runner + Verb-Checkpoints
+   School Games OG · 7. Schulstufe (3. Kl. MS) · A2 · Standard
+   Einzeldatei, kein Build, kein Server. Läuft per Doppelklick (file://).
+   ===================================================================== */
+
+/* ---------- VERB-POOL (40+, regular + irregular) ----------
+   [base, deutsch, [past...], [participle...], isRegular]
+   Past/Participle als Array = alle akzeptierten Schreibweisen.        */
+const VERBS = [
+  // ---- IRREGULAR ----
+  ["go","gehen",["went"],["gone"],false],
+  ["come","kommen",["came"],["come"],false],
+  ["see","sehen",["saw"],["seen"],false],
+  ["take","nehmen",["took"],["taken"],false],
+  ["give","geben",["gave"],["given"],false],
+  ["make","machen",["made"],["made"],false],
+  ["do","tun",["did"],["done"],false],
+  ["get","bekommen",["got"],["got","gotten"],false],
+  ["find","finden",["found"],["found"],false],
+  ["think","denken",["thought"],["thought"],false],
+  ["buy","kaufen",["bought"],["bought"],false],
+  ["bring","bringen",["brought"],["brought"],false],
+  ["eat","essen",["ate"],["eaten"],false],
+  ["drink","trinken",["drank"],["drunk"],false],
+  ["write","schreiben",["wrote"],["written"],false],
+  ["read","lesen",["read"],["read"],false],
+  ["speak","sprechen",["spoke"],["spoken"],false],
+  ["swim","schwimmen",["swam"],["swum"],false],
+  ["run","laufen",["ran"],["run"],false],
+  ["sing","singen",["sang"],["sung"],false],
+  ["drive","fahren",["drove"],["driven"],false],
+  ["fly","fliegen",["flew"],["flown"],false],
+  ["know","wissen",["knew"],["known"],false],
+  ["grow","wachsen",["grew"],["grown"],false],
+  ["throw","werfen",["threw"],["thrown"],false],
+  ["wear","tragen",["wore"],["worn"],false],
+  ["break","brechen",["broke"],["broken"],false],
+  ["choose","wählen",["chose"],["chosen"],false],
+  ["forget","vergessen",["forgot"],["forgotten"],false],
+  ["begin","beginnen",["began"],["begun"],false],
+  ["win","gewinnen",["won"],["won"],false],
+  ["lose","verlieren",["lost"],["lost"],false],
+  ["sleep","schlafen",["slept"],["slept"],false],
+  ["feel","fühlen",["felt"],["felt"],false],
+  ["leave","verlassen",["left"],["left"],false],
+  ["meet","treffen",["met"],["met"],false],
+  ["tell","erzählen",["told"],["told"],false],
+  ["sell","verkaufen",["sold"],["sold"],false],
+  ["catch","fangen",["caught"],["caught"],false],
+  ["teach","unterrichten",["taught"],["taught"],false],
+  ["stand","stehen",["stood"],["stood"],false],
+  ["understand","verstehen",["understood"],["understood"],false],
+  ["build","bauen",["built"],["built"],false],
+  ["send","schicken",["sent"],["sent"],false],
+  // ---- REGULAR (+ed) ----
+  ["play","spielen",["played"],["played"],true],
+  ["work","arbeiten",["worked"],["worked"],true],
+  ["watch","ansehen",["watched"],["watched"],true],
+  ["want","wollen",["wanted"],["wanted"],true],
+  ["like","mögen",["liked"],["liked"],true],
+  ["live","leben / wohnen",["lived"],["lived"],true],
+  ["help","helfen",["helped"],["helped"],true],
+  ["talk","reden",["talked"],["talked"],true],
+  ["walk","gehen / spazieren",["walked"],["walked"],true],
+  ["learn","lernen",["learned","learnt"],["learned","learnt"],true],
+  ["ask","fragen",["asked"],["asked"],true],
+  ["answer","antworten",["answered"],["answered"],true],
+  ["open","öffnen",["opened"],["opened"],true],
+  ["close","schließen",["closed"],["closed"],true],
+  ["start","starten / beginnen",["started"],["started"],true],
+  ["stop","stoppen / anhalten",["stopped"],["stopped"],true],
+  ["use","benutzen",["used"],["used"],true],
+  ["call","rufen / anrufen",["called"],["called"],true],
+  ["clean","putzen",["cleaned"],["cleaned"],true],
+  ["cook","kochen",["cooked"],["cooked"],true],
+  ["travel","reisen",["travelled","traveled"],["travelled","traveled"],true],
+  ["study","lernen / studieren",["studied"],["studied"],true],
+  ["try","versuchen",["tried"],["tried"],true],
+  ["carry","tragen",["carried"],["carried"],true],
+];
+
+/* ---------- STRING-MATCHING (großzügig) ---------- */
+function norm(s){
+  return String(s).toLowerCase().trim()
+    .replace(/^to\s+/,"")          // führendes "to " ignorieren
+    .replace(/\s+/g," ");
+}
+function lev(a,b){                  // Levenshtein-Distanz für 1-Tippfehler-Toleranz
+  const m=a.length,n=b.length, d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=0;j<=n;j++) d[0][j]=j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+// Englische Formen: exakt (case-insensitiv). Mehrere Schreibweisen erlaubt.
+function matchForm(input, accepted){
+  const v=norm(input); if(!v) return false;
+  return accepted.some(a=>{
+    return String(a).toLowerCase().split("/").map(x=>x.trim()).includes(v);
+  });
+}
+// Deutsche Bedeutung: lev<=1, akzeptiert "/"- und ","-Alternativen.
+function matchGerman(input, german){
+  const v=norm(input); if(!v) return false;
+  const opts=german.toLowerCase().split(/[\/,]/).map(x=>x.trim()).filter(Boolean);
+  return opts.some(o=> v===o || lev(v,o)<=1 );
+}
+
+/* =====================================================================
+   GAME ENGINE
+   ===================================================================== */
+const cv=document.getElementById("game"), ctx=cv.getContext("2d");
+const W=cv.width, H=cv.height;
+const GROUND_Y=H-60;              // Bodenlinie
+const REDUCE=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Maskottchen
+const HERO={ x:130, y:GROUND_Y, r:24, vy:0, onGround:true };
+const GRAVITY=2400;               // px/s²
+const JUMP_V=-720;                // Sprung-Impuls
+const FLOOR_OFFSET=0;
+
+// Welt
+let speed=300;                    // px/s (steigt langsam)
+const SPEED_START=300, SPEED_MAX=560, SPEED_RAMP=6; // px/s pro Sekunde
+let obstacles=[];                 // {x, w, h, type:'spike'|'block'}
+let spawnTimer=0;
+let distancePx=0;                 // gesamt zurückgelegte Distanz
+let nextCheckpointPx=0;
+const CHECKPOINT_M=22;            // Meter bis Checkpoint
+const PX_PER_M=42;                // Umrechnung
+let lives=3, score=0, streak=0, checkpointCount=0;
+let highscore=+(localStorage.getItem("verbdash_hs")||0);
+let invuln=0;                     // s Unverwundbarkeit nach Treffer
+let state="start";                // start | run | quiz | over
+let lastT=0, animId=null;
+
+/* ---------- AUDIO (kurze Töne <500ms) ---------- */
+let actx=null;
+function beep(freq,dur=0.12,type=null){
+  try{
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    const psy=document.documentElement.getAttribute("data-theme")==="psychedelic";
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type = type || (psy?"sawtooth":"square");
+    o.frequency.value=freq;
+    g.gain.value=0.07;
+    o.connect(g); g.connect(actx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+dur);
+    o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sJump =()=>beep(520,0.10);
+const sHit  =()=>{ beep(140,0.18,"square"); };
+const sGood =()=>{ beep(660,0.10); setTimeout(()=>beep(880,0.12),90); };
+const sBad  =()=>{ beep(200,0.22,"sawtooth"); };
+const sCheck=()=>beep(440,0.12,"triangle");
+
+/* ---------- INPUT ---------- */
+function jump(){
+  if(state!=="run") return;
+  if(HERO.onGround){ HERO.vy=JUMP_V; HERO.onGround=false; sJump(); }
+}
+window.addEventListener("keydown",e=>{
+  if(e.code==="Space"||e.code==="ArrowUp"){ e.preventDefault(); jump(); }
+});
+cv.addEventListener("pointerdown",e=>{ e.preventDefault(); jump(); });
+
+/* ---------- SPAWN ---------- */
+function spawnObstacle(){
+  // Hindernistypen: Spike (springen) oder Block (springen). Höhe so, dass überspringbar.
+  const r=Math.random();
+  if(r<0.62){
+    obstacles.push({x:W+40,w:34,h:38,type:"spike"});
+  }else if(r<0.85){
+    obstacles.push({x:W+40,w:40,h:46,type:"block"});
+  }else{
+    // Doppel-Spike
+    obstacles.push({x:W+40,w:34,h:38,type:"spike"});
+    obstacles.push({x:W+78,w:34,h:38,type:"spike"});
+  }
+}
+
+/* ---------- RESET ---------- */
+function resetRun(){
+  speed=SPEED_START; obstacles=[]; spawnTimer=0;
+  distancePx=0; nextCheckpointPx=CHECKPOINT_M*PX_PER_M;
+  lives=3; score=0; streak=0; checkpointCount=0; invuln=0;
+  HERO.y=GROUND_Y; HERO.vy=0; HERO.onGround=true;
+  updateHud();
+}
+function updateHud(){
+  document.getElementById("scoreVal").textContent=score;
+  document.getElementById("livesVal").textContent="❤️".repeat(lives)+"🖤".repeat(Math.max(0,3-lives));
+  const m=Math.floor(distancePx/PX_PER_M);
+  const toNext=Math.max(0,(nextCheckpointPx-distancePx)/PX_PER_M);
+  document.getElementById("distLabel").textContent=
+    Math.ceil(toNext)+" m · Streak: "+streak+"🔥";
+  const segStart=nextCheckpointPx-CHECKPOINT_M*PX_PER_M;
+  const pct=Math.min(100,((distancePx-segStart)/(CHECKPOINT_M*PX_PER_M))*100);
+  document.getElementById("progFill").style.width=pct+"%";
+}
+
+/* ---------- MAIN LOOP ---------- */
+function loop(t){
+  animId=requestAnimationFrame(loop);
+  if(!lastT) lastT=t;
+  let dt=(t-lastT)/1000; lastT=t;
+  if(dt>0.05) dt=0.05;            // Tab-Wechsel abfangen
+  if(state==="run") update(dt);
+  draw();
+}
+function update(dt){
+  // Tempo langsam steigern
+  speed=Math.min(SPEED_MAX, speed+SPEED_RAMP*dt);
+  const dx=speed*dt;
+  distancePx+=dx;
+  if(invuln>0) invuln-=dt;
+
+  // Hero-Physik
+  HERO.vy+=GRAVITY*dt;
+  HERO.y+=HERO.vy*dt;
+  if(HERO.y>=GROUND_Y){ HERO.y=GROUND_Y; HERO.vy=0; HERO.onGround=true; }
+
+  // Spawn (Abstand abhängig vom Tempo → immer überspringbar)
+  spawnTimer-=dt;
+  if(spawnTimer<=0){
+    spawnObstacle();
+    const gap=(Math.random()*0.7+0.95);          // s zwischen Spawns
+    spawnTimer=gap*(300/speed);                    // schneller → relativ mehr Reaktionszeit
+  }
+
+  // Bewegen & Kollision
+  for(const o of obstacles) o.x-=dx;
+  obstacles=obstacles.filter(o=>o.x+o.w>-20);
+
+  for(const o of obstacles){
+    if(invuln>0) break;
+    // AABB des Hindernisses
+    const ox=o.x, oy=GROUND_Y-o.h, ow=o.w, oh=o.h;
+    const hx=HERO.x-HERO.r*0.7, hy=HERO.y-HERO.r, hw=HERO.r*1.4, hh=HERO.r*2;
+    if(hx<ox+ow && hx+hw>ox && hy<oy+oh && hy+hh>oy){
+      hitObstacle();
+      break;
+    }
+  }
+
+  // Checkpoint erreicht?
+  if(distancePx>=nextCheckpointPx){
+    openCheckpoint();
+  }
+  // Score = Distanz (1 Punkt / Meter)
+  score=Math.floor(distancePx/PX_PER_M)+streak*20;
+  updateHud();
+}
+
+function hitObstacle(){
+  lives--; invuln=1.4; sHit();
+  const wrap=document.getElementById("gameWrap");
+  if(!REDUCE){ wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake"); }
+  streak=0;
+  if(lives<=0){ gameOver(); }
+  updateHud();
+}
+
+/* ---------- DRAW ---------- */
+let bgScroll=0;
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function draw(){
+  const psy=document.documentElement.getAttribute("data-theme")==="psychedelic";
+  // Himmel
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,cssVar("--sky-top")); g.addColorStop(1,cssVar("--sky-bottom"));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  // Parallax-Hügel (statisch bei reduce-motion)
+  if(!REDUCE) bgScroll=(bgScroll+speed*0.0006)%1;
+  ctx.fillStyle=psy?"rgba(191,0,255,.25)":"rgba(255,255,255,.35)";
+  for(let i=-1;i<6;i++){
+    const hx=((i+ (1-bgScroll))*200)%(W+200)-100;
+    ctx.beginPath(); ctx.arc(hx,GROUND_Y,90,Math.PI,0); ctx.fill();
+  }
+
+  // Boden
+  ctx.fillStyle=cssVar("--ground"); ctx.fillRect(0,GROUND_Y,W,H-GROUND_Y);
+  ctx.fillStyle=cssVar("--ground-dark"); ctx.fillRect(0,GROUND_Y,W,6);
+
+  // Hindernisse
+  for(const o of obstacles){
+    const oy=GROUND_Y-o.h;
+    if(o.type==="spike"){
+      ctx.fillStyle=cssVar("--spike");
+      ctx.strokeStyle=cssVar("--spike-dark"); ctx.lineWidth=3;
+      ctx.beginPath();
+      ctx.moveTo(o.x,GROUND_Y); ctx.lineTo(o.x+o.w/2,oy); ctx.lineTo(o.x+o.w,GROUND_Y);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    }else{
+      ctx.fillStyle=cssVar("--block");
+      ctx.strokeStyle=cssVar("--block-dark"); ctx.lineWidth=3;
+      roundRect(o.x,oy,o.w,o.h,6); ctx.fill(); ctx.stroke();
+    }
+  }
+
+  // Maskottchen (runde Figur mit Gesicht)
+  const blink=(invuln>0 && Math.floor(performance.now()/100)%2===0);
+  if(!blink){
+    ctx.save();
+    if(psy){ ctx.shadowColor=cssVar("--glow"); ctx.shadowBlur=18; }
+    // Körper
+    ctx.fillStyle=cssVar("--hero");
+    ctx.strokeStyle=cssVar("--hero-dark"); ctx.lineWidth=4;
+    ctx.beginPath(); ctx.arc(HERO.x,HERO.y-HERO.r,HERO.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.shadowBlur=0;
+    // Augen
+    ctx.fillStyle="#fff";
+    ctx.beginPath(); ctx.arc(HERO.x-7,HERO.y-HERO.r-4,6,0,Math.PI*2);
+    ctx.arc(HERO.x+9,HERO.y-HERO.r-4,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#1F2937";
+    ctx.beginPath(); ctx.arc(HERO.x-5,HERO.y-HERO.r-4,3,0,Math.PI*2);
+    ctx.arc(HERO.x+11,HERO.y-HERO.r-4,3,0,Math.PI*2); ctx.fill();
+    // Lächeln
+    ctx.strokeStyle="#1F2937"; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(HERO.x+2,HERO.y-HERO.r+4,7,0.1*Math.PI,0.9*Math.PI); ctx.stroke();
+    ctx.restore();
+  }
+
+  // "Schatten"
+  ctx.fillStyle="rgba(0,0,0,.15)";
+  ctx.beginPath(); ctx.ellipse(HERO.x,GROUND_Y+4,HERO.r*0.8,6,0,0,Math.PI*2); ctx.fill();
+}
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+/* =====================================================================
+   CHECKPOINT / QUIZ
+   ===================================================================== */
+let curVerb=null, curFormat=null, awaitingProceed=false;
+
+function pickVerb(){ return VERBS[Math.floor(Math.random()*VERBS.length)]; }
+
+function openCheckpoint(){
+  state="quiz";
+  checkpointCount++;
+  sCheck();
+  curVerb=pickVerb();
+  // Format steigt mit Fortschritt: 1-2 MC, 3-4 Lücke, ab 5 alle Formen tippen
+  if(checkpointCount<=2) curFormat="mc";
+  else if(checkpointCount<=4) curFormat="gap";
+  else curFormat=(checkpointCount%3===0)?"mc":"full";
+  renderQuiz();
+  document.getElementById("ovQuiz").hidden=false;
+}
+
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+function renderQuiz(){
+  const [base,de,past,part,isReg]=curVerb;
+  const typeEl=document.getElementById("qType");
+  typeEl.textContent=isReg?"REGULAR":"IRREGULAR";
+  typeEl.className="verb-type "+(isReg?"t-reg":"t-irr");
+  const fb=document.getElementById("qFeedback");
+  fb.textContent="🚩 Checkpoint "+checkpointCount; fb.className="feedback";
+  const body=document.getElementById("qBody"); body.innerHTML="";
+  awaitingProceed=false;
+
+  if(curFormat==="mc")       renderMC(body,base,de,past,part);
+  else if(curFormat==="gap") renderGap(body,base,de,past,part);
+  else                       renderFull(body,base,de,past,part);
+}
+
+/* --- Multiple Choice: eine Form abfragen --- */
+function renderMC(body,base,de,past,part){
+  const askPart=Math.random()<0.5;                 // past oder participle
+  const correctArr=askPart?part:past;
+  const correct=correctArr[0].split("/")[0].trim();
+  const label=askPart?"Past Participle":"Past Simple";
+  body.appendChild(el("div","prompt-de",base));
+  body.appendChild(el("div","prompt-sub","„"+de+"“ — Wähle das <b>"+label+"</b>:"));
+
+  // Distraktoren: Formen anderer Verben (gleicher Spalte)
+  const pool=new Set([correct]);
+  const opts=[correct];
+  let guard=0;
+  while(opts.length<4 && guard++<200){
+    const v=pickVerb(); const arr=askPart?v[3]:v[2];
+    const cand=arr[0].split("/")[0].trim();
+    if(!pool.has(cand)){ pool.add(cand); opts.push(cand); }
+  }
+  shuffle(opts);
+  const grid=el("div","mc-grid");
+  opts.forEach(o=>{
+    const b=el("button","mc-btn",o);
+    b.onclick=()=>{
+      if(awaitingProceed) return;
+      [...grid.children].forEach(x=>x.disabled=true);
+      if(o===correct){ b.classList.add("ok"); onCorrect(); }
+      else{
+        b.classList.add("bad");
+        // richtige Lösung markieren
+        [...grid.children].forEach(x=>{ if(x.textContent===correct)x.classList.add("ok"); });
+        onWrong(base+" → "+label.toLowerCase()+": <b>"+correct+"</b>");
+      }
+    };
+    grid.appendChild(b);
+  });
+  body.appendChild(grid);
+}
+
+/* --- Lücke: eine Form tippen --- */
+function renderGap(body,base,de,past,part){
+  const askPart=Math.random()<0.5;
+  const accepted=askPart?part:past;
+  const label=askPart?"Past Participle":"Past Simple";
+  body.appendChild(el("div","prompt-de",base));
+  body.appendChild(el("div","prompt-sub","„"+de+"“ — Schreib das <b>"+label+"</b>:"));
+  const wrap=el("div","qfields");
+  const f=el("div","field");
+  f.innerHTML='<label>'+label+'</label><input id="gapInp" autocomplete="off" autocapitalize="off" spellcheck="false">';
+  wrap.appendChild(f); body.appendChild(wrap);
+  const inp=f.querySelector("input");
+  const btn=el("button","btn-primary","Prüfen ✓");
+  btn.onclick=()=>{
+    if(awaitingProceed) return;
+    inp.disabled=true; btn.style.display="none";
+    if(matchForm(inp.value,accepted)){ inp.classList.add("ok"); onCorrect(); }
+    else{ inp.classList.add("bad"); onWrong(label+": <b>"+accepted[0]+"</b>"); }
+  };
+  body.appendChild(btn);
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btn.click(); });
+  setTimeout(()=>inp.focus(),60);
+}
+
+/* --- Voll: deutsche Bedeutung gegeben, alle 3 Formen tippen --- */
+function renderFull(body,base,de,past,part){
+  body.appendChild(el("div","prompt-de",de));
+  body.appendChild(el("div","prompt-sub","Schreib <b>alle drei Formen</b> auf Englisch:"));
+  const wrap=el("div","qfields");
+  wrap.innerHTML=
+    '<div class="field"><label>Infinitive (Grundform)</label><input id="fInf" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="sol" id="sInf"></div></div>'+
+    '<div class="field"><label>Past Simple</label><input id="fPast" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="sol" id="sPast"></div></div>'+
+    '<div class="field"><label>Past Participle</label><input id="fPart" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="sol" id="sPart"></div></div>';
+  body.appendChild(wrap);
+  const btn=el("button","btn-primary","Prüfen ✓");
+  body.appendChild(btn);
+
+  const inf=wrap.querySelector("#fInf"), p1=wrap.querySelector("#fPast"), p2=wrap.querySelector("#fPart");
+  inf.addEventListener("keydown",e=>{ if(e.key==="Enter") p1.focus(); });
+  p1.addEventListener("keydown",e=>{ if(e.key==="Enter") p2.focus(); });
+  p2.addEventListener("keydown",e=>{ if(e.key==="Enter") btn.click(); });
+  setTimeout(()=>inf.focus(),60);
+
+  btn.onclick=()=>{
+    if(awaitingProceed) return;
+    const okInf=matchForm(inf.value,[base]);
+    const okP1 =matchForm(p1.value,past);
+    const okP2 =matchForm(p2.value,part);
+    mark(inf,okInf,"sInf",base);
+    mark(p1,okP1,"sPast",past[0]);
+    mark(p2,okP2,"sPart",part[0]);
+    [inf,p1,p2].forEach(i=>i.disabled=true); btn.style.display="none";
+    if(okInf&&okP1&&okP2) onCorrect();
+    else onWrong("Schau dir die Lösung an und merke sie dir!");
+  };
+  function mark(input,ok,solId,sol){
+    input.classList.add(ok?"ok":"bad");
+    document.getElementById(solId).textContent= ok?"✓":("✗ "+sol);
+    document.getElementById(solId).style.color= ok?"var(--success)":"var(--error)";
+  }
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* --- Quiz-Ergebnis --- */
+function onCorrect(){
+  streak++; score+=200; sGood();
+  const fb=document.getElementById("qFeedback");
+  fb.textContent="✅ Richtig! +200 · Streak "+streak+"🔥"; fb.className="feedback good";
+  if(!REDUCE){ document.getElementById("quizCard").classList.add("bounce");
+    setTimeout(()=>document.getElementById("quizCard").classList.remove("bounce"),500); }
+  proceedAfter();
+  updateHud();
+}
+function onWrong(solHtml){
+  sBad(); streak=0;
+  const fb=document.getElementById("qFeedback");
+  fb.innerHTML="❌ Nicht ganz. "+solHtml+"<br><small>Dasselbe Verb nochmal …</small>";
+  fb.className="feedback bad";
+  if(!REDUCE){ document.getElementById("quizCard").classList.add("shake");
+    setTimeout(()=>document.getElementById("quizCard").classList.remove("shake"),400); }
+  // Falsch = nochmal: gleiches Verb neu rendern (nach kurzer Lösungsanzeige)
+  awaitingProceed=true;
+  const btn=el("button","btn-primary go","🔁 Nochmal versuchen");
+  btn.onclick=()=>{ renderQuiz(); };
+  document.getElementById("qBody").appendChild(btn);
+  updateHud();
+}
+function proceedAfter(){
+  awaitingProceed=true;
+  const btn=el("button","btn-primary go","Weiterlaufen ▶");
+  btn.onclick=closeQuiz;
+  document.getElementById("qBody").appendChild(btn);
+}
+function closeQuiz(){
+  document.getElementById("ovQuiz").hidden=true;
+  nextCheckpointPx=distancePx+CHECKPOINT_M*PX_PER_M;
+  // kleiner Schub Tempo nach jedem Checkpoint (max bleibt gedeckelt)
+  speed=Math.min(SPEED_MAX,speed+12);
+  state="run"; lastT=0;
+  updateHud();
+}
+
+/* =====================================================================
+   STATE / FLOW
+   ===================================================================== */
+function startGame(){
+  document.getElementById("ovStart").hidden=true;
+  document.getElementById("ovOver").hidden=true;
+  resetRun(); state="run"; lastT=0;
+  if(actx&&actx.state==="suspended") actx.resume();
+}
+function gameOver(){
+  state="over";
+  if(score>highscore){ highscore=score; localStorage.setItem("verbdash_hs",highscore); }
+  document.getElementById("overMsg").textContent=
+    "Du hast "+Math.floor(distancePx/PX_PER_M)+" m geschafft und "+(checkpointCount-(state==="quiz"?1:0))+" Checkpoints gemeistert.";
+  document.getElementById("overScore").textContent="⭐ Score: "+score;
+  document.getElementById("overHs").textContent="🏆 Highscore: "+highscore;
+  document.getElementById("ovOver").hidden=false;
+}
+
+/* ---------- THEME TOGGLE ---------- */
+const root=document.documentElement;
+document.getElementById("btnTheme").onclick=()=>{
+  const psy=root.getAttribute("data-theme")==="psychedelic";
+  root.setAttribute("data-theme",psy?"standard":"psychedelic");
+  document.getElementById("btnTheme").textContent=psy?"🌈":"☀️";
+};
+
+/* ---------- BUTTONS ---------- */
+document.getElementById("btnStart").onclick=startGame;
+document.getElementById("btnRetry").onclick=startGame;
+document.getElementById("btnBack").onclick=()=>{
+  if(state==="run"||state==="quiz"){ state="start";
+    document.getElementById("ovQuiz").hidden=true;
+    document.getElementById("ovOver").hidden=true;
+    document.getElementById("ovStart").hidden=false;
+  }else{ alert("Hier käme die Spiele-Übersicht von School Games 🎓"); }
+};
+
+/* ---------- HINT autohide ---------- */
+setTimeout(()=>{ const h=document.getElementById("hint"); if(h) h.style.opacity="0"; },4000);
+
+/* ---------- INIT ---------- */
+function init(){
+  root.setAttribute("data-theme","standard");
+  document.getElementById("startHs").textContent= highscore>0?("🏆 Highscore: "+highscore):"";
+  resetRun(); state="start";
+  draw();
+  animId=requestAnimationFrame(loop);
+  // Splash 1 Sek
+  setTimeout(()=>{
+    const s=document.getElementById("splash");
+    s.style.opacity="0"; setTimeout(()=>s.remove(),500);
+  },1000);
+}
+init();
+</script>
+</body>
+</html>

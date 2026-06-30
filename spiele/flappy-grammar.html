@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="Flappy Grammar">
+  <meta name="lernspiel:thema"        content="Past vs Present Perfect">
+  <meta name="lernspiel:stufe"        content="7. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Flieg durch die Lücken mit der richtigen Zeitform: Past oder Present Perfect.">
+<title>Flappy Grammar — Past vs Present Perfect | School Games 🎓</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEMES — CSS-Variablen (Standard + Psychedelic)
+   ============================================================ */
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B; --info:#3B82F6;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --shadow-card:4px 4px 0px #1F2937;
+  --shadow-btn-blue:4px 4px 0px #1E3A8A;
+  --shadow-btn-green:4px 4px 0px #14532D;
+  --shadow-btn-red:4px 4px 0px #7F1D1D;
+  --header-bg:#FFFFFF; --hud-text:#1F2937;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FFFF00; --info:#00FFFF;
+  --text-dark:#F9FAFB; --text-light:#F9FAFB; --border:#BF00FF;
+  --shadow-card:0 0 20px #FF00FF, 0 0 40px #BF00FF;
+  --shadow-btn-blue:0 0 12px #00FFFF, 0 0 24px #00FFFF;
+  --shadow-btn-green:0 0 12px #00FF41, 0 0 24px #00FF41;
+  --shadow-btn-red:0 0 12px #FF0033, 0 0 24px #FF0033;
+  --header-bg:#0D001A; --hud-text:#F9FAFB;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Nunito',sans-serif; background:var(--bg-main); color:var(--text-dark);
+  overflow:hidden; user-select:none; transition:background .6s;
+}
+:root[data-theme="psychedelic"] body{ animation:bgPulse 3s ease-in-out infinite; }
+@keyframes bgPulse{ 0%,100%{background:#0D001A;} 50%{background:#001A0D;} }
+@media (prefers-reduced-motion: reduce){ :root[data-theme="psychedelic"] body{ animation:none; } }
+
+h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif; font-weight:normal; }
+
+/* ---------- SPLASH ---------- */
+#splash{
+  position:fixed; inset:0; z-index:200; background:#1E1B4B;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  transition:opacity .5s;
+}
+#splash .logo{ font-size:64px; animation:pop .6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop{ 0%{transform:scale(0);} 100%{transform:scale(1);} }
+#splash h1{ font-size:36px; color:#9333EA; letter-spacing:.03em; }
+#splash p{ color:#0D9488; font-weight:800; font-size:16px; }
+:root[data-theme="psychedelic"] #splash h1{ color:#BF00FF; text-shadow:0 0 16px #BF00FF; }
+
+/* ---------- SCREENS ---------- */
+.screen{
+  position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center;
+  background:var(--bg-main); padding:16px; overflow-y:auto;
+}
+.screen.active{ display:flex; }
+:root[data-theme="psychedelic"] .screen{ background:rgba(0,0,0,.92); }
+.screen-card{
+  background:var(--bg-card); border:4px solid var(--text-dark); border-radius:24px;
+  box-shadow:var(--shadow-card); padding:32px; max-width:560px; width:100%; text-align:center;
+}
+:root[data-theme="psychedelic"] .screen-card{ border-color:var(--purple); }
+.screen-card h1{ font-size:40px; color:var(--purple); margin-bottom:8px; line-height:1.1; }
+.screen-card h2{ font-size:22px; color:var(--orange); margin-bottom:16px; }
+.screen-card .sub{ font-size:16px; font-weight:700; margin-bottom:24px; line-height:1.5; }
+.badge{
+  display:inline-block; background:var(--orange); color:#fff; border-radius:999px;
+  padding:6px 18px; font-weight:900; font-size:14px; letter-spacing:.03em; margin-bottom:16px;
+}
+:root[data-theme="psychedelic"] .badge{ color:#000; }
+.rule-strip{
+  background:var(--bg-main); border:2px dashed var(--teal); border-radius:16px;
+  padding:12px 16px; margin-bottom:16px; font-size:15px; font-weight:800; color:var(--hud-text); line-height:1.6;
+}
+.rule-strip b{ color:var(--purple); }
+:root[data-theme="psychedelic"] .rule-strip{ background:#000; }
+.controls-box{
+  background:var(--bg-main); border:2px solid var(--border); border-radius:16px;
+  padding:16px; margin-bottom:24px; text-align:left; font-size:15px; font-weight:700; line-height:1.9;
+}
+:root[data-theme="psychedelic"] .controls-box{ background:#000; }
+.controls-box b{ color:var(--blue); }
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  font-family:'Fredoka One','Nunito',sans-serif; font-size:22px; color:#fff;
+  background:var(--blue); border:none; border-radius:16px; min-height:48px;
+  padding:10px 32px; cursor:pointer; box-shadow:var(--shadow-btn-blue);
+  transition:transform .15s cubic-bezier(0.34,1.56,0.64,1), box-shadow .15s; letter-spacing:.03em;
+}
+.btn:hover{ transform:scale(1.05); }
+.btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(0,0,0,.3); }
+.btn:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+.btn.success{ background:var(--green); box-shadow:var(--shadow-btn-green); }
+.btn.danger{ background:var(--red); box-shadow:var(--shadow-btn-red); }
+:root[data-theme="psychedelic"] .btn{ color:#000; font-weight:900; }
+
+/* ---------- GAME LAYOUT ---------- */
+#game{ display:none; flex-direction:column; height:100%; }
+#game.active{ display:flex; }
+#hdr{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 16px; background:var(--header-bg); border-bottom:3px solid var(--text-dark);
+  z-index:20; flex-wrap:nowrap;
+}
+:root[data-theme="psychedelic"] #hdr{ border-color:var(--purple); }
+.hdr-btn{
+  font-size:22px; background:var(--bg-main); border:2px solid var(--text-dark); border-radius:12px;
+  width:48px; height:48px; min-width:48px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:transform .15s;
+}
+.hdr-btn:hover{ transform:scale(1.08); }
+.hdr-btn:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+:root[data-theme="psychedelic"] .hdr-btn{ border-color:var(--purple); background:#000; color:#fff; }
+#hdr-center{ text-align:center; flex:1; min-width:0; }
+#hdr-title{ font-family:'Fredoka One',sans-serif; font-size:17px; color:var(--purple); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#hdr-level{ font-size:12px; font-weight:800; color:var(--teal); }
+#hdr-right{ display:flex; align-items:center; gap:8px; }
+.hud-pill{
+  background:var(--bg-main); border:2px solid var(--text-dark); border-radius:999px;
+  padding:4px 14px; font-weight:900; font-size:16px; color:var(--hud-text); white-space:nowrap;
+}
+:root[data-theme="psychedelic"] .hud-pill{ background:#000; border-color:var(--purple); }
+#hearts{ font-size:18px; letter-spacing:1px; }
+
+/* ---------- CANVAS AREA ---------- */
+#stage{ position:relative; flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+#gameCanvas{
+  width:100%; height:100%; display:block;
+  image-rendering:auto; touch-action:none;
+}
+#tapHint{
+  position:absolute; top:18px; left:50%; transform:translateX(-50%); z-index:5;
+  background:rgba(0,0,0,.55); color:#fff; padding:8px 18px; border-radius:999px;
+  font-weight:900; font-size:15px; pointer-events:none; animation:hintPulse 1.1s ease-in-out infinite;
+}
+@keyframes hintPulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+@media (prefers-reduced-motion: reduce){ #tapHint{ animation:none; } }
+
+/* ---------- FOOTER PROGRESS ---------- */
+#footer{
+  padding:8px 16px; background:var(--header-bg); border-top:3px solid var(--text-dark); z-index:20;
+}
+:root[data-theme="psychedelic"] #footer{ border-color:var(--purple); }
+.bar-label{ font-size:11px; font-weight:800; color:var(--teal); margin-bottom:4px; display:flex; justify-content:space-between; }
+.bar-track{ height:14px; background:var(--bg-main); border:2px solid var(--text-dark); border-radius:999px; overflow:hidden; }
+:root[data-theme="psychedelic"] .bar-track{ background:#000; border-color:var(--purple); }
+.bar-fill{ height:100%; width:0%; background:var(--teal); border-radius:999px; transition:width .25s ease; }
+:root[data-theme="psychedelic"] .bar-fill{ background:var(--pink); box-shadow:0 0 10px var(--pink); }
+
+/* ---------- QUESTION MODAL ---------- */
+#quizOverlay{
+  position:fixed; inset:0; z-index:80; display:none; align-items:center; justify-content:center;
+  background:rgba(30,27,75,.55); padding:16px; overflow-y:auto;
+}
+#quizOverlay.active{ display:flex; }
+:root[data-theme="psychedelic"] #quizOverlay{ background:rgba(0,0,0,.8); }
+#quizCard{
+  background:var(--bg-card); border:4px solid var(--text-dark); border-radius:24px;
+  box-shadow:var(--shadow-card); padding:24px; max-width:540px; width:100%;
+  animation:slideIn .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes slideIn{ 0%{transform:translateY(40px) scale(.95); opacity:0;} 100%{transform:none; opacity:1;} }
+@media (prefers-reduced-motion: reduce){ #quizCard{ animation:none; } }
+:root[data-theme="psychedelic"] #quizCard{ border-color:var(--purple); }
+#quizCard.shake{ animation:shake .2s linear 3; }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-9px);} 75%{transform:translateX(9px);} }
+@media (prefers-reduced-motion: reduce){ #quizCard.shake{ animation:none; } }
+.q-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; }
+.q-type{ display:inline-block; background:var(--blue); color:#fff; border-radius:999px; padding:4px 14px; font-weight:900; font-size:12px; letter-spacing:.04em; }
+:root[data-theme="psychedelic"] .q-type{ color:#000; }
+.q-cp{ font-weight:900; font-size:13px; color:var(--orange); }
+.q-prompt{ font-size:15px; font-weight:800; color:var(--teal); margin-bottom:8px; }
+.q-text{ font-size:22px; font-weight:800; color:var(--text-dark); line-height:1.5; margin-bottom:20px; }
+.q-text .blank{ color:var(--purple); font-weight:900; }
+.opts{ display:flex; flex-direction:column; gap:10px; }
+.opt{
+  font-family:'Nunito',sans-serif; font-size:18px; font-weight:800; text-align:left;
+  background:var(--bg-main); color:var(--text-dark); border:3px solid var(--text-dark); border-radius:16px;
+  min-height:48px; padding:10px 18px; cursor:pointer; transition:transform .12s, background .15s;
+}
+.opt:hover{ transform:scale(1.02); background:#fff; }
+.opt:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+:root[data-theme="psychedelic"] .opt{ background:#000; color:#fff; border-color:var(--purple); }
+.opt.correct{ background:var(--success); color:#fff; border-color:#14532D; }
+.opt.wrong{ background:var(--error); color:#fff; border-color:#7F1D1D; }
+.opt.dim{ opacity:.45; }
+/* error-correction words */
+.words{ display:flex; flex-wrap:wrap; gap:8px; }
+.word{
+  font-family:'Nunito',sans-serif; font-size:19px; font-weight:800;
+  background:var(--bg-main); color:var(--text-dark); border:3px solid var(--text-dark); border-radius:12px;
+  padding:8px 12px; min-height:44px; cursor:pointer; transition:transform .12s, background .15s;
+}
+.word:hover{ transform:translateY(-3px); background:#fff; }
+.word:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+:root[data-theme="psychedelic"] .word{ background:#000; color:#fff; border-color:var(--purple); }
+.word.correct{ background:var(--success); color:#fff; }
+.word.wrong{ background:var(--error); color:#fff; }
+/* gap input */
+.gap-row{ display:flex; gap:10px; flex-wrap:wrap; }
+#gapInput{
+  flex:1; min-width:160px; font-family:'Nunito',sans-serif; font-size:20px; font-weight:800;
+  background:var(--bg-main); color:var(--text-dark); border:3px solid var(--text-dark); border-radius:16px;
+  padding:10px 16px; min-height:48px; outline:none;
+}
+#gapInput:focus{ border-color:var(--blue); }
+:root[data-theme="psychedelic"] #gapInput{ background:#000; color:#fff; border-color:var(--purple); }
+.gap-hint{ font-size:13px; font-weight:700; color:var(--text-dark); opacity:.7; margin-top:8px; }
+/* feedback box */
+#feedback{ margin-top:18px; padding:14px 16px; border-radius:16px; font-weight:800; font-size:15px; line-height:1.5; display:none; }
+#feedback.show{ display:block; animation:slideIn .25s ease; }
+#feedback.good{ background:#DCFCE7; color:#14532D; border:2px solid var(--success); }
+#feedback.bad{ background:#FEE2E2; color:#7F1D1D; border:2px solid var(--error); }
+:root[data-theme="psychedelic"] #feedback.good{ background:#001a0d; color:#00FF41; }
+:root[data-theme="psychedelic"] #feedback.bad{ background:#1a0000; color:#FF3355; }
+#feedback .rule{ display:block; margin-top:6px; font-weight:700; opacity:.92; }
+#quizFooter{ margin-top:18px; text-align:center; min-height:0; }
+#nextBtn{ display:none; }
+
+/* fx canvas (confetti) */
+#fxCanvas{ position:fixed; inset:0; z-index:90; pointer-events:none; }
+
+.kbd{ display:inline-block; background:var(--text-dark); color:#fff; border-radius:6px; padding:1px 8px; font-size:13px; font-weight:900; }
+:root[data-theme="psychedelic"] .kbd{ background:var(--purple); color:#000; }
+.foot-tag{ margin-top:18px; font-size:12px; font-weight:800; color:var(--teal); }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="logo">🎓</div>
+  <h1>School Games</h1>
+  <p>Lernen macht Spaß!</p>
+</div>
+
+<!-- START SCREEN -->
+<div class="screen" id="startScreen">
+  <div class="screen-card">
+    <span class="badge">7. Klasse · AHS · B1</span>
+    <h1>Flappy Grammar 🐦</h1>
+    <h2>Past Simple vs. Present Perfect</h2>
+    <div class="rule-strip">
+      Flieg durch die Röhren! Bei jedem <b>Checkpoint</b> kommt eine
+      Grammatik-Aufgabe: <b>Multiple Choice</b>, <b>Lückentext</b> oder <b>Fehler finden</b>.
+    </div>
+    <div class="controls-box">
+      🕹️ <b>Fliegen:</b> <span class="kbd">Leertaste</span> · Klick · Tippen<br>
+      ❤️ <b>3 Leben</b> — falsche Antwort oder Crash kostet ein Leben<br>
+      ✅ <b>Richtig</b> = Bonus-Punkte + weiterfliegen<br>
+      🌈 <b>Regenbogen-Knopf</b> oben rechts für Psychedelic-Mode
+    </div>
+    <button class="btn success" id="startBtn">Los geht's! 🚀</button>
+    <div class="foot-tag">School Games 🎓 · Lebende Fremdsprache Englisch</div>
+  </div>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div class="screen" id="overScreen">
+  <div class="screen-card">
+    <h1 id="overTitle">Game Over!</h1>
+    <h2 id="overSub">Stark geflogen!</h2>
+    <div class="rule-strip" style="font-size:18px;">
+      Punkte: <b id="finalScore">0</b><br>
+      Highscore: <b id="highScore">0</b><br>
+      <span style="font-size:14px; color:var(--teal);">Richtige Antworten: <b id="finalCorrect">0</b> · Beste Serie: <b id="finalStreak">0</b></span>
+    </div>
+    <div id="overTip" class="controls-box" style="font-size:14px; line-height:1.6;"></div>
+    <button class="btn success" id="againBtn">Nochmal fliegen 🔁</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div id="hdr">
+    <button class="hdr-btn" id="backBtn" aria-label="Zurück zum Start">⬅️</button>
+    <div id="hdr-center">
+      <div id="hdr-title">Flappy Grammar 🐦</div>
+      <div id="hdr-level">Tempo-Stufe 1 · Past vs Present Perfect</div>
+    </div>
+    <div id="hdr-right">
+      <span class="hud-pill" id="hearts">❤️❤️❤️</span>
+      <span class="hud-pill" id="scorePill">0</span>
+      <button class="hdr-btn" id="psyBtn" aria-label="Psychedelic-Mode umschalten">🌈</button>
+    </div>
+  </div>
+
+  <div id="stage">
+    <canvas id="gameCanvas"></canvas>
+    <div id="tapHint">Tippen / Leertaste zum Fliegen!</div>
+  </div>
+
+  <div id="footer">
+    <div class="bar-label"><span>Nächster Checkpoint</span><span id="barText">0 / 4 Röhren</span></div>
+    <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div id="quizOverlay">
+  <div id="quizCard">
+    <div class="q-top">
+      <span class="q-type" id="qType">MULTIPLE CHOICE</span>
+      <span class="q-cp" id="qCp">CHECKPOINT 1</span>
+    </div>
+    <div class="q-prompt" id="qPrompt"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="qBody"></div>
+    <div id="feedback"></div>
+    <div id="quizFooter">
+      <button class="btn success" id="nextBtn">Weiterfliegen ➡️</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="fxCanvas"></canvas>
+
+<script>
+'use strict';
+/* ============================================================
+   FLAPPY GRAMMAR — Past Simple vs Present Perfect
+   7. Schulstufe · AHS (A2+/B1) · Österreichischer Lehrplan
+   Eine einzelne HTML-Datei. Kein Build, kein Server.
+   ============================================================ */
+
+const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+
+/* ---------- AUDIO (WebAudio, alle Töne < 500ms) ---------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, dur, type, vol, delay, freqEnd){
+  if(!audioCtx) return;
+  const t0 = audioCtx.currentTime + (delay||0);
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type || (psyMode ? 'sawtooth' : 'sine');
+  osc.frequency.setValueAtTime(freq, t0);
+  if(freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t0+dur);
+  g.gain.setValueAtTime(vol||0.15, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+const SND = {
+  flap(){ tone(380,.10, psyMode?'square':'sine', .10, 0, 620); },
+  point(){ tone(880,.07,'sine',.12); tone(1175,.10,'sine',.12,.06); },
+  correct(){ tone(523,.12,null,.18); tone(659,.12,null,.18,.09); tone(784,.18,null,.18,.18); },
+  wrong(){ tone(170,.22, psyMode?'sawtooth':'square', .14); tone(110,.2,psyMode?'sawtooth':'square',.12,.09); },
+  checkpoint(){ tone(660,.1,'sine',.14); tone(990,.14,'sine',.14,.08); },
+  levelUp(){ [523,587,659,784,1047].forEach((f,i)=>tone(f,.12,null,.16,i*.08)); },
+  crash(){ tone(220,.18,'square',.16,0,70); tone(140,.22,'square',.12,.1,60); },
+  button(){ tone(600,.06,'sine',.10); }
+};
+
+/* ---------- THEME / PALETTEN ---------- */
+let psyMode = false;
+const PALETTES = {
+  standard:{
+    skyTop:'#7DD3FC', skyBot:'#E0F2FE', hill1:'#86EFAC', hill2:'#4ADE80',
+    cloud:'#FFFFFF', ground:'#92580C', grass:'#16A34A',
+    pipe:'#22C55E', pipeDark:'#15803D', pipeLip:'#16A34A',
+    bird:'#FACC15', birdWing:'#F97316', birdBeak:'#F97316', cap:'#1E1B4B',
+    cp:'#9333EA', cpGlow:'rgba(147,51,234,.35)', outline:'#1F2937', star:'#FFFFFF'
+  },
+  psychedelic:{
+    skyTop:'#0D001A', skyBot:'#000000', hill1:'#003311', hill2:'#00FF41',
+    cloud:'#BF00FF', ground:'#1a0033', grass:'#00FF41',
+    pipe:'#FF00FF', pipeDark:'#7a007a', pipeLip:'#00FFFF',
+    bird:'#FFFF00', birdWing:'#FF6600', birdBeak:'#FF6600', cap:'#00FFFF',
+    cp:'#00FFFF', cpGlow:'rgba(0,255,255,.4)', outline:'#00FFFF', star:'#FFFF00'
+  }
+};
+let PAL = PALETTES.standard;
+function setTheme(psy){
+  psyMode = psy;
+  document.documentElement.setAttribute('data-theme', psy?'psychedelic':'standard');
+  PAL = PALETTES[psy?'psychedelic':'standard'];
+}
+
+/* ---------- CANVAS ---------- */
+const canvas = $('gameCanvas'), ctx = canvas.getContext('2d');
+const fxCanvas = $('fxCanvas'), fctx = fxCanvas.getContext('2d');
+const W = 480, H = 720;            // interne Auflösung (portrait, Flappy-typisch)
+canvas.width = W; canvas.height = H;
+function sizeFx(){ fxCanvas.width = innerWidth; fxCanvas.height = innerHeight; }
+sizeFx(); addEventListener('resize', sizeFx);
+
+const GROUND_H = 90;
+const GROUND_Y = H - GROUND_H;
+
+/* ---------- FRAGEN-POOL (Past Simple vs Present Perfect) ----------
+   types: 'mc' (multiple choice), 'gap' (Lückentext), 'error' (Fehler finden)
+   diff: 1 (leicht) … 3 (fordernd)
+------------------------------------------------------------------- */
+const QUESTIONS = [
+  // ----- MULTIPLE CHOICE -----
+  { type:'mc', diff:1, prompt:'Wähle die richtige Form.',
+    text:'I ___ my homework an hour ago.',
+    opts:['did','have done','have did'], answer:0,
+    rule:'„an hour ago" ist abgeschlossene Vergangenheit → Past Simple (did).' },
+  { type:'mc', diff:1, prompt:'Choose the correct form.',
+    text:'She ___ just ___ her keys.',
+    opts:['has / found','did / find','has / find'], answer:0,
+    rule:'„just" = Signalwort für Present Perfect: has/have + just + Partizip (found).' },
+  { type:'mc', diff:2, prompt:'Past Simple oder Present Perfect?',
+    text:'We ___ in Vienna since 2019.',
+    opts:['have lived','lived','live'], answer:0,
+    rule:'„since" + Zeitpunkt → Handlung dauert an → Present Perfect (have lived).' },
+  { type:'mc', diff:2, prompt:'Choose the correct option.',
+    text:'___ you ever ___ sushi?',
+    opts:['Have / eaten','Did / eat','Have / ate'], answer:0,
+    rule:'„ever" (Erfahrung im Leben) → Present Perfect: Have you ever eaten…?' },
+  { type:'mc', diff:2, prompt:'Welcher Satz ist richtig?',
+    text:'Erfahrung gestern – welche Form?',
+    opts:['I saw that film last night.','I have seen that film last night.','I seen that film last night.'], answer:0,
+    rule:'„last night" = bestimmter Zeitpunkt in der Vergangenheit → Past Simple (saw).' },
+  { type:'mc', diff:3, prompt:'Choose the best answer.',
+    text:'When ___ you ___ to London?  — Last summer.',
+    opts:['did / go','have / gone','did / went'], answer:0,
+    rule:'Frage mit „When" nach einem genauen Zeitpunkt → Past Simple (did you go).' },
+  { type:'mc', diff:3, prompt:'Pick the correct form.',
+    text:'The train ___ already ___ when we got to the station.',
+    opts:['had / left','has / left','did / leave'], answer:0,
+    rule:'Vorzeitig vor einer anderen Vergangenheit → Past Perfect (had left). Achtung: NICHT Present Perfect!' },
+
+  // ----- GAP FILL -----
+  { type:'gap', diff:1, prompt:'Setze das Verb in der richtigen Zeit ein.',
+    text:'Yesterday I (visit) ___ my grandparents.',
+    verb:'visit', answer:['visited'],
+    rule:'„Yesterday" → Past Simple. visit → visited.' },
+  { type:'gap', diff:2, prompt:'Present Perfect: have/has + Partizip Perfekt.',
+    text:'Look! She (break) ___ her phone.',
+    verb:'break', answer:['has broken','she has broken'],
+    rule:'Sichtbares Ergebnis jetzt, keine Zeitangabe → Present Perfect: has broken.' },
+  { type:'gap', diff:2, prompt:'Fülle die Lücke mit der richtigen Form.',
+    text:'They (not / finish) ___ their project yet.',
+    verb:'not finish', answer:["haven't finished","have not finished"],
+    rule:'„yet" → Present Perfect, verneint: have not / haven\'t finished.' },
+  { type:'gap', diff:2, prompt:'Past Simple – Vergangenheitsform einsetzen.',
+    text:'We (buy) ___ this car two years ago.',
+    verb:'buy', answer:['bought'],
+    rule:'„… ago" → Past Simple. buy → bought (unregelmäßig).' },
+  { type:'gap', diff:3, prompt:'Present Perfect mit „for".',
+    text:'I (know) ___ her for ten years.',
+    verb:'know', answer:['have known',"i have known","'ve known"],
+    rule:'„for" + Zeitdauer, die andauert → Present Perfect: have known.' },
+  { type:'gap', diff:3, prompt:'Wähle die richtige Zeitform.',
+    text:'He (live) ___ in Graz when he was a child.',
+    verb:'live', answer:['lived'],
+    rule:'Abgeschlossen in der Kindheit („when he was a child") → Past Simple: lived.' },
+
+  // ----- ERROR CORRECTION (falsches Wort anklicken) -----
+  { type:'error', diff:1, prompt:'Klick das falsche Wort an.',
+    words:['I','have','seen','him','yesterday','.'], wrongIndex:1, fix:'saw',
+    rule:'„yesterday" = Past Simple. Richtig: „I SAW him yesterday." (nicht have seen).' },
+  { type:'error', diff:2, prompt:'Welches Wort ist falsch?',
+    words:['She','has','went','to','Spain','three','times','.'], wrongIndex:2, fix:'gone',
+    rule:'Present Perfect braucht das Partizip: „has GONE", nicht „has went".' },
+  { type:'error', diff:2, prompt:'Find the mistake.',
+    words:['We','didn\'t','saw','the','film','last','week','.'], wrongIndex:2, fix:'see',
+    rule:'Nach „didn\'t" steht der Infinitiv: „didn\'t SEE", nicht „didn\'t saw".' },
+  { type:'error', diff:3, prompt:'Klick auf den Fehler.',
+    words:['I','have','met','him','in','2018','.'], wrongIndex:1, fix:'met (Past Simple)',
+    rule:'„in 2018" = genaues Jahr → Past Simple: „I MET him in 2018." (kein Present Perfect).' },
+  { type:'error', diff:3, prompt:'Which word is wrong?',
+    words:['Have','you','ever','ate','frog','legs','?'], wrongIndex:3, fix:'eaten',
+    rule:'„Have you ever …?" verlangt das Partizip: „ever EATEN", nicht „ever ate".' }
+];
+
+/* ---------- GAME STATE ---------- */
+let state = 'menu';   // menu | playing | quiz | dead
+let bird, pipes, clouds, hills, particles, confetti, psyStars;
+let camTime = 0, score = 0, lives = 3, pipesPassed = 0, cpCount = 0;
+let correctAnswers = 0, streak = 0, bestStreak = 0, speedTier = 1;
+let pipesSinceCp = 0;
+const PIPES_PER_CP = 4;          // alle 4 Röhren ein Checkpoint
+let highscore = 0;
+try { highscore = parseInt(localStorage.getItem('flappyGrammarHS')||'0',10) || 0; } catch(e){}
+
+let usedQ = [];                  // schon gestellte Fragen (Indizes), Anti-Wiederholung
+function pickQuestion(){
+  const maxDiff = speedTier >= 4 ? 3 : (speedTier >= 2 ? 2 : 2); // leicht steigend, ab Start 1-2
+  let pool = QUESTIONS.map((q,i)=>({q,i}))
+                      .filter(o => o.q.diff <= (speedTier>=3?3:(speedTier>=2?3:2)))
+                      .filter(o => !usedQ.includes(o.i));
+  if(pool.length === 0){ usedQ = []; pool = QUESTIONS.map((q,i)=>({q,i})); }
+  // gleichmäßige Typ-Verteilung: bevorzuge einen Typ, der zuletzt selten kam
+  const choice = pool[Math.floor(Math.random()*pool.length)];
+  usedQ.push(choice.i);
+  return choice.q;
+}
+
+/* ---------- BIRD PHYSICS ---------- */
+const GRAV = 1500;          // px/s²
+const FLAP_V = -430;        // px/s
+function resetBird(){
+  bird = { x: W*0.28, y: H*0.42, vy:0, r:18, rot:0, wing:0, dead:false };
+}
+function spawnInitialWorld(){
+  pipes = [];
+  // erste Röhre etwas weiter rechts, damit der Spieler ankommt
+  let startX = W + 80;
+  for(let i=0;i<4;i++){ pipes.push(makePipe(startX + i*PIPE_GAP_X)); }
+  clouds = [];
+  for(let i=0;i<5;i++) clouds.push({ x:Math.random()*W, y:40+Math.random()*220, s:.3+Math.random()*.3, w:60+Math.random()*60 });
+  hills = [];
+  for(let i=0;i<4;i++) hills.push({ x:i*200, w:200, h:70+Math.random()*50 });
+  particles = []; confetti = [];
+  psyStars = [];
+  for(let i=0;i<70;i++) psyStars.push({ x:Math.random()*W, y:Math.random()*GROUND_Y, r:Math.random()*1.8+.4, tw:Math.random()*6.28 });
+}
+
+const PIPE_W = 70;
+const PIPE_GAP_X = 250;     // horizontaler Abstand zwischen Röhren
+function curGapY(){ return 215 - Math.min(35, (speedTier-1)*5); }   // vertikale Lücke breit, schrumpft nur leicht
+function makePipe(x){
+  const gap = curGapY();
+  const margin = 80;
+  const topH = margin + Math.random() * (GROUND_Y - gap - margin*2);
+  return { x, topH, gap, passed:false, scored:false };
+}
+function curSpeed(){ return 120 + (speedTier-1)*22; }   // px/s, steigt pro Stufe
+
+/* ---------- INPUT ---------- */
+function flap(){
+  if(state !== 'playing') return;
+  ensureAudio();
+  bird.vy = FLAP_V;
+  bird.wing = 1;
+  SND.flap();
+  hideHint();
+}
+let hintHidden = false;
+function hideHint(){ if(!hintHidden){ hintHidden = true; $('tapHint').style.display='none'; } }
+
+canvas.addEventListener('pointerdown', e=>{ e.preventDefault(); flap(); });
+addEventListener('keydown', e=>{
+  if(e.code === 'Space' || e.code === 'ArrowUp'){
+    e.preventDefault();
+    if(state === 'playing') flap();
+    else if(state === 'menu' && $('startScreen').classList.contains('active')) startGame();
+  }
+  if(e.code === 'Enter' && state === 'quiz'){
+    const nb = $('nextBtn'); if(nb.style.display !== 'none') nb.click();
+  }
+});
+
+/* ---------- GAME FLOW ---------- */
+function showScreen(idOrNull){
+  ['startScreen','overScreen'].forEach(s=>$(s).classList.remove('active'));
+  $('game').classList.remove('active');
+  if(idOrNull === 'game'){ $('game').classList.add('active'); }
+  else if(idOrNull){ $(idOrNull).classList.add('active'); }
+}
+
+function startGame(){
+  ensureAudio();
+  state = 'playing';
+  score = 0; lives = 3; pipesPassed = 0; pipesSinceCp = 0; cpCount = 0;
+  correctAnswers = 0; streak = 0; bestStreak = 0; speedTier = 1; usedQ = [];
+  hintHidden = false; $('tapHint').style.display='block';
+  resetBird(); spawnInitialWorld();
+  updateHUD();
+  showScreen('game');
+  lastT = performance.now();
+  if(!rafOn){ rafOn = true; requestAnimationFrame(loop); }
+}
+
+function loseLife(reason){
+  lives--;
+  updateHUD();
+  if(lives <= 0){ gameOver(); return false; }
+  return true;
+}
+
+function gameOver(){
+  state = 'dead';
+  SND.crash();
+  if(score > highscore){ highscore = score; try{ localStorage.setItem('flappyGrammarHS', String(highscore)); }catch(e){} }
+  $('finalScore').textContent = score;
+  $('highScore').textContent = highscore;
+  $('finalCorrect').textContent = correctAnswers;
+  $('finalStreak').textContent = bestStreak;
+  $('overTitle').textContent = score >= highscore && score>0 ? 'Neuer Highscore! 🏆' : 'Game Over!';
+  $('overSub').textContent = pickGO();
+  $('overTip').innerHTML = '<b>Merksatz:</b> ' + pickTip();
+  showScreen('overScreen');
+}
+function pickGO(){
+  const arr = ['Stark geflogen!','Gar nicht schlecht!','Weiter so!','Grammatik-Profi unterwegs!','Nächstes Mal noch weiter!'];
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+function pickTip(){
+  const tips = [
+    'Signalwörter Present Perfect: <b>just, already, yet, ever, never, since, for</b>.',
+    'Signalwörter Past Simple: <b>yesterday, ago, last…, in 2018, when</b>.',
+    'Present Perfect = <b>have/has + 3. Verbform</b> (Partizip): go → gone, see → seen.',
+    'Genauer Zeitpunkt in der Vergangenheit → fast immer <b>Past Simple</b>.',
+    '„since" = ab einem Zeitpunkt, „for" = über eine Zeitdauer — beide mit Present Perfect.'
+  ];
+  return tips[Math.floor(Math.random()*tips.length)];
+}
+
+/* ---------- HUD ---------- */
+function updateHUD(){
+  $('scorePill').textContent = score;
+  $('hearts').textContent = '❤️'.repeat(Math.max(0,lives)) + '🖤'.repeat(Math.max(0,3-lives));
+  $('hdr-level').textContent = 'Tempo-Stufe ' + speedTier + ' · Past vs Present Perfect';
+  const left = PIPES_PER_CP - pipesSinceCp;
+  $('barText').textContent = pipesSinceCp + ' / ' + PIPES_PER_CP + ' Röhren';
+  $('barFill').style.width = Math.min(100, (pipesSinceCp/PIPES_PER_CP)*100) + '%';
+}
+
+/* ---------- MAIN LOOP ---------- */
+let lastT = 0, rafOn = false;
+function loop(now){
+  const dt = Math.min(0.033, (now - lastT)/1000);
+  lastT = now;
+  if(state === 'playing') update(dt);
+  render(dt);
+  drawConfetti(dt);
+  requestAnimationFrame(loop);
+}
+
+function update(dt){
+  camTime += dt;
+  // Bird
+  bird.vy += GRAV*dt;
+  bird.y += bird.vy*dt;
+  bird.rot = Math.max(-0.5, Math.min(1.2, bird.vy/600));
+  bird.wing = Math.max(0, bird.wing - dt*4);
+
+  // Decke
+  if(bird.y - bird.r < 0){ bird.y = bird.r; bird.vy = 0; }
+  // Boden = sofort tödlich (ein Leben weg + Reset-Position) oder Game Over
+  if(bird.y + bird.r >= GROUND_Y){
+    bird.y = GROUND_Y - bird.r;
+    handleCrash();
+    return;
+  }
+
+  // Pipes bewegen
+  const sp = curSpeed();
+  for(const p of pipes){ p.x -= sp*dt; }
+  // Recyceln + Scoring
+  for(const p of pipes){
+    if(!p.scored && p.x + PIPE_W < bird.x - bird.r){
+      p.scored = true;
+      score += 1; pipesPassed++; pipesSinceCp++;
+      SND.point();
+      spawnPuff(bird.x, bird.y, PAL.pipeLip);
+      updateHUD();
+      // Tempo steigt alle 6 Röhren
+      const newTier = 1 + Math.floor(pipesPassed/6);
+      if(newTier > speedTier){ speedTier = newTier; SND.levelUp(); }
+      // Checkpoint?
+      if(pipesSinceCp >= PIPES_PER_CP){ pipesSinceCp = 0; openCheckpoint(); return; }
+    }
+  }
+  // entfernte Pipes auffüllen
+  if(pipes.length && pipes[0].x < -PIPE_W){
+    pipes.shift();
+    const lastX = pipes[pipes.length-1].x;
+    pipes.push(makePipe(lastX + PIPE_GAP_X));
+  }
+  // Kollision mit Pipes
+  for(const p of pipes){
+    if(hitsPipe(p)){ handleCrash(); return; }
+  }
+
+  // Wolken / Hügel
+  for(const c of clouds){ c.x -= sp*c.s*dt; if(c.x < -c.w){ c.x = W + Math.random()*60; c.y = 40+Math.random()*220; } }
+  for(const h of hills){ h.x -= sp*0.25*dt; if(h.x < -h.w){ h.x = Math.max(...hills.map(x=>x.x)) + h.w; } }
+  // Partikel
+  particles = particles.filter(pt=>pt.life>0);
+  for(const pt of particles){ pt.life -= dt; pt.x += pt.vx*dt; pt.y += pt.vy*dt; pt.vy += 400*dt; }
+}
+
+function hitsPipe(p){
+  const bx = bird.x, by = bird.y, r = bird.r*0.82;
+  if(bx + r < p.x || bx - r > p.x + PIPE_W) return false;
+  const gapTop = p.topH, gapBot = p.topH + p.gap;
+  if(by - r < gapTop || by + r > gapBot) return true;
+  return false;
+}
+
+let crashLock = false;
+function handleCrash(){
+  if(crashLock) return;
+  crashLock = true;
+  SND.wrong();
+  spawnPuff(bird.x, bird.y, PAL.bird, 16);
+  shakeStage();
+  const alive = loseLife('crash');
+  if(alive){
+    // sanfter Respawn: Vogel zurück in die Mitte, kurze Unverwundbarkeit durch Pipe-Reset vor ihm
+    setTimeout(()=>{
+      resetBird();
+      // Pipes, die zu nah sind, nach rechts schieben
+      let safeX = bird.x + 220;
+      for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += PIPE_GAP_X; p.scored=false; } }
+      crashLock = false;
+    }, 350);
+  } else {
+    crashLock = false;
+  }
+}
+
+/* ---------- CHECKPOINT / QUIZ ---------- */
+function openCheckpoint(){
+  state = 'quiz';
+  cpCount++;
+  SND.checkpoint();
+  const q = pickQuestion();
+  buildQuiz(q);
+  $('quizOverlay').classList.add('active');
+}
+
+function buildQuiz(q){
+  const TYPE_LABEL = { mc:'MULTIPLE CHOICE', gap:'LÜCKENTEXT', error:'FEHLER FINDEN' };
+  $('qType').textContent = TYPE_LABEL[q.type];
+  $('qCp').textContent = 'CHECKPOINT ' + cpCount;
+  $('qPrompt').textContent = q.prompt;
+  const body = $('qBody');
+  const fb = $('feedback'); fb.className=''; fb.classList.remove('show','good','bad'); fb.innerHTML='';
+  $('nextBtn').style.display='none';
+  $('quizCard').classList.remove('shake');
+  body.innerHTML='';
+
+  if(q.type === 'mc'){
+    $('qText').textContent = q.text;
+    const wrap = document.createElement('div'); wrap.className='opts';
+    q.opts.forEach((o,i)=>{
+      const b = document.createElement('button'); b.className='opt'; b.textContent = String.fromCharCode(65+i)+')  '+o;
+      b.onclick = ()=> answerMC(q, i, wrap);
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  }
+  else if(q.type === 'gap'){
+    $('qText').innerHTML = q.text.replace('___','<span class="blank">_____</span>');
+    const row = document.createElement('div'); row.className='gap-row';
+    const inp = document.createElement('input'); inp.id='gapInput'; inp.type='text';
+    inp.autocomplete='off'; inp.autocapitalize='off'; inp.spellcheck=false;
+    inp.placeholder='Deine Antwort…';
+    const go = document.createElement('button'); go.className='btn'; go.textContent='Prüfen ✓';
+    go.onclick = ()=> answerGap(q, inp);
+    inp.addEventListener('keydown', e=>{ if(e.code==='Enter'){ e.preventDefault(); answerGap(q, inp); } });
+    row.appendChild(inp); row.appendChild(go);
+    body.appendChild(row);
+    const hint = document.createElement('div'); hint.className='gap-hint'; hint.textContent='Verb: ' + q.verb + ' — richtige Zeitform einsetzen.';
+    body.appendChild(hint);
+    setTimeout(()=>inp.focus(), 60);
+  }
+  else if(q.type === 'error'){
+    $('qText').textContent = 'Im Satz steckt ein Fehler:';
+    const wrap = document.createElement('div'); wrap.className='words';
+    q.words.forEach((w,i)=>{
+      const isPunct = /^[.?!,]$/.test(w);
+      if(isPunct){ const s=document.createElement('span'); s.style.alignSelf='center'; s.style.fontWeight='800'; s.style.fontSize='20px'; s.textContent=w; wrap.appendChild(s); return; }
+      const b = document.createElement('button'); b.className='word'; b.textContent = w;
+      b.onclick = ()=> answerError(q, i, wrap);
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  }
+}
+
+function normalize(s){
+  return s.toLowerCase().trim()
+    .replace(/[’‘]/g,"'").replace(/\s+/g,' ')
+    .replace(/[.?!]+$/,'');
+}
+function answerGap(q, inp){
+  if(inp.disabled) return;
+  const val = normalize(inp.value);
+  if(val === ''){ inp.focus(); return; }
+  const ok = q.answer.some(a => normalize(a) === val);
+  inp.disabled = true;
+  inp.style.borderColor = ok ? 'var(--success)' : 'var(--error)';
+  finishQuiz(q, ok, q.answer[0]);
+}
+function answerMC(q, i, wrap){
+  const btns = [...wrap.children];
+  btns.forEach(b=>b.onclick=null);
+  const ok = i === q.answer;
+  btns[i].classList.add(ok?'correct':'wrong');
+  if(!ok) btns[q.answer].classList.add('correct');
+  btns.forEach((b,j)=>{ if(j!==i && j!==q.answer) b.classList.add('dim'); });
+  finishQuiz(q, ok, q.opts[q.answer]);
+}
+function answerError(q, i, wrap){
+  const btns = [...wrap.querySelectorAll('.word')];
+  btns.forEach(b=>b.onclick=null);
+  // index unter den .word-Buttons mappen wir zurück auf words-Index
+  const wordButtons = []; q.words.forEach((w,idx)=>{ if(!/^[.?!,]$/.test(w)) wordButtons.push(idx); });
+  const clickedWordIdx = i;
+  const ok = clickedWordIdx === q.wrongIndex;
+  // markiere
+  btns.forEach((b,bi)=>{
+    if(wordButtons[bi] === q.wrongIndex) b.classList.add('correct');
+  });
+  if(!ok){
+    const clickedBtn = btns[wordButtons.indexOf(clickedWordIdx)];
+    if(clickedBtn) clickedBtn.classList.add('wrong');
+  }
+  finishQuiz(q, ok, q.words[q.wrongIndex] + ' → ' + q.fix);
+}
+
+function finishQuiz(q, ok, correctText){
+  const fb = $('feedback');
+  if(ok){
+    correctAnswers++; streak++; bestStreak = Math.max(bestStreak, streak);
+    const bonus = 5 + streak;       // Bonus wächst mit Serie
+    score += bonus;
+    SND.correct();
+    confettiBurst();
+    fb.className='show good';
+    fb.innerHTML = '✅ <b>Richtig!</b> +'+bonus+' Punkte'+(streak>1?' · Serie ×'+streak:'')+
+                   '<span class="rule">💡 '+q.rule+'</span>';
+  } else {
+    streak = 0;
+    SND.wrong();
+    $('quizCard').classList.add('shake');
+    const alive = lives > 1;
+    lives--;
+    fb.className='show bad';
+    fb.innerHTML = '❌ <b>Leider falsch.</b> Richtig: <b>'+correctText+'</b>'+
+                   '<span class="rule">💡 '+q.rule+'</span>';
+  }
+  updateHUD();
+  $('scorePill').textContent = score;
+  // Weiter-Button bzw. Game Over
+  const nb = $('nextBtn');
+  if(lives <= 0){
+    nb.style.display='inline-block';
+    nb.textContent = 'Ergebnis ansehen 📊';
+    nb.className = 'btn danger';
+    nb.onclick = ()=>{ $('quizOverlay').classList.remove('active'); gameOver(); };
+  } else {
+    nb.style.display='inline-block';
+    nb.textContent = 'Weiterfliegen ➡️';
+    nb.className = 'btn success';
+    nb.onclick = ()=> resumeFromQuiz();
+  }
+}
+
+function resumeFromQuiz(){
+  $('quizOverlay').classList.remove('active');
+  // sanfter Wiedereinstieg: Vogel mittig, Pipes vor ihm freiräumen
+  resetBird();
+  let safeX = bird.x + 240;
+  for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += PIPE_GAP_X; p.scored=false; } }
+  crashLock = false;
+  state = 'playing';
+  lastT = performance.now();
+}
+
+/* ---------- FX ---------- */
+function spawnPuff(x,y,color,n){
+  if(REDUCE_MOTION) return;
+  n = n||8;
+  for(let i=0;i<n;i++){
+    particles.push({ x, y, vx:(Math.random()-.5)*220, vy:(Math.random()-.5)*220-60,
+      life:.5+Math.random()*.3, r:2+Math.random()*3, color });
+  }
+}
+let shakeAmt = 0;
+function shakeStage(){ if(!REDUCE_MOTION) shakeAmt = 9; }
+
+const CONFETTI_STD = ['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const CONFETTI_PSY = ['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+function confettiBurst(){
+  if(REDUCE_MOTION) return;
+  const colors = psyMode ? CONFETTI_PSY : CONFETTI_STD;
+  const cx = innerWidth/2, cy = innerHeight*0.4;
+  for(let i=0;i<34;i++){
+    confetti.push({ x:cx, y:cy, vx:(Math.random()-.5)*700, vy:-200-Math.random()*450,
+      w:6+Math.random()*8, h:4+Math.random()*6, rot:Math.random()*6.28, vr:(Math.random()-.5)*12,
+      color:colors[i%colors.length], life:1.4 });
+  }
+}
+function drawConfetti(dt){
+  fctx.clearRect(0,0,fxCanvas.width,fxCanvas.height);
+  if(!confetti) return;
+  confetti = confetti.filter(c=>c.life>0);
+  for(const c of confetti){
+    c.life -= dt; c.vy += 900*dt; c.x += c.vx*dt; c.y += c.vy*dt; c.rot += c.vr*dt;
+    fctx.save(); fctx.translate(c.x,c.y); fctx.rotate(c.rot);
+    fctx.globalAlpha = Math.min(1,c.life);
+    fctx.fillStyle = c.color; fctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);
+    fctx.restore();
+  }
+  fctx.globalAlpha = 1;
+}
+
+/* ---------- RENDER ---------- */
+let psyHue = 0;
+function render(dt){
+  psyHue = (psyHue + 100*dt) % 360;
+  ctx.save();
+  // Stage-Shake
+  if(shakeAmt > 0){ ctx.translate((Math.random()-.5)*shakeAmt, (Math.random()-.5)*shakeAmt); shakeAmt = Math.max(0, shakeAmt - dt*40); }
+
+  // Himmel
+  const sky = ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,PAL.skyTop); sky.addColorStop(1,PAL.skyBot);
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
+
+  // Psychedelic Sterne
+  if(psyMode && psyStars){
+    for(const s of psyStars){
+      s.tw += dt*3;
+      ctx.globalAlpha = .35 + Math.sin(s.tw)*.35;
+      ctx.fillStyle = PAL.star;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.28); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Hügel (Parallax)
+  if(hills){
+    ctx.fillStyle = PAL.hill2;
+    for(const h of hills){
+      ctx.beginPath();
+      ctx.moveTo(h.x, GROUND_Y);
+      ctx.quadraticCurveTo(h.x + h.w/2, GROUND_Y - h.h, h.x + h.w, GROUND_Y);
+      ctx.fill();
+    }
+  }
+  // Wolken
+  if(clouds){
+    ctx.fillStyle = PAL.cloud;
+    for(const c of clouds){
+      ctx.globalAlpha = psyMode ? .5 : .9;
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, c.w*.5, c.w*.24, 0, 0, 6.28);
+      ctx.ellipse(c.x + c.w*.32, c.y-8, c.w*.32, c.w*.2, 0, 0, 6.28);
+      ctx.ellipse(c.x - c.w*.3, c.y-4, c.w*.28, c.w*.18, 0, 0, 6.28);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Pipes
+  if(pipes){
+    for(const p of pipes) drawPipe(p);
+  }
+
+  // Boden
+  ctx.fillStyle = PAL.ground; ctx.fillRect(0, GROUND_Y, W, GROUND_H);
+  ctx.fillStyle = PAL.grass;  ctx.fillRect(0, GROUND_Y, W, 12);
+  // Boden-Streifen (scrollend)
+  ctx.fillStyle = psyMode ? 'rgba(0,255,65,.18)' : 'rgba(0,0,0,.12)';
+  const off = (camTime*curSpeed()) % 40;
+  for(let x=-off; x<W; x+=40){ ctx.fillRect(x, GROUND_Y+18, 20, GROUND_H-18); }
+
+  // Partikel
+  if(particles){
+    for(const pt of particles){
+      ctx.globalAlpha = Math.max(0, pt.life*1.6);
+      ctx.fillStyle = pt.color;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, 6.28); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Bird
+  if(bird) drawBird();
+
+  // Checkpoint-Vorschau-Banner (wenn nah)
+  if(state === 'playing' && pipes){
+    const left = PIPES_PER_CP - pipesSinceCp;
+    if(left === 1){
+      ctx.fillStyle = psyMode ? 'rgba(0,255,255,.9)' : 'rgba(147,51,234,.92)';
+      ctx.font = '900 22px Nunito, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⭐ Nächste Röhre = CHECKPOINT!', W/2, 40);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawPipe(p){
+  const x = p.x, gapTop = p.topH, gapBot = p.topH + p.gap;
+  const lip = 18, lipOver = 6;
+  ctx.lineWidth = 3; ctx.strokeStyle = PAL.outline;
+  // oben
+  ctx.fillStyle = PAL.pipe;
+  ctx.fillRect(x, 0, PIPE_W, gapTop - lip);
+  ctx.strokeRect(x, -3, PIPE_W, gapTop - lip + 3);
+  ctx.fillStyle = PAL.pipeLip;
+  ctx.fillRect(x - lipOver, gapTop - lip, PIPE_W + lipOver*2, lip);
+  ctx.strokeRect(x - lipOver, gapTop - lip, PIPE_W + lipOver*2, lip);
+  // unten
+  ctx.fillStyle = PAL.pipe;
+  ctx.fillRect(x, gapBot + lip, PIPE_W, GROUND_Y - (gapBot+lip));
+  ctx.strokeRect(x, gapBot + lip, PIPE_W, GROUND_Y - (gapBot+lip)+3);
+  ctx.fillStyle = PAL.pipeLip;
+  ctx.fillRect(x - lipOver, gapBot, PIPE_W + lipOver*2, lip);
+  ctx.strokeRect(x - lipOver, gapBot, PIPE_W + lipOver*2, lip);
+  // Glanz
+  ctx.fillStyle = psyMode ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.28)';
+  ctx.fillRect(x+8, 0, 8, gapTop - lip);
+  ctx.fillRect(x+8, gapBot + lip, 8, GROUND_Y-(gapBot+lip));
+}
+
+function drawBird(){
+  const R = bird.r;
+  const wingUp = bird.wing > 0.4;
+  ctx.save();
+  ctx.translate(bird.x, bird.y);
+  ctx.rotate(bird.rot);
+  ctx.lineWidth = 3; ctx.strokeStyle = PAL.outline;
+  ctx.lineJoin = 'round';
+
+  // Schwanzfedern (hinten)
+  ctx.fillStyle = PAL.birdWing;
+  ctx.beginPath();
+  ctx.moveTo(-R*0.6, -2);
+  ctx.lineTo(-R*1.55, -8);
+  ctx.lineTo(-R*1.35, 1);
+  ctx.lineTo(-R*1.6, 9);
+  ctx.lineTo(-R*0.6, 6);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Körper (leicht eiförmig)
+  ctx.fillStyle = PAL.bird;
+  ctx.beginPath(); ctx.ellipse(0, 1, R*1.04, R*1.12, 0, 0, 6.28); ctx.fill(); ctx.stroke();
+
+  // hellerer Bauch
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(0, 1, R*1.04, R*1.12, 0, 0, 6.28); ctx.clip();
+  ctx.fillStyle = psyMode ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.55)';
+  ctx.beginPath(); ctx.ellipse(2, R*0.55, R*0.85, R*0.8, 0, 0, 6.28); ctx.fill();
+  ctx.restore();
+  // Bauch-Outline neu nachziehen
+  ctx.beginPath(); ctx.ellipse(0, 1, R*1.04, R*1.12, 0, 0, 6.28); ctx.stroke();
+
+  // Flügel (flappt, mit Federdetail)
+  ctx.fillStyle = PAL.birdWing;
+  ctx.save();
+  ctx.translate(-1, wingUp ? -3 : 5);
+  ctx.rotate(wingUp ? -0.5 : 0.35);
+  ctx.beginPath(); ctx.ellipse(0, 0, R*0.7, R*0.46, 0, 0, 6.28); ctx.fill(); ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(-R*0.2,-2); ctx.lineTo(R*0.45,-1); ctx.moveTo(-R*0.2,2); ctx.lineTo(R*0.45,3); ctx.stroke();
+  ctx.lineWidth = 3;
+  ctx.restore();
+
+  // Wangenröte
+  ctx.fillStyle = psyMode ? 'rgba(255,0,255,.35)' : 'rgba(244,114,182,.55)';
+  ctx.beginPath(); ctx.arc(R*0.5, R*0.42, R*0.28, 0, 6.28); ctx.fill();
+
+  // Auge (groß & freundlich)
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(R*0.42, -R*0.32, R*0.42, 0, 6.28); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = PAL.outline;
+  ctx.beginPath(); ctx.arc(R*0.55, -R*0.28, R*0.2, 0, 6.28); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(R*0.62, -R*0.36, R*0.07, 0, 6.28); ctx.fill();
+
+  // Schnabel (kleiner, gerundet)
+  ctx.fillStyle = PAL.birdBeak;
+  ctx.beginPath();
+  ctx.moveTo(R*0.9, -R*0.05);
+  ctx.lineTo(R*1.45, R*0.12);
+  ctx.lineTo(R*0.9, R*0.32);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Schnabel-Trennlinie
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(R*0.9, R*0.14); ctx.lineTo(R*1.4, R*0.12); ctx.stroke();
+  ctx.lineWidth = 3;
+
+  // Doktorhut (School Games!) — sitzt auf dem Kopf
+  ctx.save();
+  ctx.translate(-1, -R*1.05);
+  ctx.rotate(-0.08);
+  ctx.fillStyle = PAL.cap;
+  // Mütze-Block
+  ctx.beginPath(); ctx.ellipse(0, -2, R*0.5, R*0.28, 0, 0, 6.28); ctx.fill(); ctx.stroke();
+  // Brett (Mortarboard)
+  ctx.beginPath();
+  ctx.moveTo(-R*0.95, -3); ctx.lineTo(0, -R*0.62); ctx.lineTo(R*0.95, -3); ctx.lineTo(0, R*0.18);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Knopf
+  ctx.fillStyle = PAL.birdBeak;
+  ctx.beginPath(); ctx.arc(0, -R*0.22, R*0.12, 0, 6.28); ctx.fill(); ctx.stroke();
+  // Quaste
+  ctx.lineWidth = 2.5; ctx.strokeStyle = PAL.birdBeak;
+  ctx.beginPath(); ctx.moveTo(0, -R*0.22); ctx.lineTo(R*0.9, R*0.05); ctx.lineTo(R*0.9, R*0.5); ctx.stroke();
+  ctx.fillStyle = PAL.birdBeak;
+  ctx.beginPath(); ctx.arc(R*0.9, R*0.58, R*0.14, 0, 6.28); ctx.fill();
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/* ---------- PSYCHEDELIC HUE FILTER ---------- */
+function applyPsyFilter(){
+  // Hue-Rotation auf das gesamte Canvas im Psychedelic-Mode (leicht)
+}
+
+/* ---------- BUTTON WIRING ---------- */
+$('startBtn').onclick = ()=>{ SND.button(); startGame(); };
+$('againBtn').onclick = ()=>{ SND.button(); startGame(); };
+$('backBtn').onclick = ()=>{ SND.button(); state='menu'; $('quizOverlay').classList.remove('active'); showScreen('startScreen'); };
+$('psyBtn').onclick = ()=>{
+  SND.button();
+  setTheme(!psyMode);
+  $('psyBtn').textContent = psyMode ? '🔮' : '🌈';
+};
+
+/* ---------- SPLASH → START ---------- */
+setTimeout(()=>{
+  const sp = $('splash');
+  sp.style.opacity = '0';
+  setTimeout(()=>{ sp.style.display='none'; showScreen('startScreen'); }, 500);
+}, 1000);
+
+/* Render-Loop läuft immer (auch im Menü zeigt Canvas nichts, Game inaktiv) */
+function bootLoop(){ lastT = performance.now(); rafOn = true; requestAnimationFrame(loop); }
+// Loop erst nach Start nötig; aber wir starten ihn safe:
+resetBird(); spawnInitialWorld();
+bootLoop();
+</script>
+</body>
+</html>

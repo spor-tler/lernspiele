@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="Tennis Past Tense">
+  <meta name="lernspiel:thema"        content="Past Tense">
+  <meta name="lernspiel:stufe"        content="6. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Returniere den Ball mit der richtigen Vergangenheitsform.">
+<title>Top Spin Tennis · Past Tense — School Games 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --glow:transparent;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FF6600;
+  --text-dark:#F9FAFB; --text-light:#FFFFFF; --border:#BF00FF;
+  --glow:#00FFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{ font-family:"Nunito",sans-serif; font-weight:700; background:var(--bg-main); color:var(--text-dark);
+  display:flex; flex-direction:column; align-items:center; min-height:100%; overflow:hidden; user-select:none; }
+:root[data-theme="psychedelic"] body{ animation:bgpulse 6s infinite alternate; }
+@keyframes bgpulse{0%{background:#0D001A;}50%{background:#001A0D;}100%{background:#000;}}
+h1,h2,h3,.fred{font-family:"Fredoka",sans-serif;font-weight:600;}
+.wrap{ width:100%; max-width:960px; display:flex; flex-direction:column; height:100vh; height:100dvh; padding:8px; gap:8px; }
+
+header{ display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:var(--bg-dark); color:var(--text-light); padding:8px 16px; border-radius:16px; box-shadow:0 4px 0 rgba(0,0,0,.25); }
+.h-left,.h-right{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ min-width:48px; min-height:48px; border:none; cursor:pointer; border-radius:16px; background:var(--bg-card);
+  color:var(--text-dark); font-size:22px; font-family:"Fredoka",sans-serif; box-shadow:0 0 10px var(--glow);
+  display:flex; align-items:center; justify-content:center; transition:transform .15s; }
+.icon-btn:active{ transform:translate(2px,2px); }
+.title{text-align:center;line-height:1.05;}
+.title h1{font-size:20px;color:var(--text-light);text-shadow:0 0 8px var(--glow);}
+.badge{ display:inline-block; margin-top:2px; background:var(--teal); color:#fff; font-family:"Fredoka",sans-serif;
+  font-size:12px; padding:2px 10px; border-radius:999px; }
+.score{ background:var(--yellow); color:#1F2937; font-weight:800; padding:6px 14px; border-radius:999px;
+  font-family:"Fredoka",sans-serif; font-size:18px; display:flex; align-items:center; gap:6px; box-shadow:0 0 10px var(--glow); }
+.lives{font-size:18px;letter-spacing:1px;}
+
+.game-area{ position:relative; flex:1; min-height:0; background:var(--bg-card); border:4px solid var(--bg-dark);
+  border-radius:24px; overflow:hidden; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 0 24px var(--glow); }
+#three{ display:block; width:100%; height:100%; touch-action:none; }
+.shake{ animation:shake .2s 2; }
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+footer{ background:var(--bg-dark); border-radius:16px; padding:8px 16px 12px; }
+.prog-label{ color:var(--text-light); font-size:12px; font-weight:700; display:flex; justify-content:space-between; margin-bottom:6px; }
+.prog-track{ height:14px; background:rgba(255,255,255,.15); border-radius:999px; overflow:hidden; }
+.prog-fill{ height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--teal),var(--yellow),var(--red));
+  transition:width .15s; box-shadow:0 0 12px var(--glow); }
+
+.overlay{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:16px; padding:24px; background:rgba(30,27,75,.72); backdrop-filter:blur(3px); color:var(--text-light); z-index:20; }
+.overlay.hidden{display:none;}
+.card{ background:var(--bg-card); color:var(--text-dark); border-radius:24px; border:4px solid var(--bg-dark);
+  box-shadow:4px 4px 0 #1F2937; padding:24px; max-width:560px; width:100%; }
+:root[data-theme="psychedelic"] .card{ box-shadow:0 0 20px #FF00FF,0 0 40px #BF00FF; }
+.card h2{font-size:28px;color:var(--purple);margin-bottom:8px;text-shadow:0 0 10px var(--glow);}
+.card p{font-size:16px;margin-bottom:8px;}
+.keyhint{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+.keyhint span{background:var(--bg-main);border:2px solid var(--border);border-radius:12px;padding:8px 12px;font-size:14px;}
+.btn{ min-height:48px; cursor:pointer; border:none; border-radius:16px; font-family:"Fredoka",sans-serif; font-size:20px;
+  padding:10px 28px; color:#fff; background:var(--blue); box-shadow:4px 4px 0 #1E3A8A; transition:transform .15s; }
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #1E3A8A;}
+.btn.success{background:var(--green);box-shadow:4px 4px 0 #14532D;}
+.btn.danger{background:var(--red);box-shadow:4px 4px 0 #7F1D1D;}
+
+.quiz-tag{ display:inline-block; background:var(--orange); color:#fff; font-family:"Fredoka",sans-serif; font-size:13px;
+  padding:4px 14px; border-radius:999px; margin-bottom:12px; }
+.quiz-q{ font-family:"Fredoka",sans-serif; font-size:24px; line-height:1.35; margin-bottom:16px; color:var(--text-dark); }
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{ min-height:48px; cursor:pointer; border:3px solid var(--blue); border-radius:16px; background:var(--bg-main);
+  color:var(--text-dark); font-family:"Fredoka",sans-serif; font-size:20px; padding:10px 16px; transition:transform .12s,background .2s; }
+.opt:hover{transform:scale(1.03);}
+.opt.correct{background:var(--success);color:#fff;border-color:var(--success);}
+.opt.wrong{background:var(--error);color:#fff;border-color:var(--error);animation:shake .2s 2;}
+.opt:disabled{cursor:default;}
+.fill-row{font-family:"Fredoka",sans-serif;font-size:22px;margin-bottom:14px;line-height:1.6;}
+.fill-input{ font-family:"Fredoka",sans-serif; font-size:20px; min-height:48px; width:200px; text-align:center;
+  border:3px solid var(--blue); border-radius:16px; padding:6px 10px; background:var(--bg-main); color:var(--text-dark); }
+.fill-input:focus{outline:3px solid var(--orange);}
+.hintword{color:var(--teal);font-weight:800;}
+.build-target{ min-height:56px; border:3px dashed var(--blue); border-radius:16px; background:var(--bg-main);
+  display:flex; flex-wrap:wrap; gap:8px; padding:10px; margin-bottom:12px; align-items:center; justify-content:center; }
+.build-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;}
+.word{ cursor:pointer; font-family:"Fredoka",sans-serif; font-size:18px; min-height:44px; padding:8px 14px; border-radius:12px;
+  border:3px solid var(--purple); background:var(--bg-card); color:var(--text-dark); transition:transform .12s; }
+.word:hover{transform:scale(1.06);}
+.word.used{opacity:.25;pointer-events:none;}
+.feedline{font-family:"Fredoka",sans-serif;font-size:18px;min-height:26px;margin-top:6px;}
+.feedline.ok{color:var(--success);} .feedline.no{color:var(--error);}
+
+/* Confetti */
+.confetti{ position:absolute; top:-10px; width:10px; height:14px; z-index:30; pointer-events:none; border-radius:2px; }
+@keyframes fall{ to{ transform:translateY(120vh) rotate(720deg); opacity:.2; } }
+
+/* Floating point text */
+.floattext{ position:absolute; z-index:30; pointer-events:none; font-family:"Fredoka",sans-serif; font-size:34px;
+  color:var(--yellow); text-shadow:0 2px 0 var(--bg-dark),0 0 14px var(--glow); animation:floatup 1.1s ease-out forwards; }
+@keyframes floatup{ 0%{transform:translate(-50%,0) scale(.6);opacity:0;} 20%{opacity:1;transform:translate(-50%,-10px) scale(1.1);}
+  100%{transform:translate(-50%,-90px) scale(1);opacity:0;} }
+
+#splash{ position:fixed; inset:0; z-index:100; background:var(--bg-dark); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px; transition:opacity .5s; }
+#splash .logo{font-family:"Fredoka",sans-serif;font-size:42px;color:var(--purple);text-shadow:0 0 20px var(--purple);}
+#splash .tag{color:var(--teal);font-size:16px;}
+#splash.gone{opacity:0;pointer-events:none;}
+
+.touch-hint{ position:absolute; bottom:8px; left:50%; transform:translateX(-50%); z-index:15; color:#fff;
+  background:rgba(30,27,75,.6); padding:6px 14px; border-radius:999px; font-size:13px; }
+
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important;transition-duration:.001ms!important;} }
+@media (max-width:560px){ .title h1{font-size:16px;} .card h2{font-size:22px;} .quiz-q{font-size:20px;} }
+</style>
+</head>
+<body>
+<div id="splash"><div class="logo">School Games 🎓</div><div class="tag">Lernen macht Spaß!</div></div>
+
+<div class="wrap">
+  <header>
+    <div class="h-left">
+      <button class="icon-btn" id="backBtn" aria-label="Zurück">←</button>
+      <div class="title"><h1>🎾 Top Spin · Past Tense</h1><span class="badge">6. Klasse · Standard</span></div>
+    </div>
+    <div class="h-right">
+      <div class="lives" id="livesVal">❤️❤️❤️</div>
+      <div class="score">⭐ <span id="scoreVal">0</span></div>
+      <button class="icon-btn" id="psyBtn" aria-label="Psychedelic Mode">🌈</button>
+    </div>
+  </header>
+
+  <div class="game-area" id="gameArea">
+    <canvas id="three"></canvas>
+    <div class="touch-hint" id="touchHint" style="display:none">↔ ziehen = laufen · tippen = schlagen</div>
+
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <h2>🎾 Top Spin Tennis</h2>
+        <p>Halte den Ballwechsel so lange wie möglich am Leben!<br>Jede Ballberührung macht den Ball <b>schneller</b>.</p>
+        <div class="keyhint">
+          <span>⬅️➡️⬆️⬇️ = <b>laufen</b></span>
+          <span>SPACE = <b>schlagen</b> (Timing!)</span>
+        </div>
+        <p style="font-size:14px">Verpasst, ins Netz oder ins Aus? Dann rettet dich eine <b style="color:var(--purple)">Past-Tense-Frage</b> — richtig = weiter!</p>
+        <button class="btn success" id="startBtn">Aufschlag! 🚀</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="quizOverlay">
+      <div class="card">
+        <span class="quiz-tag" id="quizTag">FEHLER</span>
+        <div id="quizBody"></div>
+        <div class="feedline" id="quizFeed"></div>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="overOverlay">
+      <div class="card">
+        <h2 id="overTitle">Game Over 🎾</h2>
+        <p id="overStats"></p>
+        <p style="font-size:14px" id="overBest"></p>
+        <button class="btn" id="retryBtn">Nochmal! 🔁</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="prog-label"><span id="progText">🔥 Rally: 0 · Bestserie: 0</span><span id="speedText">0 km/h</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* ===================================================================
+   Top Spin Tennis · Past Tense — School Games OG
+   3D (Three.js), Single-File. Endlos-Rally vs CPU.
+=================================================================== */
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+setTimeout(()=>{document.getElementById("splash").classList.add("gone");},1000);
+setTimeout(()=>{const s=document.getElementById("splash"); if(s) s.remove();},1600);
+
+/* ---------- Spielfeld-Konstanten (Three.js Welt-Einheiten) ---------- */
+const COURT_HW   = 4.1;    // halbe Spielfeldbreite (in-bounds)
+const MOVE_HW    = 5.2;    // wie weit Spieler seitlich laufen darf
+const COURT_HL   = 11.8;   // halbe Spielfeldlänge (Grundlinie)
+const NET_H      = 0.95;
+const BALL_R     = 0.22;
+const GRAV       = -20;
+const REST       = 0.7;    // Abprall
+const SPEED_BASE = 10.5;
+const SPEED_MUL  = 1.065;  // pro Berührung schneller
+const SPEED_MAX  = 27;
+const PLAYER_SPD = 9.5;    // Einheiten/s
+const OPP_SPD    = 7.6;    // lineare KI (px/Frame-Stil, balancierbar)
+const OPP_REACH  = 1.5;
+const PLAYER_Z0  = 10.4;   // Grundlinie Spieler (nah, +z)
+const OPP_Z0     = -10.4;  // Grundlinie Gegner (fern, -z)
+const HIT_RANGE  = 2.4;    // Reichweite Schläger
+
+/* ---------- Zustand ---------- */
+let state="start";                 // start | serve | rally | quiz | point | over
+let lives=3, score=0;
+let streak=0, bestStreak=+(localStorage.getItem("tennis_best")||0);
+let rallyHits=0;                   // Berührungen im aktuellen Ballwechsel
+let speed=SPEED_BASE;
+let lastHitter=null;               // 'player' | 'opp'
+let bounceCount=0;
+let prevBallZ=0;
+let pauseTimer=0;
+let serveDir=1;                    // wer serviert (1 = Gegner serviert zu dir)
+
+/* ---------- Three.js Grundgerüst ---------- */
+let renderer, scene, camera, clock;
+let courtMat, lineMat, netMat, ballMesh, ballShadow;
+let player, opp, ball;
+let lightDir, hemi;
+
+const cv=document.getElementById("three");
+
+function initThree(){
+  renderer=new THREE.WebGLRenderer({canvas:cv, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+  scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0x87CEEB, 24, 46);
+
+  camera=new THREE.PerspectiveCamera(58, 16/9, 0.1, 200);
+  clock=new THREE.Clock();
+
+  hemi=new THREE.HemisphereLight(0xffffff, 0x335533, 0.95); scene.add(hemi);
+  lightDir=new THREE.DirectionalLight(0xffffff, 0.9);
+  lightDir.position.set(6,18,8); lightDir.castShadow=true;
+  lightDir.shadow.mapSize.set(1024,1024);
+  const sc=lightDir.shadow.camera; sc.left=-14; sc.right=14; sc.top=20; sc.bottom=-20; sc.near=1; sc.far=50;
+  scene.add(lightDir);
+
+  buildCourt();
+  buildBall();
+  player=buildPlayer(0x2563EB, true);  player.group.position.set(0,0,PLAYER_Z0); scene.add(player.group);
+  opp   =buildPlayer(0xDC2626, false); opp.group.position.set(0,0,OPP_Z0);     scene.add(opp.group);
+
+  applyTheme();
+  resize();
+  window.addEventListener("resize", resize);
+}
+
+function buildCourt(){
+  // Boden (Spielfeld + Umgebung)
+  const groundGeo=new THREE.PlaneGeometry(60,80);
+  courtMat=new THREE.MeshStandardMaterial({color:0x2f8f4e, roughness:1});
+  const ground=new THREE.Mesh(groundGeo, courtMat);
+  ground.rotation.x=-Math.PI/2; ground.position.y=0; ground.receiveShadow=true; scene.add(ground);
+
+  // Court-Belag (etwas anders gefärbt)
+  const courtGeo=new THREE.PlaneGeometry(COURT_HW*2+1.4, COURT_HL*2+1.4);
+  const cm=new THREE.MeshStandardMaterial({color:0x2563EB, roughness:.9});
+  const court=new THREE.Mesh(courtGeo, cm);
+  court.rotation.x=-Math.PI/2; court.position.y=0.01; court.receiveShadow=true; scene.add(court);
+  court.userData.surface=cm; scene.userData.courtSurface=cm;
+
+  // Linien
+  lineMat=new THREE.MeshBasicMaterial({color:0xffffff});
+  function line(w,l,x,z){ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,l), lineMat);
+    m.rotation.x=-Math.PI/2; m.position.set(x,0.02,z); scene.add(m); return m; }
+  const lw=0.12;
+  line(COURT_HW*2+lw, lw, 0, COURT_HL);     // Grundlinie nah
+  line(COURT_HW*2+lw, lw, 0, -COURT_HL);    // Grundlinie fern
+  line(lw, COURT_HL*2, -COURT_HW, 0);       // Seitenlinie
+  line(lw, COURT_HL*2,  COURT_HW, 0);       // Seitenlinie
+  line(COURT_HW*2, lw, 0, COURT_HL*0.45);   // Aufschlaglinie
+  line(COURT_HW*2, lw, 0, -COURT_HL*0.45);
+  line(lw, COURT_HL*0.9, 0, COURT_HL*0.225);// Mittellinie
+  line(lw, COURT_HL*0.9, 0, -COURT_HL*0.225);
+
+  // Netz
+  netMat=new THREE.MeshStandardMaterial({color:0x111111, transparent:true, opacity:0.55, side:THREE.DoubleSide});
+  const net=new THREE.Mesh(new THREE.PlaneGeometry(COURT_HW*2+0.8, NET_H), netMat);
+  net.position.set(0, NET_H/2, 0); scene.add(net);
+  const tapeMat=new THREE.MeshBasicMaterial({color:0xffffff});
+  const tape=new THREE.Mesh(new THREE.BoxGeometry(COURT_HW*2+0.8,0.07,0.05), tapeMat);
+  tape.position.set(0,NET_H,0); scene.add(tape);
+  const postGeo=new THREE.CylinderGeometry(0.06,0.06,NET_H+0.1,8);
+  const postMat=new THREE.MeshStandardMaterial({color:0x333333});
+  [-(COURT_HW+0.4),(COURT_HW+0.4)].forEach(x=>{ const p=new THREE.Mesh(postGeo,postMat);
+    p.position.set(x,(NET_H+0.1)/2,0); p.castShadow=true; scene.add(p); });
+  scene.userData.net=netMat;
+}
+
+function buildBall(){
+  ball={x:0,y:2,z:6, vx:0,vy:0,vz:0};
+  ballMesh=new THREE.Mesh(new THREE.SphereGeometry(BALL_R,16,16),
+    new THREE.MeshStandardMaterial({color:0xD7F205, roughness:.6, emissive:0x000000}));
+  ballMesh.castShadow=true; scene.add(ballMesh);
+  // Bodenschatten als Hilfe für Tiefe/Timing
+  ballShadow=new THREE.Mesh(new THREE.CircleGeometry(BALL_R*1.3,16),
+    new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.28}));
+  ballShadow.rotation.x=-Math.PI/2; scene.add(ballShadow);
+}
+
+function buildPlayer(color, isPlayer){
+  const g=new THREE.Group();
+  const skin=0xffd8a8;
+  const bodyMat=new THREE.MeshStandardMaterial({color, roughness:.7});
+  const legMat =new THREE.MeshStandardMaterial({color:0x1F2937, roughness:.8});
+  const skinMat=new THREE.MeshStandardMaterial({color:skin, roughness:.7});
+  // Beine
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,0.7,8), legMat);
+  leg.position.set(-0.16,0.35,0); leg.castShadow=true; g.add(leg);
+  const leg2=leg.clone(); leg2.position.x=0.16; g.add(leg2);
+  // Rumpf
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.32,0.85,10), bodyMat);
+  torso.position.y=1.15; torso.castShadow=true; g.add(torso);
+  // Kopf
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.24,12,12), skinMat);
+  head.position.y=1.78; head.castShadow=true; g.add(head);
+  // Cap
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(0.26,12,12,0,Math.PI*2,0,Math.PI/2),
+    new THREE.MeshStandardMaterial({color}));
+  cap.position.y=1.86; g.add(cap);
+  // Arm + Schläger
+  const armPivot=new THREE.Group(); armPivot.position.set(0.28,1.35,0); g.add(armPivot);
+  const arm=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.6,8), skinMat);
+  arm.position.set(0.0,-0.1,0); arm.rotation.z=Math.PI/2.6; armPivot.add(arm);
+  const racketG=new THREE.Group(); racketG.position.set(0.42,-0.3,0); armPivot.add(racketG);
+  const handle=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.4,6),
+    new THREE.MeshStandardMaterial({color:0x222222})); handle.position.y=0.0; racketG.add(handle);
+  const head2=new THREE.Mesh(new THREE.TorusGeometry(0.26,0.045,8,18),
+    new THREE.MeshStandardMaterial({color:0x111111})); head2.position.y=0.42; head2.rotation.x=Math.PI/2*0; racketG.add(head2);
+  const strings=new THREE.Mesh(new THREE.CircleGeometry(0.24,16),
+    new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.25, side:THREE.DoubleSide}));
+  strings.position.y=0.42; racketG.add(strings);
+  racketG.rotation.x=Math.PI/2;
+  return { group:g, x:0, z:isPlayer?PLAYER_Z0:OPP_Z0, armPivot, racketG, swing:0, bodyMat, capMat:cap.material };
+}
+
+/* ---------- Theme (Standard / Psychedelic) ---------- */
+function applyTheme(){
+  const psy=document.documentElement.getAttribute("data-theme")==="psychedelic";
+  if(psy){
+    scene.background=new THREE.Color(0x0a0014); scene.fog.color.set(0x0a0014);
+    courtMat.color.set(0x12002a); scene.userData.courtSurface.color.set(0x1a0033);
+    scene.userData.courtSurface.emissive && scene.userData.courtSurface.emissive.set(0x220044);
+    lineMat.color.set(0x00ffff); scene.userData.net.color.set(0xff00ff);
+    ballMesh.material.color.set(0xFFFF00); ballMesh.material.emissive.set(0x999900);
+    hemi.intensity=0.6; lightDir.intensity=0.7; lightDir.color.set(0xff66ff);
+    player.bodyMat.color.set(0x00ffff); opp.bodyMat.color.set(0xff00ff);
+  } else {
+    scene.background=new THREE.Color(0x87CEEB); scene.fog.color.set(0x87CEEB);
+    courtMat.color.set(0x2f8f4e); scene.userData.courtSurface.color.set(0x2563EB);
+    lineMat.color.set(0xffffff); scene.userData.net.color.set(0x111111);
+    ballMesh.material.color.set(0xD7F205); ballMesh.material.emissive.set(0x000000);
+    hemi.intensity=0.95; lightDir.intensity=0.9; lightDir.color.set(0xffffff);
+    player.bodyMat.color.set(0x2563EB); opp.bodyMat.color.set(0xDC2626);
+  }
+}
+
+function resize(){
+  const r=cv.getBoundingClientRect();
+  const w=Math.max(360,r.width), h=Math.max(240,r.height);
+  renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+}
+
+/* ===================================================================
+   AUDIO
+=================================================================== */
+let actx=null;
+function beep(freq,dur=0.1,type=null,vol=0.06){
+  try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    const psy=document.documentElement.getAttribute("data-theme")==="psychedelic";
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type||(psy?"sawtooth":"square"); o.frequency.value=freq; g.gain.value=vol;
+    o.connect(g);g.connect(actx.destination);o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+dur); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sHit  =()=>beep(420,0.06,"square",0.08);
+const sBounce=()=>beep(240,0.05,"sine",0.05);
+const sServe=()=>beep(330,0.10,"triangle");
+const sWin  =()=>{beep(660,0.09);setTimeout(()=>beep(880,0.10),80);setTimeout(()=>beep(1175,0.12),160);};
+const sMiss =()=>beep(150,0.22,"sawtooth",0.08);
+const sGood =()=>{beep(660,0.10);setTimeout(()=>beep(880,0.10),90);setTimeout(()=>beep(1175,0.12),180);};
+const sBad  =()=>beep(196,0.22,"sawtooth",0.08);
+const sClick=()=>beep(420,0.05,"sine",0.05);
+
+/* ===================================================================
+   GRAMMATIK-BANK — Past Simple: Questions & Negations (A1+, 6. Stufe)
+=================================================================== */
+const BANK_MC = [
+  { q:"___ you visit your grandma last weekend?", correct:"Did", distract:["Do","Are"] },
+  { q:"She ___ watch the film yesterday.",        correct:"didn't", distract:["doesn't","wasn't"] },
+  { q:"___ they play football after school?",     correct:"Did", distract:["Do","Was"] },
+  { q:"We ___ go to the park on Sunday.",         correct:"didn't", distract:["don't","weren't"] },
+  { q:"He ___ eat his breakfast this morning.",   correct:"didn't", distract:["don't","isn't"] },
+  { q:"___ she finish her homework last night?",  correct:"Did", distract:["Does","Was"] },
+  { q:"I ___ see Tom at the party.",              correct:"didn't", distract:["don't","wasn't"] },
+  { q:"___ your dad cook dinner yesterday?",      correct:"Did", distract:["Does","Do"] },
+  { q:"They ___ buy the tickets.",                correct:"didn't", distract:["don't","aren't"] },
+  { q:"___ the dog run in the garden?",           correct:"Did", distract:["Does","Do"] },
+  { q:"You ___ call me back.",                    correct:"didn't", distract:["don't","weren't"] },
+  { q:"___ we have a test last Friday?",          correct:"Did", distract:["Do","Was"] },
+];
+const BANK_FILL = [
+  { pre:"Yesterday we ___ football.", verb:"play",        acc:["played"] },
+  { pre:"She ___ to the cinema last night.", verb:"go",   acc:["went"] },
+  { pre:"I ___ a great film last week.", verb:"see",       acc:["saw"] },
+  { pre:"They ___ pizza for dinner.", verb:"eat",          acc:["ate"] },
+  { pre:"My mum ___ a cake for my birthday.", verb:"make", acc:["made"] },
+  { pre:"The boys ___ in the river.", verb:"swim",         acc:["swam"] },
+  { pre:"I ___ my homework before dinner.", verb:"finish", acc:["finished"] },
+  { pre:"He ___ his homework yesterday.", verb:"not / do", acc:["didnt do","did not do"] },
+  { pre:"We ___ the bus this morning.", verb:"not / catch",acc:["didnt catch","did not catch"] },
+  { pre:"You ___ your keys at home.", verb:"not / take",   acc:["didnt take","did not take"] },
+  { pre:"She ___ the answer.", verb:"not / know",          acc:["didnt know","did not know"] },
+  { pre:"Last summer we ___ to Italy.", verb:"travel",     acc:["travelled","traveled"] },
+];
+const BANK_BUILD = [
+  { words:["Did","you","see","the","film","?"],       hint:"Bau eine Frage" },
+  { words:["She","didn't","play","tennis","."],        hint:"Bau einen verneinten Satz" },
+  { words:["Did","they","go","to","the","park","?"],   hint:"Bau eine Frage" },
+  { words:["We","didn't","watch","the","game","."],    hint:"Bau einen verneinten Satz" },
+  { words:["Did","he","eat","the","cake","?"],         hint:"Bau eine Frage" },
+  { words:["I","didn't","do","my","homework","."],     hint:"Bau einen verneinten Satz" },
+  { words:["Did","your","friend","call","you","?"],    hint:"Bau eine Frage" },
+  { words:["They","didn't","win","the","match","."],   hint:"Bau einen verneinten Satz" },
+];
+const usedIdx={mc:[],fill:[],build:[]};
+function pick(bank,key){
+  let pool=bank.map((_,i)=>i).filter(i=>!usedIdx[key].includes(i));
+  if(pool.length===0){usedIdx[key]=[];pool=bank.map((_,i)=>i);}
+  const i=pool[Math.floor(Math.random()*pool.length)]; usedIdx[key].push(i); return bank[i];
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function norm(s){return s.toLowerCase().trim().replace(/['’.]/g,"").replace(/\s+/g," ");}
+
+/* ===================================================================
+   INPUT
+=================================================================== */
+const keys={left:false,right:false,up:false,down:false};
+function typingInField(e){const t=e.target;return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+window.addEventListener("keydown",e=>{
+  if(typingInField(e)||state==="quiz") return;
+  switch(e.code){
+    case "ArrowLeft": case "KeyA": keys.left=true; e.preventDefault(); break;
+    case "ArrowRight":case "KeyD": keys.right=true; e.preventDefault(); break;
+    case "ArrowUp":   case "KeyW": keys.up=true; e.preventDefault(); break;
+    case "ArrowDown": case "KeyS": keys.down=true; e.preventDefault(); break;
+    case "Space": case "Enter":
+      e.preventDefault();
+      if(state==="start"||state==="over"){ startGame(); }
+      else if(state==="rally"||state==="serve"){ trySwing(); }
+      break;
+  }
+});
+window.addEventListener("keyup",e=>{
+  switch(e.code){
+    case "ArrowLeft": case "KeyA": keys.left=false; break;
+    case "ArrowRight":case "KeyD": keys.right=false; break;
+    case "ArrowUp":   case "KeyW": keys.up=false; break;
+    case "ArrowDown": case "KeyS": keys.down=false; break;
+  }
+});
+// Touch: ziehen = laufen, tippen = schlagen
+let touchActive=false, touchStartX=0, touchStartT=0;
+cv.addEventListener("pointerdown",e=>{
+  if(state==="start"||state==="over") return;
+  touchActive=true; touchStartX=e.clientX; touchStartT=performance.now();
+  cv.setPointerCapture?.(e.pointerId);
+});
+cv.addEventListener("pointermove",e=>{
+  if(!touchActive) return;
+  const dx=e.clientX-touchStartX;
+  keys.left = dx<-12; keys.right = dx>12;
+});
+cv.addEventListener("pointerup",e=>{
+  if(!touchActive) return;
+  const quick=performance.now()-touchStartT<260 && Math.abs(e.clientX-touchStartX)<14;
+  if(quick && (state==="rally"||state==="serve")) trySwing();
+  keys.left=keys.right=false; touchActive=false;
+});
+
+/* ===================================================================
+   SPIEL-FLOW
+=================================================================== */
+function startGame(){
+  hide("startOverlay"); hide("quizOverlay"); hide("overOverlay");
+  state="serve"; lives=3; score=0; streak=0; rallyHits=0; speed=SPEED_BASE;
+  player.x=0; player.z=PLAYER_Z0; opp.x=0; opp.z=OPP_Z0;
+  player.group.position.set(0,0,PLAYER_Z0); opp.group.position.set(0,0,OPP_Z0);
+  if("ontouchstart" in window) document.getElementById("touchHint").style.display="block";
+  updateHud();
+  serveBall("opp");
+}
+function gameOver(){
+  state="over";
+  if(streak>bestStreak){ bestStreak=streak; localStorage.setItem("tennis_best",bestStreak); }
+  document.getElementById("overStats").innerHTML=
+    `⭐ Punkte: <b>${score}</b><br>🔥 Beste Serie: <b>${streak}</b><br>⚡ Top-Speed: <b>${Math.round(speed*4)} km/h</b>`;
+  document.getElementById("overBest").textContent=`🏆 Rekord-Serie: ${bestStreak}`;
+  show("overOverlay");
+}
+
+function serveBall(by){
+  state="serve"; bounceCount=0; rallyHits=0; speed=SPEED_BASE; lastHitter=by;
+  if(by==="opp"){
+    ball.x=(Math.random()-0.5)*4; ball.y=2.2; ball.z=OPP_Z0+0.5;
+    aimBall(ball, (Math.random()-0.5)*5, PLAYER_Z0-1.5, speed);
+  } else {
+    ball.x=player.x; ball.y=2.0; ball.z=PLAYER_Z0-0.5;
+    aimBall(ball, (Math.random()-0.5)*5, OPP_Z0+1.5, speed);
+  }
+  prevBallZ=ball.z; sServe();
+  pauseTimer=0.0; state="rally";
+}
+
+/* Ballistische Geschwindigkeit, damit der Ball am Ziel (ty=0) landet */
+function aimBall(b, tx, tz, sp){
+  const dx=tx-b.x, dz=tz-b.z;
+  const d=Math.hypot(dx,dz);
+  const T=Math.max(0.35, d/sp);              // Flugzeit
+  b.vx=dx/T; b.vz=dz/T;
+  b.vy=(0 - b.y - 0.5*GRAV*T*T)/T;           // landet bei y=0 nach Zeit T
+}
+
+function trySwing(){
+  if(state!=="rally") return;
+  player.swing=0.18;                          // Schlaganimation
+  const dx=ball.x-player.x, dz=ball.z-player.z;
+  const dist=Math.hypot(dx,dz);
+  const onMySide=ball.z>0.2;
+  if(dist<HIT_RANGE && ball.y<2.4 && onMySide){
+    // Treffer! Ball schneller + Richtung per Laufrichtung steuern
+    speed=Math.min(SPEED_MAX, speed*SPEED_MUL);
+    let aimX = 0;
+    if(keys.left) aimX=-3.2; else if(keys.right) aimX=3.2; else aimX=-player.x*0.4;
+    aimBall(ball, aimX, OPP_Z0+1.2+Math.random()*1.0, speed);
+    ball.y=Math.max(ball.y,0.5);
+    lastHitter="player"; bounceCount=0; rallyHits++;
+    streak++; if(streak>bestStreak) bestStreak=streak;
+    sHit(); flashRacket(player);
+    updateHud();
+  }
+  // Whiff: Ball nicht in Reichweite → passiert nichts (Fehler erst, wenn Ball vorbei)
+}
+
+function opponentReturn(){
+  // Gegner schlägt zurück, wenn Ball nah genug an seiner Position
+  const dx=ball.x-opp.x;
+  if(Math.abs(dx)<OPP_REACH){
+    speed=Math.min(SPEED_MAX, speed*SPEED_MUL);
+    const aimX=(Math.random()*2-1)*3.4;
+    aimBall(ball, aimX, PLAYER_Z0-1.2-Math.random()*1.0, speed);
+    ball.y=Math.max(ball.y,0.5);
+    lastHitter="opp"; bounceCount=0; rallyHits++;
+    sHit(); flashRacket(opp);
+    updateHud();
+    return true;
+  }
+  return false; // Gegner verfehlt → Punkt für dich
+}
+
+function flashRacket(p){ p.swing=0.18; }
+
+/* ---- Fehler / Punkt ---- */
+function resolveError(side){
+  if(state!=="rally") return;
+  if(side==="player"){
+    state="quiz"; sMiss(); doShake(); openQuiz();
+  } else {
+    // Gegner-Fehler → du gewinnst den Punkt
+    state="point"; score++; sWin(); confetti(); floatText("PUNKT! 🎾");
+    pauseTimer=0.9; updateHud();
+  }
+}
+function afterPoint(){ serveDir=-serveDir; serveBall(serveDir>0?"opp":"player"); }
+
+/* ===================================================================
+   QUIZ
+=================================================================== */
+const fmtCycle=["mc","fill","build"];
+let quizFmtIdx=0;
+function openQuiz(){
+  const fmt=fmtCycle[quizFmtIdx%3]; quizFmtIdx++;
+  const tag={mc:"MULTIPLE CHOICE",fill:"LÜCKENTEXT",build:"SATZBAU"}[fmt];
+  document.getElementById("quizTag").textContent="❌ FEHLER · "+tag;
+  document.getElementById("quizFeed").textContent=""; document.getElementById("quizFeed").className="feedline";
+  const body=document.getElementById("quizBody");
+  if(fmt==="mc") renderMC(body); else if(fmt==="fill") renderFill(body); else renderBuild(body);
+  show("quizOverlay");
+}
+function closeQuiz(correct){
+  hide("quizOverlay");
+  if(correct){
+    floatText("GERETTET! ✅"); confetti();
+    afterPoint();
+  } else {
+    streak=0; lives--; updateHud();
+    if(lives<=0){ gameOver(); return; }
+    afterPoint();
+  }
+}
+function feed(ok,msg){const f=document.getElementById("quizFeed");f.textContent=msg;f.className="feedline "+(ok?"ok":"no");}
+
+function renderMC(body){
+  const item=pick(BANK_MC,"mc");
+  const opts=shuffle([item.correct,...item.distract]);
+  let html=`<div class="quiz-q">${item.q.replace("___","<u>&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;</u>")}</div><div class="opts">`;
+  opts.forEach(o=>html+=`<button class="opt" data-v="${o}">${o}</button>`); html+="</div>";
+  body.innerHTML=html;
+  body.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const all=body.querySelectorAll(".opt"); all.forEach(b=>b.disabled=true);
+      const ok=btn.dataset.v===item.correct;
+      if(ok){btn.classList.add("correct");feed(true,"Richtig! 🎉");sGood();}
+      else{btn.classList.add("wrong");sBad();all.forEach(b=>{if(b.dataset.v===item.correct)b.classList.add("correct");});feed(false,"Richtig wäre: "+item.correct);}
+      setTimeout(()=>closeQuiz(ok), ok?900:1600);
+    });
+  });
+}
+function renderFill(body){
+  const item=pick(BANK_FILL,"fill");
+  body.innerHTML=
+    `<div class="quiz-q">Setz das Verb ins Past Simple:</div>
+     <div class="fill-row">${item.pre.replace("___",'<input class="fill-input" id="fillIn" autocomplete="off" autocapitalize="off" spellcheck="false">')}</div>
+     <div style="margin-bottom:14px">Verb: <span class="hintword">${item.verb}</span></div>
+     <button class="btn success" id="fillSubmit">Prüfen ✔️</button>`;
+  const inp=body.querySelector("#fillIn"); inp.focus();
+  const submit=()=>{ const val=norm(inp.value); if(!val) return;
+    const ok=item.acc.some(a=>norm(a)===val);
+    inp.disabled=true; body.querySelector("#fillSubmit").disabled=true;
+    if(ok){inp.style.borderColor="var(--success)";feed(true,"Richtig! 🎉");sGood();}
+    else{inp.style.borderColor="var(--error)";feed(false,"Richtig wäre: "+item.acc[item.acc.length-1]);sBad();doShake();}
+    setTimeout(()=>closeQuiz(ok), ok?900:1700);
+  };
+  body.querySelector("#fillSubmit").addEventListener("click",submit);
+  inp.addEventListener("keydown",e=>{if(e.code==="Enter")submit();});
+}
+function renderBuild(body){
+  const item=pick(BANK_BUILD,"build");
+  const scrambled=shuffle(item.words.map((w,i)=>({w,i})));
+  let chips=scrambled.map((o,idx)=>`<button class="word" data-idx="${idx}">${o.w}</button>`).join("");
+  body.innerHTML=
+    `<div class="quiz-q">${item.hint}:</div>
+     <div class="build-target" id="buildTarget"><span style="opacity:.5">tippe die Wörter der Reihe nach an</span></div>
+     <div class="build-bank" id="buildBank">${chips}</div>
+     <button class="btn success" id="buildSubmit">Prüfen ✔️</button>
+     <button class="btn danger" id="buildClear" style="font-size:16px;padding:8px 18px">↺ Reset</button>`;
+  const target=body.querySelector("#buildTarget"); const chosen=[];
+  function redraw(){
+    target.innerHTML=chosen.length?chosen.map((c,k)=>`<span class="word" data-k="${k}" style="border-color:var(--blue)">${c.word}</span>`).join("")
+      :`<span style="opacity:.5">tippe die Wörter der Reihe nach an</span>`;
+    target.querySelectorAll("span.word").forEach(sp=>sp.addEventListener("click",()=>{
+      const k=+sp.dataset.k; const rem=chosen.splice(k,1)[0]; rem.btn.classList.remove("used"); sClick(); redraw(); }));
+  }
+  body.querySelectorAll("#buildBank .word").forEach(btn=>btn.addEventListener("click",()=>{
+    if(btn.classList.contains("used"))return; btn.classList.add("used"); sClick();
+    chosen.push({word:btn.textContent,btn}); redraw(); }));
+  body.querySelector("#buildClear").addEventListener("click",()=>{
+    chosen.length=0; body.querySelectorAll("#buildBank .word").forEach(b=>b.classList.remove("used")); redraw(); });
+  body.querySelector("#buildSubmit").addEventListener("click",()=>{
+    if(chosen.length!==item.words.length){feed(false,"Benutze alle Wörter!");return;}
+    const ok=chosen.every((c,k)=>c.word===item.words[k]);
+    body.querySelector("#buildSubmit").disabled=true; body.querySelector("#buildClear").disabled=true;
+    if(ok){feed(true,"Richtig! 🎉");sGood();}else{feed(false,"Richtig: "+item.words.join(" "));sBad();doShake();}
+    setTimeout(()=>closeQuiz(ok), ok?900:1900);
+  });
+}
+
+/* ===================================================================
+   PHYSIK-UPDATE
+=================================================================== */
+function update(dt){
+  // Spielerbewegung
+  const mvx=(keys.right?1:0)-(keys.left?1:0);
+  const mvz=(keys.down?1:0)-(keys.up?1:0);
+  player.x=clamp(player.x+mvx*PLAYER_SPD*dt, -MOVE_HW, MOVE_HW);
+  player.z=clamp(player.z+mvz*PLAYER_SPD*dt, 1.4, COURT_HL+0.6);
+  player.group.position.x=player.x; player.group.position.z=player.z;
+  player.group.rotation.y=Math.PI; // schaut zum Netz
+  // Schläger zum Ball drehen (optische Hilfe)
+  faceRacket(player, ball.x, ball.z);
+
+  // Gegner-KI (linear)
+  const tgt = ball.vz<0 ? ball.x : ball.x*0.4; // antizipiert grob
+  const diff=tgt-opp.x;
+  opp.x += clamp(diff, -OPP_SPD*dt, OPP_SPD*dt);
+  opp.x=clamp(opp.x,-MOVE_HW,MOVE_HW);
+  opp.group.position.x=opp.x; opp.group.rotation.y=0;
+  faceRacket(opp, ball.x, ball.z);
+
+  // Schlag-Animationen
+  [player,opp].forEach(p=>{ if(p.swing>0){ p.swing-=dt; p.armPivot.rotation.z=-Math.max(0,p.swing)*7; } else p.armPivot.rotation.z+=(0-p.armPivot.rotation.z)*Math.min(1,dt*10); });
+
+  if(state==="point"||state==="serve"){
+    if(pauseTimer>0){ pauseTimer-=dt; if(pauseTimer<=0 && state==="point") afterPoint(); }
+  }
+
+  if(state==="rally"||state==="point"){
+    // Ballphysik
+    ball.vy+=GRAV*dt;
+    ball.x+=ball.vx*dt; ball.y+=ball.vy*dt; ball.z+=ball.vz*dt;
+
+    // Netz-Kollision (Vorzeichenwechsel z bei niedrigem y)
+    if((prevBallZ>0)!==(ball.z>0) && ball.y<NET_H && Math.abs(ball.x)<COURT_HW+0.4){
+      ball.z=prevBallZ>0?0.05:-0.05; ball.vz*=-0.3; ball.vx*=0.4; sBounce();
+      if(state==="rally"){ resolveError(lastHitter==="player"?"player":"opp"); }
+    }
+    prevBallZ=ball.z;
+
+    // Bodenabprall
+    if(ball.y<BALL_R && ball.vy<0){
+      ball.y=BALL_R; ball.vy*=-REST; ball.vx*=0.86; ball.vz*=0.92; bounceCount++; sBounce();
+      const outX=Math.abs(ball.x)>COURT_HW+0.2, outZ=Math.abs(ball.z)>COURT_HL+0.2;
+      if(state==="rally"){
+        if(bounceCount===1 && (outX||outZ)){
+          resolveError(lastHitter);             // ins Aus geschlagen → Schlagender errte
+        } else if(bounceCount>=2){
+          const side=ball.z>0?"player":"opp";   // 2. Aufsprung → diese Seite verfehlte
+          resolveError(side);
+        }
+      }
+    }
+
+    // Gegner-Return-Fenster (Ball auf Gegnerseite, fliegt zu ihm)
+    if(state==="rally" && lastHitter==="player" && ball.z<OPP_Z0+1.6 && ball.vz<0){
+      if(!opponentReturn()){
+        // Gegner verfehlt → wenn Ball dann hinter Grundlinie/2. Bounce, zählt als dein Punkt (über bounce-Logik)
+      }
+    }
+
+    // (Spieler schlägt aktiv via Space/trySwing — kein Auto-Return)
+  }
+
+  // Ball-Meshes
+  ballMesh.position.set(ball.x,ball.y,ball.z);
+  ballMesh.rotation.x+=dt*8; ballMesh.rotation.y+=dt*6;
+  ballShadow.position.set(ball.x,0.015,ball.z);
+  const sh=clamp(1-ball.y/6,0.25,1); ballShadow.scale.set(sh,sh,sh);
+  ballShadow.material.opacity=0.30*sh;
+
+  // Kamera hinter dem Spieler
+  const camTargetX=player.x*0.5;
+  camera.position.x += (camTargetX - camera.position.x)*Math.min(1,dt*4);
+  camera.position.y=6.2; camera.position.z=PLAYER_Z0+6.2;
+  camera.lookAt(player.x*0.3, 1.0, -2);
+
+  updateHudLight();
+}
+function faceRacket(p,tx,tz){
+  const dx=tx-p.x, dz=tz-p.z; const ang=Math.atan2(dx,-dz);
+  p.racketG && (p.armPivot.rotation.y = clamp(ang*0.4,-0.8,0.8));
+}
+function clamp(v,a,b){return v<a?a:v>b?b:v;}
+
+/* ===================================================================
+   HUD / FX
+=================================================================== */
+function updateHud(){
+  document.getElementById("scoreVal").textContent=score;
+  document.getElementById("livesVal").textContent="❤️".repeat(Math.max(0,lives))+"🖤".repeat(Math.max(0,3-lives));
+}
+function updateHudLight(){
+  document.getElementById("progText").textContent=`🔥 Serie: ${streak} · Bestserie: ${Math.max(streak,bestStreak)}`;
+  const kmh=Math.round(speed*4);
+  document.getElementById("speedText").textContent=kmh+" km/h";
+  const pct=clamp((speed-SPEED_BASE)/(SPEED_MAX-SPEED_BASE)*100,0,100);
+  document.getElementById("progFill").style.width=pct+"%";
+}
+function show(id){document.getElementById(id).classList.remove("hidden");}
+function hide(id){document.getElementById(id).classList.add("hidden");}
+function doShake(){ if(REDUCE)return; const a=document.getElementById("gameArea"); a.classList.remove("shake"); void a.offsetWidth; a.classList.add("shake"); }
+function confetti(){
+  if(REDUCE) return;
+  const area=document.getElementById("gameArea");
+  const cols=["#FACC15","#16A34A","#EC4899","#F97316","#9333EA","#2563EB"];
+  for(let i=0;i<26;i++){
+    const d=document.createElement("div"); d.className="confetti";
+    d.style.left=Math.random()*100+"%"; d.style.background=cols[i%cols.length];
+    d.style.animation=`fall ${0.9+Math.random()*0.8}s linear ${Math.random()*0.2}s forwards`;
+    area.appendChild(d); setTimeout(()=>d.remove(),2000);
+  }
+}
+function floatText(txt){
+  const area=document.getElementById("gameArea");
+  const d=document.createElement("div"); d.className="floattext"; d.textContent=txt;
+  d.style.left="50%"; d.style.top="42%";
+  area.appendChild(d); setTimeout(()=>d.remove(),1200);
+}
+
+/* ===================================================================
+   LOOP
+=================================================================== */
+function loop(){
+  requestAnimationFrame(loop);
+  let dt=clock.getDelta(); if(dt>0.05) dt=0.05;
+  if(state!=="start"&&state!=="over"&&state!=="quiz") update(dt);
+  renderer.render(scene,camera);
+}
+
+/* ---------- Buttons ---------- */
+document.getElementById("psyBtn").addEventListener("click",()=>{
+  const root=document.documentElement;
+  root.setAttribute("data-theme", root.getAttribute("data-theme")==="psychedelic"?"standard":"psychedelic");
+  applyTheme(); sClick();
+});
+document.getElementById("backBtn").addEventListener("click",()=>{
+  state="start"; keys.left=keys.right=keys.up=keys.down=false;
+  hide("quizOverlay"); hide("overOverlay"); show("startOverlay");
+});
+document.getElementById("startBtn").addEventListener("click",startGame);
+document.getElementById("retryBtn").addEventListener("click",startGame);
+
+/* ---------- Boot ---------- */
+window.addEventListener("load",()=>{ initThree(); loop(); });
+</script>
+</body>
+</html>

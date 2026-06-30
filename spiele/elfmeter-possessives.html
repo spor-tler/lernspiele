@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="lernspiel:titel"        content="Elfmeter-Quiz: Possessives & Who">
+  <meta name="lernspiel:thema"        content="Possessives & Fragen mit who">
+  <meta name="lernspiel:stufe"        content="5. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Triff ins Tor, indem du Possessivbegleiter und who-Fragen richtig löst.">
+<title>Elfmeter-Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#0a1628;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(29,158,117,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(30,80,200,.10) 0%,transparent 60%);pointer-events:none}
+#game{width:100%;max-width:660px;position:relative;z-index:1}
+#hdr{text-align:center;margin-bottom:14px}
+#hdr h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#fff;line-height:1;margin-bottom:3px}
+#hdr p{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.5px}
+#sbar{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:9px 16px;margin-bottom:10px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7)}
+.sv{color:#fff;font-size:18px;font-weight:800}
+#gn{color:#1D9E75}#cn{color:#5ba3f5}
+#pbw{height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin-bottom:10px;overflow:hidden}
+#pb{height:100%;background:linear-gradient(90deg,#1D9E75,#5de0b5);border-radius:4px;transition:width .4s ease}
+#fw{border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,.12);margin-bottom:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);cursor:crosshair;user-select:none}
+canvas{display:block;width:100%;-webkit-user-drag:none}
+#ah{text-align:center;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);min-height:20px;margin-bottom:8px}
+#qb{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 18px 14px;margin-bottom:8px}
+.cb{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(91,163,245,.15);border:1px solid rgba(91,163,245,.25);color:#5ba3f5;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+#qq{font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.5;white-space:pre-line}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.85);transition:all .15s;text-align:left;line-height:1.4}
+.opt:hover:not(:disabled){background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
+.opt.correct{background:rgba(29,158,117,.2);border-color:#1D9E75;color:#5de0b5}
+.opt.wrong{background:rgba(226,75,74,.2);border-color:#E24B4A;color:#f08a89}
+.opt:disabled{cursor:default;transform:none}
+#fb{text-align:center;font-size:15px;font-weight:800;min-height:26px;margin-bottom:6px}
+.green{color:#1D9E75}.red{color:#E24B4A}.orange{color:#EF9F27}
+#nb{display:none;width:100%;padding:11px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.75);cursor:pointer;transition:all .15s}
+#nb:hover{background:rgba(255,255,255,.12)}
+#es{display:none;text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:28px 24px}
+#et{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:2px;color:#fff;margin-bottom:10px}
+#em{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:20px}
+#rb{padding:12px 32px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;border-radius:10px;border:none;background:linear-gradient(135deg,#1D9E75,#0f6e56);color:#fff;cursor:pointer;transition:all .18s;box-shadow:0 4px 18px rgba(29,158,117,.35)}
+#rb:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="hdr"><h1>&#x26BD; Elfmeter-Quiz</h1><p>Possessive Pronouns &middot; Whose &middot; Possessive 's</p></div>
+  <div id="sbar">
+    <span>Tore <span class="sv" id="gn">0</span></span>
+    <span>Frage <span class="sv" id="qn">1</span> / 10</span>
+    <span>Richtig <span class="sv" id="cn">0</span></span>
+  </div>
+  <div id="pbw"><div id="pb" style="width:0%"></div></div>
+  <div id="fw"><canvas id="field"></canvas></div>
+  <div id="ah">Beantworte zuerst die Frage!</div>
+  <div id="qb">
+    <div id="cb2" class="cb">-</div>
+    <div id="qq">Laden...</div>
+    <div class="opts" id="opts"></div>
+  </div>
+  <div id="fb"></div>
+  <button id="nb">N&#228;chste Frage &#x2192;</button>
+  <div id="es">
+    <div id="et"></div>
+    <p id="em"></p>
+    <button id="rb">&#x1F504; Nochmal spielen</button>
+  </div>
+</div>
+<script>
+const Qs=[
+  {q:"Choose the correct possessive pronoun:\n'That is Peter\'s bag. It is ___ bag.'",opts:["her","his","their","its"],ans:1,cat:"Possessive Pronoun"},
+  {q:"Fill in the blank:\n'Anna and Tom have a dog. It is ___ dog.'",opts:["his","her","their","our"],ans:2,cat:"Possessive Pronoun"},
+  {q:"Choose the correct question word:\n\'___ bag is this?\' \u2013 \'It\'s Sarah\'s bag.\'",opts:["Who","Whose","What","Which"],ans:1,cat:"Whose"},
+  {q:"Which sentence is correct?",opts:["This is Tom\'s book.","This is Toms book.","This is book of Tom.","This is the Tom book."],ans:0,cat:"Possessive \'s"},
+  {q:"Complete the sentence:\n\'I have a sister. ___ name is Lisa.\'",opts:["His","Its","Her","Their"],ans:2,cat:"Possessive Pronoun"},
+  {q:"What does this sentence mean?\n\'That is Maria\'s bicycle.\'",opts:["Maria wants a bicycle.","The bicycle belongs to Maria.","Maria likes bicycles.","Maria has no bicycle."],ans:1,cat:"Possessive \'s"},
+  {q:"Ask a question for this answer:\n\'That is my brother\'s phone.\'",opts:["Who is that?","Whose phone is that?","What is that?","Which phone is that?"],ans:1,cat:"Whose"},
+  {q:"Fill in: \'___ pencil is that?\' \u2013 \'It\'s mine.\'",opts:["Who","Which","Whose","What"],ans:2,cat:"Whose"},
+  {q:"Choose the correct form:\n\'We have a cat. ___ cat is black.\'",opts:["My","Your","Our","Their"],ans:2,cat:"Possessive Pronoun"},
+  {q:"Which is the possessive \'s form of: \'the room of the teacher\'?",opts:["The room teacher\'s","The teachers room","The teacher\'s room","The room\'s teacher"],ans:2,cat:"Possessive \'s"}
+];
+
+const canvas=document.getElementById("field");
+const ctx=canvas.getContext("2d");
+const FW=document.getElementById("fw");
+const CW=660,CH=300;
+canvas.width=CW;canvas.height=CH;
+
+const GW=200,GH=100;
+const GX=(CW-GW)/2,GY=12;
+const BSX=CW/2,BSY=CH-36;
+
+let shuffled=[],idx=0,goals=0,correct=0;
+let canAim=false,isShooting=false;
+let ballX=BSX,ballY=BSY;
+let mouseX=CW/2,mouseY=GY+GH/2,showAim=false;
+let gkX=GX+GW/2,gkDir=1,gkSpd=2.0;
+let gkDiving=false,gkDiveTargetX=GX+GW/2;
+let shotResult=null;
+let animT=0,animDur=36;
+let shotTX=0,shotTY=0,shotSX=0,shotSY=0;
+let patrolAF=null,paused=false;
+
+function cpos(e){
+  const r=canvas.getBoundingClientRect();
+  const sx=CW/r.width,sy=CH/r.height;
+  if(e.touches)return{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy};
+  return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};
+}
+
+canvas.addEventListener("mousemove",e=>{if(!canAim||isShooting)return;const p=cpos(e);mouseX=p.x;mouseY=p.y;showAim=true;draw();});
+canvas.addEventListener("mouseleave",()=>{showAim=false;if(!isShooting)draw();});
+canvas.addEventListener("touchmove",e=>{e.preventDefault();if(!canAim||isShooting)return;const p=cpos(e);mouseX=p.x;mouseY=p.y;showAim=true;draw();},{passive:false});
+canvas.addEventListener("click",e=>{if(!canAim||isShooting)return;const p=cpos(e);doShoot(p.x,p.y);});
+canvas.addEventListener("touchend",e=>{e.preventDefault();if(!canAim||isShooting)return;doShoot(mouseX,mouseY);},{passive:false});
+
+function doShoot(tx,ty){
+  canAim=false;isShooting=true;paused=true;
+  shotTX=tx;shotTY=ty;shotSX=ballX;shotSY=ballY;
+  animT=0;showAim=false;
+  gkDiving=true;
+  // keeper dives toward shot direction, not exact position (makes it beatable)
+  const diveOffset=(tx-GX-GW/2)*0.7;
+  gkDiveTargetX=Math.max(GX+16,Math.min(GX+GW-16,GX+GW/2+diveOffset));
+  document.getElementById("ah").textContent="⚽ Ball fliegt...";
+  requestAnimationFrame(shotFrame);
+}
+
+function shotFrame(){
+  animT++;
+  const prog=animT/animDur;
+  const ep=prog<.5?2*prog*prog:1-Math.pow(-2*prog+2,2)/2;
+  ballX=shotSX+(shotTX-shotSX)*ep;
+  ballY=shotSY+(shotTY-shotSY)*ep-Math.sin(Math.PI*prog)*65;
+  // keeper moves
+  const kprog=Math.min(prog*1.4,1);
+  const kep=kprog<.5?2*kprog*kprog:1-Math.pow(-2*kprog+2,2)/2;
+  gkX=GX+GW/2+(gkDiveTargetX-(GX+GW/2))*kep;
+  draw();
+  if(animT<animDur){requestAnimationFrame(shotFrame);}
+  else{finishShot();}
+}
+
+function finishShot(){
+  ballX=shotTX;ballY=shotTY;
+  isShooting=false;paused=false;
+  const inGoal=shotTX>GX&&shotTX<GX+GW&&shotTY>GY&&shotTY<GY+GH;
+  const kw=14,kh=46,ky=GY+(GH-kh)/2;
+  const saved=inGoal&&Math.abs(shotTX-gkX)<kw+13&&shotTY>ky-10&&shotTY<ky+kh+10;
+  const fb=document.getElementById("fb");
+  if(inGoal&&!saved){
+    goals++;document.getElementById("gn").textContent=goals;
+    fb.textContent="🎉 TOR! Fantastisch!";fb.className="green";
+    document.getElementById("ah").textContent="";
+  } else if(inGoal&&saved){
+    fb.textContent="🧤 Gehalten! Der Tormann hat gerettet!";fb.className="orange";
+    document.getElementById("ah").textContent="";
+  } else {
+    fb.textContent="❌ Daneben! Neben oder über das Tor.";fb.className="red";
+    document.getElementById("ah").textContent="";
+  }
+  draw();
+  setTimeout(()=>{document.getElementById("nb").style.display="block";},400);
+}
+
+// Patrol loop
+function patrol(){
+  if(!paused&&!isShooting&&canAim&&!gkDiving){
+    gkX+=gkDir*gkSpd;
+    const m=18;
+    if(gkX>GX+GW-m){gkX=GX+GW-m;gkDir=-1;}
+    if(gkX<GX+m){gkX=GX+m;gkDir=1;}
+    draw();
+  }
+  requestAnimationFrame(patrol);
+}
+
+// ── Draw ──────────────────────────────────────────────────────
+function drawGrass(){
+  for(let i=0;i<8;i++){
+    ctx.fillStyle=i%2===0?"#1e5e1e":"#226622";
+    ctx.fillRect(i*(CW/8),0,CW/8,CH);
+  }
+  ctx.strokeStyle="rgba(255,255,255,.14)";ctx.lineWidth=1.5;
+  ctx.strokeRect(8,8,CW-16,CH-16);
+  ctx.beginPath();ctx.moveTo(CW/2,8);ctx.lineTo(CW/2,CH-8);ctx.stroke();
+  ctx.beginPath();ctx.arc(CW/2,CH/2,50,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.arc(CW/2,CH-8,65,Math.PI,2*Math.PI);ctx.stroke();
+  ctx.beginPath();ctx.arc(CW/2,CH-8,3,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();
+  ctx.beginPath();ctx.arc(BSX,BSY,3,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,.45)";ctx.fill();
+}
+
+function drawNet(){
+  ctx.strokeStyle="rgba(255,255,255,.22)";ctx.lineWidth=0.8;
+  const ng=18;
+  for(let nx=GX;nx<=GX+GW;nx+=ng){ctx.beginPath();ctx.moveTo(nx,GY);ctx.lineTo(nx,GY+GH);ctx.stroke();}
+  for(let ny=GY;ny<=GY+GH;ny+=ng){ctx.beginPath();ctx.moveTo(GX,ny);ctx.lineTo(GX+GW,ny);ctx.stroke();}
+}
+
+function drawGoalFrame(){
+  ctx.strokeStyle="#fff";ctx.lineWidth=4;
+  ctx.strokeRect(GX,GY,GW,GH);
+  ctx.strokeStyle="rgba(255,255,255,.45)";ctx.lineWidth=1.5;
+  ctx.strokeRect(GX+36,GY,GW-72,36);
+}
+
+function drawAimLine(){
+  if(!showAim||!canAim)return;
+  ctx.save();
+  ctx.setLineDash([6,5]);
+  ctx.strokeStyle="rgba(255,220,50,.5)";ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(ballX,ballY);ctx.lineTo(mouseX,mouseY);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(mouseX,mouseY,15,0,Math.PI*2);
+  ctx.strokeStyle="rgba(255,220,50,.85)";ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(mouseX,mouseY,3,0,Math.PI*2);
+  ctx.fillStyle="rgba(255,220,50,.9)";ctx.fill();
+  const d=9;
+  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+    ctx.beginPath();ctx.moveTo(mouseX+dx*(d+9),mouseY+dy*(d+9));ctx.lineTo(mouseX+dx*(d+4),mouseY+dy*(d+4));ctx.stroke();
+  });
+  ctx.restore();
+}
+
+function drawGoalFlash(){
+  if(!isShooting&&shotResult==="goal")return;
+}
+
+function drawKeeper(){
+  const cx=gkX;
+  const gy2=GY+GH;
+  // shadow
+  ctx.beginPath();ctx.ellipse(cx,gy2-2,15,5,0,0,Math.PI*2);
+  ctx.fillStyle="rgba(0,0,0,.28)";ctx.fill();
+
+  ctx.save();
+  // Figure — diving or standing
+  const diving=gkDiving&&paused;
+  if(diving){
+    const angle=shotTX>CW/2?0.45:-0.45;
+    ctx.translate(cx,gy2-28);ctx.rotate(angle);
+  } else {
+    ctx.translate(cx,gy2);
+  }
+
+  if(diving){
+    // body
+    ctx.fillStyle="#e8a020";
+    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(-13,-16,26,24,4);else ctx.rect(-13,-16,26,24);ctx.fill();
+    ctx.fillStyle="#fff";ctx.font="bold 9px sans-serif";ctx.textAlign="center";ctx.fillText("1",0,0);
+    // legs
+    ctx.fillStyle="#1a3a6e";ctx.fillRect(-10,6,8,18);ctx.fillRect(2,6,8,18);
+    ctx.fillStyle="#111";ctx.fillRect(-11,22,9,7);ctx.fillRect(1,22,9,7);
+    // arms wide
+    ctx.fillStyle="#e8a020";ctx.fillRect(-30,-18,18,7);ctx.fillRect(12,-18,18,7);
+    ctx.fillStyle="#f5e642";
+    ctx.beginPath();ctx.arc(-30,-14,7,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(30,-14,7,0,Math.PI*2);ctx.fill();
+    // head
+    ctx.fillStyle="#f4c17a";ctx.beginPath();ctx.arc(0,-25,12,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#e8a020";ctx.beginPath();ctx.arc(0,-27,12,Math.PI,2*Math.PI);ctx.fill();
+    ctx.fillRect(-13,-27,26,5);
+    ctx.fillStyle="#222";ctx.beginPath();ctx.arc(-4,-25,2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(4,-25,2,0,Math.PI*2);ctx.fill();
+  } else {
+    // legs
+    ctx.fillStyle="#1a3a6e";ctx.fillRect(-10,-28,9,20);ctx.fillRect(1,-28,9,20);
+    ctx.fillStyle="#111";ctx.fillRect(-11,-10,10,8);ctx.fillRect(0,-10,10,8);
+    // jersey
+    ctx.fillStyle="#e8a020";
+    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(-13,-54,26,26,4);else ctx.rect(-13,-54,26,26);ctx.fill();
+    ctx.fillStyle="#fff";ctx.font="bold 10px sans-serif";ctx.textAlign="center";ctx.fillText("1",0,-38);
+    // arms
+    ctx.fillStyle="#e8a020";ctx.fillRect(-22,-54,10,6);ctx.fillRect(12,-54,10,6);
+    ctx.fillStyle="#f5e642";
+    ctx.beginPath();ctx.arc(-23,-51,5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(23,-51,5,0,Math.PI*2);ctx.fill();
+    // head
+    ctx.fillStyle="#f4c17a";ctx.beginPath();ctx.arc(0,-65,12,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#e8a020";ctx.beginPath();ctx.arc(0,-67,12,Math.PI,2*Math.PI);ctx.fill();
+    ctx.fillRect(-14,-67,28,5);
+    ctx.fillStyle="#222";ctx.beginPath();ctx.arc(-4,-65,2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(4,-65,2,0,Math.PI*2);ctx.fill();
+    // mouth
+    ctx.strokeStyle="#a0522d";ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(0,-63,3,0.2,Math.PI-0.2);ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawBall(){
+  const g=ctx.createRadialGradient(ballX-4,ballY-4,2,ballX,ballY,14);
+  g.addColorStop(0,"#fff");g.addColorStop(1,"#ccc");
+  ctx.beginPath();ctx.arc(ballX,ballY,14,0,Math.PI*2);
+  ctx.fillStyle=g;ctx.fill();
+  ctx.strokeStyle="#333";ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle="#222";
+  [[-4,-4],[4,-4],[0,5],[-5,2],[5,2]].forEach(p=>{
+    ctx.beginPath();ctx.arc(ballX+p[0],ballY+p[1],2.2,0,Math.PI*2);ctx.fill();
+  });
+}
+
+function drawGoalHighlight(){
+  if(!canAim)return;
+  const g=ctx.createLinearGradient(GX,GY,GX+GW,GY+GH);
+  g.addColorStop(0,"rgba(255,220,50,.03)");g.addColorStop(1,"rgba(255,220,50,.07)");
+  ctx.fillStyle=g;ctx.fillRect(GX+2,GY+2,GW-4,GH-4);
+}
+
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
+  drawGrass();drawNet();drawGoalHighlight();drawGoalFrame();
+  drawAimLine();drawKeeper();drawBall();
+}
+
+// ── Game Logic ────────────────────────────────────────────────
+function loadQ(){
+  if(idx>=shuffled.length){endGame();return;}
+  const q=shuffled[idx];
+  document.getElementById("qn").textContent=idx+1;
+  document.getElementById("pb").style.width=((idx/shuffled.length)*100)+"%";
+  document.getElementById("cb2").textContent=q.cat;
+  document.getElementById("qq").textContent=q.q;
+  const od=document.getElementById("opts");od.innerHTML="";
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=o;
+    b.onclick=()=>answer(i);od.appendChild(b);
+  });
+  canAim=false;isShooting=false;paused=false;gkDiving=false;
+  ballX=BSX;ballY=BSY;gkX=GX+GW/2;showAim=false;gkDir=1;
+  document.getElementById("fb").textContent="";
+  document.getElementById("fb").className="";
+  document.getElementById("ah").textContent="Beantworte zuerst die Frage!";
+  document.getElementById("nb").style.display="none";
+  FW.style.cursor="default";
+  draw();
+}
+
+function answer(chosen){
+  if(canAim||isShooting)return;
+  const q=shuffled[idx];
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+  document.querySelectorAll(".opt")[q.ans].classList.add("correct");
+  const ok=chosen===q.ans;
+  if(!ok)document.querySelectorAll(".opt")[chosen].classList.add("wrong");
+  if(ok){
+    correct++;document.getElementById("cn").textContent=correct;
+    document.getElementById("fb").textContent="✅ Richtig! Klick jetzt ins Tor zum Schießen!";
+    document.getElementById("fb").className="green";
+    canAim=true;FW.style.cursor="crosshair";
+    mouseX=CW/2;mouseY=GY+GH/2;
+    document.getElementById("ah").textContent="🎯 Klick ins Tor – pass auf den Tormann auf!";
+  } else {
+    document.getElementById("fb").textContent="❌ Leider falsch – kein Schuss diesmal!";
+    document.getElementById("fb").className="red";
+    document.getElementById("ah").textContent="Schau dir die richtige Antwort an!";
+    document.getElementById("nb").style.display="block";
+  }
+}
+
+function endGame(){
+  document.getElementById("qb").style.display="none";
+  document.getElementById("nb").style.display="none";
+  document.getElementById("fb").textContent="";
+  document.getElementById("ah").textContent="";
+  document.getElementById("pbw").style.display="none";
+  draw();
+  let t="",m="";
+  if(goals>=8){t=`⚽ ${goals} Tore – HAMMER!`;m="Sensationell! Du bist ein echter Elfmeter-Profi – und deine Grammatik ist top!";}
+  else if(goals>=6){t=`⚽ ${goals} Tore – Super!`;m="Hervorragende Leistung! Possessive Pronouns hast du wirklich drauf.";}
+  else if(goals>=4){t=`⚽ ${goals} Tore – Gut!`;m="Solide Leistung! Mit etwas mehr Übung wirst du noch besser.";}
+  else if(goals>=2){t=`⚽ ${goals} Tore`;m="Nicht schlecht für den Anfang! Schau dir die Grammatik nochmal an.";}
+  else{t=`⚽ ${goals} Tore`;m="Heute war nicht dein Tag – aber du schaffst das beim nächsten Mal!";}
+  document.getElementById("et").textContent=t;
+  document.getElementById("em").innerHTML=m+"<br><br>Richtige Antworten: <strong style=\"color:#fff\">"+correct+"</strong> / "+shuffled.length;
+  document.getElementById("es").style.display="block";
+}
+
+function shuffle(a){return a.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);}
+
+document.getElementById("nb").onclick=()=>{idx++;loadQ();};
+document.getElementById("rb").onclick=()=>{
+  document.getElementById("es").style.display="none";
+  document.getElementById("qb").style.display="block";
+  document.getElementById("pbw").style.display="block";
+  shuffled=shuffle(Qs);idx=0;goals=0;correct=0;
+  document.getElementById("gn").textContent=0;document.getElementById("cn").textContent=0;
+  loadQ();
+};
+
+shuffled=shuffle(Qs);
+patrol();
+loadQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="Present Perfect vs Past Hero">
+  <meta name="lernspiel:thema"        content="Present Perfect vs Past Simple">
+  <meta name="lernspiel:stufe"        content="7. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Entscheide blitzschnell zwischen Present Perfect und Past Simple.">
+<title>PP vs Past Hero — Der Signalwort-Runner | School Games 🎓</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEMES — CSS-Variablen (Standard + Psychedelic)
+   ============================================================ */
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B; --info:#3B82F6;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --shadow-card:4px 4px 0px #1F2937;
+  --shadow-btn:3px 3px 0px rgba(0,0,0,0.3);
+  --shadow-btn-blue:4px 4px 0px #1E3A8A;
+  --shadow-btn-green:4px 4px 0px #14532D;
+  --shadow-btn-red:4px 4px 0px #7F1D1D;
+  --header-bg:#FFFFFF; --hud-text:#1F2937;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FFFF00; --info:#00FFFF;
+  --text-dark:#F9FAFB; --text-light:#F9FAFB; --border:#BF00FF;
+  --shadow-card:0 0 20px #FF00FF, 0 0 40px #BF00FF;
+  --shadow-btn:0 0 12px #00FFFF, 0 0 24px #00FFFF;
+  --shadow-btn-blue:0 0 12px #00FFFF, 0 0 24px #00FFFF;
+  --shadow-btn-green:0 0 12px #00FF41, 0 0 24px #00FF41;
+  --shadow-btn-red:0 0 12px #FF0033, 0 0 24px #FF0033;
+  --header-bg:#0D001A; --hud-text:#F9FAFB;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Nunito',sans-serif; background:var(--bg-main); color:var(--text-dark);
+  overflow:hidden; user-select:none; transition:background .6s;
+}
+:root[data-theme="psychedelic"] body{ animation:bgPulse 3s ease-in-out infinite; }
+@keyframes bgPulse{ 0%,100%{background:#0D001A;} 50%{background:#001A0D;} }
+@media (prefers-reduced-motion: reduce){
+  :root[data-theme="psychedelic"] body{ animation:none; }
+}
+
+h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif; font-weight:normal; }
+
+/* ============================================================
+   SPLASH (Branding, 1 Sekunde)
+   ============================================================ */
+#splash{
+  position:fixed; inset:0; z-index:100; background:#1E1B4B;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+}
+#splash .logo{ font-size:64px; }
+#splash h1{ font-size:36px; color:#9333EA; letter-spacing:.03em; }
+#splash p{ color:#0D9488; font-weight:800; font-size:16px; }
+:root[data-theme="psychedelic"] #splash h1{ color:#BF00FF; text-shadow:0 0 16px #BF00FF; }
+
+/* ============================================================
+   SCREENS (Start / Game Over)
+   ============================================================ */
+.screen{
+  position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  background:var(--bg-main); padding:16px; overflow-y:auto;
+}
+:root[data-theme="psychedelic"] .screen{ background:rgba(0,0,0,.92); }
+.screen-card{
+  background:var(--bg-card); border:4px solid var(--text-dark); border-radius:24px;
+  box-shadow:var(--shadow-card); padding:32px; max-width:560px; width:100%; text-align:center;
+}
+:root[data-theme="psychedelic"] .screen-card{ border-color:var(--purple); }
+.screen-card h1{ font-size:40px; color:var(--purple); margin-bottom:8px; }
+.screen-card h2{ font-size:22px; color:var(--orange); margin-bottom:16px; }
+.screen-card .sub{ font-size:16px; font-weight:700; margin-bottom:24px; line-height:1.5; }
+.rule-strip{
+  background:var(--bg-main); border:2px dashed var(--teal); border-radius:16px;
+  padding:12px 16px; margin-bottom:24px; font-size:16px; font-weight:800; color:var(--hud-text);
+}
+.rule-strip b{ color:var(--purple); }
+:root[data-theme="psychedelic"] .rule-strip{ background:#000; }
+.controls-box{
+  background:var(--bg-main); border:2px solid var(--border); border-radius:16px;
+  padding:16px; margin-bottom:24px; text-align:left; font-size:16px; font-weight:700; line-height:2;
+}
+:root[data-theme="psychedelic"] .controls-box{ background:#000; }
+.controls-box b{ color:var(--blue); }
+.badge{
+  display:inline-block; background:var(--teal); color:#fff; border-radius:999px;
+  padding:4px 16px; font-weight:900; font-size:13px; letter-spacing:.03em; margin-bottom:16px;
+}
+:root[data-theme="psychedelic"] .badge{ color:#000; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  font-family:'Fredoka One','Nunito',sans-serif; font-size:22px; color:#fff;
+  background:var(--blue); border:none; border-radius:16px; min-height:48px;
+  padding:8px 32px; cursor:pointer; box-shadow:var(--shadow-btn-blue);
+  transition:transform .15s cubic-bezier(0.34,1.56,0.64,1), box-shadow .15s;
+  letter-spacing:.03em;
+}
+.btn:hover{ transform:scale(1.05); }
+.btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(0,0,0,.3); }
+.btn:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+.btn.success{ background:var(--green); box-shadow:var(--shadow-btn-green); }
+.btn.danger{ background:var(--red); box-shadow:var(--shadow-btn-red); }
+:root[data-theme="psychedelic"] .btn{ color:#000; font-weight:900; }
+
+/* ============================================================
+   GAME LAYOUT — Header / Spielbereich / Footer
+   ============================================================ */
+#game{ display:none; flex-direction:column; height:100%; }
+#game.active{ display:flex; }
+
+header{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:var(--header-bg); border-bottom:4px solid var(--text-dark);
+  padding:8px 16px; z-index:20;
+}
+:root[data-theme="psychedelic"] header{ border-color:var(--purple); box-shadow:0 0 16px #BF00FF; }
+#backBtn{
+  font-size:24px; background:var(--red); color:#fff; border:none; border-radius:16px;
+  width:48px; height:48px; cursor:pointer; box-shadow:var(--shadow-btn-red);
+  transition:transform .15s;
+}
+#backBtn:hover{ transform:scale(1.05); }
+#backBtn:active{ transform:translate(2px,2px); }
+.header-mid{ text-align:center; flex:1; min-width:0; }
+.header-mid .game-title{ font-family:'Fredoka One',sans-serif; font-size:22px; color:var(--purple); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.header-mid .level-label{ font-size:13px; font-weight:900; color:var(--orange); letter-spacing:.03em; }
+.header-right{ display:flex; align-items:center; gap:8px; }
+#scoreBox{
+  font-family:'Fredoka One',sans-serif; font-size:22px; color:var(--hud-text);
+  background:var(--yellow); border-radius:999px; padding:8px 16px; min-width:96px; text-align:center;
+  border:2px solid var(--text-dark); color:#1F2937;
+}
+:root[data-theme="psychedelic"] #scoreBox{ background:#FFFF00; border-color:#BF00FF; box-shadow:0 0 12px #FFFF00; }
+#psyBtn{
+  font-size:24px; width:48px; height:48px; border-radius:16px; border:2px solid var(--text-dark);
+  background:var(--bg-card); cursor:pointer; transition:transform .15s;
+}
+#psyBtn:hover{ transform:scale(1.05) rotate(10deg); }
+
+#gameArea{ flex:1; display:flex; align-items:center; justify-content:center; padding:8px; min-height:0; position:relative; }
+#canvasWrap{
+  width:100%; max-width:800px; border:4px solid var(--text-dark); border-radius:24px;
+  overflow:hidden; box-shadow:var(--shadow-card); background:#7DD3FC; position:relative;
+}
+:root[data-theme="psychedelic"] #canvasWrap{ border-color:var(--purple); }
+#gameCanvas{ display:block; width:100%; height:auto; }
+
+footer{
+  background:var(--header-bg); border-top:4px solid var(--text-dark);
+  padding:8px 16px; display:flex; align-items:center; gap:16px; z-index:20;
+}
+:root[data-theme="psychedelic"] footer{ border-color:var(--purple); }
+#hearts{ font-size:22px; letter-spacing:2px; min-width:96px; }
+#progressWrap{ flex:1; }
+#progressLabel{ font-size:13px; font-weight:900; color:var(--hud-text); letter-spacing:.03em; margin-bottom:4px; }
+#progressBar{
+  height:16px; background:var(--border); border-radius:999px; overflow:hidden; border:2px solid var(--text-dark);
+}
+:root[data-theme="psychedelic"] #progressBar{ background:#1a0033; border-color:var(--purple); }
+#progressFill{
+  height:100%; width:0%; border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--teal)); transition:width .2s;
+}
+#abilityHud{ display:flex; gap:8px; align-items:center; }
+.ab{
+  width:40px; height:40px; border-radius:8px; border:2px solid var(--text-dark);
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+  background:var(--bg-card); opacity:.25; position:relative;
+}
+.ab.on{ opacity:1; background:var(--yellow); }
+:root[data-theme="psychedelic"] .ab.on{ background:#FFFF00; box-shadow:0 0 8px #FFFF00; }
+#energyBar{ width:48px; height:8px; background:var(--border); border-radius:999px; overflow:hidden; }
+#energyFill{ height:100%; width:100%; background:var(--purple); }
+
+/* ============================================================
+   QUESTION MODAL
+   ============================================================ */
+#modalOverlay{
+  position:absolute; inset:0; z-index:30; display:none; align-items:center; justify-content:center;
+  background:rgba(30,27,75,.55); padding:8px; border-radius:20px;
+}
+#modalOverlay.show{ display:flex; }
+#questionCard{
+  background:var(--bg-card); border:4px solid var(--text-dark); border-radius:24px;
+  box-shadow:var(--shadow-card); padding:24px; max-width:520px; width:100%;
+  max-height:100%; overflow-y:auto;
+}
+:root[data-theme="psychedelic"] #questionCard{ border-color:var(--pink); }
+#questionCard.shake{ animation:shakeX .2s 3; }
+@keyframes shakeX{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+@media (prefers-reduced-motion: reduce){ #questionCard.shake{ animation:none; } }
+.q-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;}
+.q-flag{ font-family:'Fredoka One',sans-serif; font-size:22px; color:var(--orange); }
+.q-tags{ display:flex; gap:8px; }
+.q-tag{
+  background:var(--purple); color:#fff; border-radius:999px; padding:4px 12px;
+  font-size:13px; font-weight:900; letter-spacing:.03em;
+}
+.q-tag.cat{ background:var(--teal); }
+:root[data-theme="psychedelic"] .q-tag{ color:#000; }
+#qInstr{ font-size:16px; font-weight:800; margin-bottom:8px; color:var(--hud-text); }
+#qSentence{
+  font-size:22px; font-weight:900; background:var(--bg-main); border:2px solid var(--border);
+  border-radius:16px; padding:16px; margin-bottom:16px; text-align:center; color:var(--hud-text);
+}
+:root[data-theme="psychedelic"] #qSentence{ background:#000; border-color:var(--purple); }
+#answers{ display:grid; grid-template-columns:1fr; gap:8px; }
+.answer-btn{
+  font-family:'Nunito',sans-serif; font-weight:800; font-size:16px; text-align:left;
+  background:var(--bg-card); color:var(--hud-text); border:2px solid var(--text-dark); border-radius:16px;
+  min-height:48px; padding:8px 16px; cursor:pointer; box-shadow:var(--shadow-btn);
+  transition:transform .15s cubic-bezier(0.34,1.56,0.64,1);
+}
+.answer-btn:hover{ transform:scale(1.02); background:var(--bg-main); }
+.answer-btn:active{ transform:translate(2px,2px); }
+.answer-btn:focus-visible{ outline:3px solid var(--orange); }
+.answer-btn.correct{ background:var(--success); color:#fff; border-color:var(--success); }
+.answer-btn.wrong{ background:var(--error); color:#fff; border-color:var(--error); }
+:root[data-theme="psychedelic"] .answer-btn{ background:#0D001A; border-color:var(--teal); }
+:root[data-theme="psychedelic"] .answer-btn.correct{ color:#000; }
+:root[data-theme="psychedelic"] .answer-btn.wrong{ color:#000; }
+#typeRow{ display:flex; gap:8px; }
+#typeInput{
+  flex:1; font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+  border:2px solid var(--text-dark); border-radius:16px; padding:8px 16px; min-height:48px;
+  background:var(--bg-card); color:var(--hud-text);
+}
+#typeInput:focus{ outline:3px solid var(--orange); }
+:root[data-theme="psychedelic"] #typeInput{ background:#000; border-color:var(--teal); }
+#feedbackBox{
+  display:none; margin-top:16px; border-radius:16px; padding:16px; font-size:16px; font-weight:700; line-height:1.5;
+}
+#feedbackBox.bad{ display:block; background:#FEE2E2; border:2px solid var(--error); color:#7F1D1D; }
+#feedbackBox.good{ display:block; background:#DCFCE7; border:2px solid var(--success); color:#14532D; }
+:root[data-theme="psychedelic"] #feedbackBox.bad{ background:#1a0008; color:#FF0033; }
+:root[data-theme="psychedelic"] #feedbackBox.good{ background:#001a08; color:#00FF41; }
+#modalActions{ display:flex; justify-content:center; margin-top:16px; }
+.attempt-info{ font-size:13px; font-weight:900; color:var(--warning); margin-top:8px; text-align:center; letter-spacing:.03em;}
+
+/* Unlock-Toast */
+#toast{
+  position:absolute; top:16px; left:50%; transform:translateX(-50%) translateY(-80px); z-index:40;
+  background:var(--purple); color:#fff; font-family:'Fredoka One',sans-serif; font-size:18px;
+  border-radius:999px; padding:12px 24px; border:3px solid var(--text-dark);
+  box-shadow:var(--shadow-card); transition:transform .4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap; max-width:95%; overflow:hidden; text-overflow:ellipsis;
+}
+#toast.show{ transform:translateX(-50%) translateY(0); }
+:root[data-theme="psychedelic"] #toast{ color:#000; }
+
+/* ============================================================
+   TOUCH CONTROLS
+   ============================================================ */
+#touchControls{ display:none; position:absolute; inset:0; z-index:25; pointer-events:none; }
+body.touch #touchControls{ display:block; }
+.tbtn{
+  position:absolute; bottom:16px; width:64px; height:64px; border-radius:999px;
+  background:rgba(255,255,255,.75); border:3px solid var(--text-dark);
+  font-size:28px; display:flex; align-items:center; justify-content:center;
+  pointer-events:auto; cursor:pointer; font-family:'Fredoka One',sans-serif;
+}
+.tbtn:active{ background:var(--yellow); transform:scale(.95); }
+#tLeft{ left:16px; } #tRight{ left:96px; }
+#tJump{ right:16px; bottom:88px; } #tDash{ right:96px; } #tSlow{ right:16px; }
+
+#fxCanvas{ position:fixed; inset:0; z-index:90; pointer-events:none; }
+
+@media (max-width:600px){
+  .header-mid .game-title{ font-size:16px; }
+  #scoreBox{ font-size:16px; min-width:72px; }
+  #abilityHud{ display:none; }
+  .screen-card{ padding:16px; }
+  .screen-card h1{ font-size:28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="logo">🎓</div>
+  <h1>School Games 🎓</h1>
+  <p>Lernen macht Spaß!</p>
+</div>
+
+<!-- START SCREEN -->
+<div class="screen" id="startScreen" style="display:none;">
+  <div class="screen-card">
+    <div class="badge">2. KLASSE MS · ENGLISH · PRESENT PERFECT ↔ SIMPLE PAST</div>
+    <h1>⏱ PP vs PAST HERO</h1>
+    <h2>Der Signalwort-Runner</h2>
+    <p class="sub">Renne so weit du kannst! An jedem Checkpoint entscheidest du: <b>Present Perfect</b> oder <b>Simple Past</b>? Das <b>Signalwort</b> im Satz verrät es dir.
+    Es startet leicht und wird Zone für Zone <b>schwerer</b>. 🔥</p>
+    <div class="rule-strip" style="text-align:left;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:150px;">✅ <b>Present Perfect</b><br><span style="font-size:13px; font-weight:700;">already · yet · just · ever · never · since · for · so far · recently</span></div>
+        <div style="flex:1; min-width:150px;">⏪ <b>Simple Past</b><br><span style="font-size:13px; font-weight:700;">yesterday · last week/year · … ago · in 2020</span></div>
+      </div>
+      <div style="font-size:14px; margin-top:8px;">Das Signalwort entscheidet — Schwierigkeit steigt mit jeder ★-Zone!</div>
+    </div>
+    <div class="controls-box">
+      🏃 <b>← →</b> oder <b>A / D</b> — Laufen<br>
+      🦘 <b>Leertaste</b> oder <b>↑ / W</b> — Springen (später: Doppelsprung!)<br>
+      ⚡ <b>Shift</b> oder <b>X</b> — Dash (ab Checkpoint 2)<br>
+      🐌 <b>S</b> gedrückt halten — Zeitlupe (ab Checkpoint 3)<br>
+      🛡 Jede richtige Antwort lädt deinen Grammatik-Schild!
+    </div>
+    <button class="btn success" id="startBtn">▶ LOS GEHT'S!</button>
+  </div>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div class="screen" id="overScreen" style="display:none;">
+  <div class="screen-card">
+    <h1 id="overTitle">💥 GAME OVER</h1>
+    <h2 id="overScore">Score: 0</h2>
+    <p class="sub" id="overStats"></p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn success" id="retryBtn">🔄 NOCHMAL!</button>
+      <button class="btn danger" id="menuBtn">🏠 MENÜ</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <header>
+    <button id="backBtn" aria-label="Zurück zum Menü">←</button>
+    <div class="header-mid">
+      <div class="game-title">⏱ PP vs PAST HERO</div>
+      <div class="level-label" id="levelLabel">ZONE 1</div>
+    </div>
+    <div class="header-right">
+      <div id="scoreBox">0</div>
+      <button id="psyBtn" aria-label="Psychedelic Mode umschalten">🌈</button>
+    </div>
+  </header>
+
+  <div id="gameArea">
+    <div id="canvasWrap">
+      <canvas id="gameCanvas" width="800" height="450"></canvas>
+      <div id="modalOverlay">
+        <div id="questionCard">
+          <div class="q-top">
+            <div class="q-flag">🚩 CHECKPOINT!</div>
+            <div class="q-tags">
+              <span class="q-tag cat" id="qCat">SIGNALWORT</span>
+              <span class="q-tag" id="qFormat">MULTIPLE CHOICE</span>
+            </div>
+          </div>
+          <div id="qInstr"></div>
+          <div id="qSentence"></div>
+          <div id="answers"></div>
+          <div id="typeArea" style="display:none;">
+            <div id="typeRow">
+              <input id="typeInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="z.B. have seen / went">
+              <button class="btn success" id="typeSubmit">OK</button>
+            </div>
+          </div>
+          <div id="feedbackBox"></div>
+          <div class="attempt-info" id="attemptInfo"></div>
+          <div id="modalActions" style="display:none;">
+            <button class="btn" id="continueBtn">WEITER ▶</button>
+          </div>
+        </div>
+      </div>
+      <div id="toast"></div>
+      <div id="touchControls">
+        <div class="tbtn" id="tLeft">◀</div>
+        <div class="tbtn" id="tRight">▶</div>
+        <div class="tbtn" id="tJump">⤒</div>
+        <div class="tbtn" id="tDash">⚡</div>
+        <div class="tbtn" id="tSlow">🐌</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div id="hearts">❤️❤️❤️</div>
+    <div id="progressWrap">
+      <div id="progressLabel">🚩 NÄCHSTER CHECKPOINT</div>
+      <div id="progressBar"><div id="progressFill"></div></div>
+    </div>
+    <div id="abilityHud">
+      <div class="ab" id="abJump" title="Doppelsprung">⬆⬆</div>
+      <div class="ab" id="abDash" title="Dash">⚡</div>
+      <div class="ab" id="abShield" title="Grammatik-Schild">🛡</div>
+      <div class="ab" id="abSlow" title="Zeitlupe">🐌</div>
+      <div id="energyBar"><div id="energyFill"></div></div>
+    </div>
+  </footer>
+</div>
+
+<canvas id="fxCanvas"></canvas>
+
+<script>
+'use strict';
+/* ============================================================
+   PP vs PAST HERO — Present Perfect ↔ Simple Past Endlos-Runner
+   School Games OG · 6. Schulstufe (2. Klasse MS) Österreich
+   Fokus: Unterscheidung am SIGNALWORT.
+     Present Perfect (have/has + 3. Form): already, yet, just, ever, never,
+       since, for, so far, recently.
+     Simple Past (2. Form / -ed): yesterday, last …, … ago, in 2020.
+   ============================================================ */
+
+const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- FRAGEN-POOL (gestaffelte Schwierigkeit) ---------- */
+/* Jeder Satz enthält ein EINDEUTIGES Signalwort, das die Zeit festlegt.
+   lvl 1 = leicht  →  lvl 4 = schwer. Der Tier steigt mit jedem Checkpoint (siehe tierFor).
+   Progression: 1) Signalwort → Zeit erkennen + einfache Form (MC)
+                2) ganze Form wählen, since/for + unregelm. (MC)
+                3) Form tippen (regelm. + ganze Form, beide Zeiten)
+                4) tippen schwer: Verneinung beider Zeiten, since/for, unregelm.
+   cat-Tag im Modal: SIGNALWORT · PRESENT PERFECT · SIMPLE PAST · SINCE/FOR · VERNEINUNG.
+   accept (Tipp-Aufgaben): alle erlaubten Schreibweisen, normalisiert verglichen. */
+const QUESTIONS = [
+
+  /* ===== LEVEL 1 — leicht: Signalwort erkennen + einfache Form (MC) ===== */
+  {lvl:1, type:'mc', cat:'SIGNALWORT', instr:'Welches Wort zeigt Present Perfect an?', q:'Welches Signalwort gehört zum Present Perfect?',
+   options:['already','yesterday','last week','in 2019'], correct:0, expl:'already/yet/just/ever/never → Present Perfect. yesterday/last week/in 2019 → Simple Past.'},
+  {lvl:1, type:'mc', cat:'SIGNALWORT', instr:'Welches Wort zeigt Simple Past an?', q:'Welches Signalwort gehört zum Simple Past?',
+   options:['yesterday','already','just','ever'], correct:0, expl:'yesterday → abgeschlossene Zeit → Simple Past.'},
+  {lvl:1, type:'mc', cat:'PRESENT PERFECT', instr:'Signalwort "already" — welche Form?', q:'I ___ my homework already.',
+   options:['have done','did','do','done'], correct:0, expl:'„already“ → Present Perfect → have done.'},
+  {lvl:1, type:'mc', cat:'SIMPLE PAST', instr:'Signalwort "yesterday" — welche Form?', q:'We ___ a film yesterday.',
+   options:['watched','have watched','watch','has watched'], correct:0, expl:'„yesterday“ → Simple Past → watched.'},
+  {lvl:1, type:'mc', cat:'SIMPLE PAST', instr:'Signalwort "last year" — welche Form?', q:'They ___ to London last year.',
+   options:['went','have gone','go','have went'], correct:0, expl:'„last year“ → Simple Past → went (go–went–gone).'},
+  {lvl:1, type:'mc', cat:'PRESENT PERFECT', instr:'Signalwort "never" — welche Form?', q:'She ___ this film.',
+   options:['has never seen','never saw','saw never','has never saw'], correct:0, expl:'„never“ → Present Perfect → has never seen.'},
+
+  /* ===== LEVEL 2 — mittel: ganze Form wählen, since/for + unregelm. (MC) ===== */
+  {lvl:2, type:'mc', cat:'SINCE/FOR', instr:'Signalwort "since" — welche Form?', q:'I ___ here since 2020.',
+   options:['have lived','lived','live','has lived'], correct:0, expl:'„since/for“ → Present Perfect → have lived.'},
+  {lvl:2, type:'mc', cat:'SIMPLE PAST', instr:'Signalwort "ago" — welche Form?', q:'She ___ her grandma two weeks ago.',
+   options:['visited','has visited','visits','have visited'], correct:0, expl:'„… ago“ → Simple Past → visited.'},
+  {lvl:2, type:'mc', cat:'PRESENT PERFECT', instr:'Signalwort "yet" — welche Form?', q:"I haven't ___ my lunch yet.",
+   options:['eaten','ate','eat','eated'], correct:0, expl:'„yet“ → Present Perfect, 3. Form → (haven’t) eaten.'},
+  {lvl:2, type:'mc', cat:'SIMPLE PAST', instr:'Signalwort "last weekend" — welche Form?', q:'Tom ___ his bike last weekend.',
+   options:['repaired','has repaired','repair','repairs'], correct:0, expl:'„last weekend“ → Simple Past → repaired.'},
+  {lvl:2, type:'mc', cat:'SINCE/FOR', instr:'Welcher Satz ist richtig? (Signalwort "for")', q:'Wähle den korrekten Satz:',
+   options:['I have known him for three years.','I know him for three years.','I knew him for three years.','I have knew him for three years.'],
+   correct:0, expl:'„for“ → Present Perfect → have known (know–knew–known).'},
+  {lvl:2, type:'mc', cat:'PRESENT PERFECT', instr:'Signalwort "so far" — welche Form?', q:'We ___ three games so far.',
+   options:['have won','won','win','has won'], correct:0, expl:'„so far“ → Present Perfect → have won (win–won–won).'},
+
+  /* ===== LEVEL 3 — schwerer: Form tippen, beide Zeiten am Signalwort ===== */
+  {lvl:3, type:'type', cat:'SIMPLE PAST', q:'We ___ (visit) Rome last summer.', accept:['visited'], show:'visited',
+   expl:'„last summer“ → Simple Past → visited.'},
+  {lvl:3, type:'type', cat:'PRESENT PERFECT', q:'I ___ (clean) my room already. — ganze Form', accept:['have cleaned'], show:'have cleaned',
+   expl:'„already“ → Present Perfect → have cleaned.'},
+  {lvl:3, type:'type', cat:'SIMPLE PAST', q:'She ___ (play) tennis yesterday.', accept:['played'], show:'played',
+   expl:'„yesterday“ → Simple Past → played.'},
+  {lvl:3, type:'type', cat:'SINCE/FOR', q:'They ___ (live) here since 2019. — ganze Form', accept:['have lived'], show:'have lived',
+   expl:'„since“ → Present Perfect → have lived.'},
+  {lvl:3, type:'type', cat:'PRESENT PERFECT', q:'He ___ (finish) his homework just now. — ganze Form', accept:['has finished'], show:'has finished',
+   expl:'„just now“ → Present Perfect → has finished.'},
+  {lvl:3, type:'type', cat:'SIMPLE PAST', q:'I ___ (watch) that show last night.', accept:['watched'], show:'watched',
+   expl:'„last night“ → Simple Past → watched.'},
+  {lvl:3, type:'type', cat:'SINCE/FOR', q:'We ___ (know) each other for years. — ganze Form', accept:['have known'], show:'have known',
+   expl:'„for“ → Present Perfect → have known (know–knew–known).'},
+
+  /* ===== LEVEL 4 — schwer: Verneinung beider Zeiten, since/for, unregelm. ===== */
+  {lvl:4, type:'type', cat:'VERNEINUNG', q:'I ___ (not see) him yesterday. — ganze Form', accept:["didn't see","did not see"], show:"didn't see",
+   expl:'„yesterday“ → Simple Past, Verneinung → didn’t see (didn’t + Grundform).'},
+  {lvl:4, type:'type', cat:'VERNEINUNG', q:"She ___ (not finish) the book yet. — ganze Form", accept:["hasn't finished","has not finished"], show:"hasn't finished",
+   expl:'„yet“ → Present Perfect, Verneinung → hasn’t finished.'},
+  {lvl:4, type:'type', cat:'SIMPLE PAST', q:'We ___ (go) to Spain in 2018. — ganze Form', accept:['went'], show:'went',
+   expl:'„in 2018“ → Simple Past → went (go–went–gone).'},
+  {lvl:4, type:'type', cat:'SINCE/FOR', q:'They ___ (live) in Graz since March. — ganze Form', accept:['have lived'], show:'have lived',
+   expl:'„since“ → Present Perfect → have lived.'},
+  {lvl:4, type:'type', cat:'PRESENT PERFECT', q:'I ___ (never / eat) sushi. — ganze Form', accept:['have never eaten'], show:'have never eaten',
+   expl:'„never“ → Present Perfect → have never eaten (eat–ate–eaten).'},
+  {lvl:4, type:'type', cat:'SIMPLE PAST', q:'He ___ (break) his arm last winter. — ganze Form', accept:['broke'], show:'broke',
+   expl:'„last winter“ → Simple Past → broke (break–broke–broken).'},
+  {lvl:4, type:'type', cat:'PRESENT PERFECT', q:'She ___ (write) three letters so far. — ganze Form', accept:['has written'], show:'has written',
+   expl:'„so far“ → Present Perfect → has written (write–wrote–written).'},
+  {lvl:4, type:'type', cat:'VERNEINUNG', q:'We ___ (not visit) them last month. — ganze Form', accept:["didn't visit","did not visit"], show:"didn't visit",
+   expl:'„last month“ → Simple Past, Verneinung → didn’t visit.'}
+];
+
+const RULE_HINT = 'Merke am Signalwort: <b>Present Perfect</b> (have/has + 3. Form) bei <b>already, yet, just, ever, never, since, for, so far, recently</b>. · <b>Simple Past</b> (2. Form / -ed) bei <b>yesterday, last …, … ago, in 2020</b>.';
+function tierFor(cp){ return cp < 2 ? 1 : cp < 4 ? 2 : cp < 6 ? 3 : 4; }
+
+/* ---------- AUDIO (WebAudio, alle Töne < 500ms) ------------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, dur, type, vol, delay, freqEnd){
+  if(!audioCtx) return;
+  const t0 = audioCtx.currentTime + (delay||0);
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type || (psyMode ? 'sawtooth' : 'sine');
+  osc.frequency.setValueAtTime(freq, t0);
+  if(freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t0+dur);
+  g.gain.setValueAtTime(vol||0.15, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+const SND = {
+  correct(){ tone(523,.12,null,.18); tone(659,.12,null,.18,.09); tone(784,.18,null,.18,.18); },
+  wrong(){ tone(160,.22, psyMode?'sawtooth':'square', .14); tone(110,.2,psyMode?'sawtooth':'square',.12,.08); },
+  levelUp(){ [523,587,659,784,1047].forEach((f,i)=>tone(f,.12,null,.16,i*.08)); },
+  button(){ tone(600,.06,'sine',.1); },
+  jump(){ tone(300,.12,psyMode?'square':'sine',.1,0,520); },
+  coin(){ tone(988,.07,'sine',.12); tone(1319,.12,'sine',.12,.06); },
+  dash(){ tone(700,.15,psyMode?'sawtooth':'sine',.1,0,200); },
+  stomp(){ tone(220,.1,'square',.12,0,80); },
+  hurt(){ tone(200,.18,'square',.14,0,90); },
+  shield(){ tone(880,.1,'sine',.1); tone(1100,.14,'sine',.1,.07); }
+};
+
+/* ---------- DOM-REFS ---------------------------------------- */
+const $ = id => document.getElementById(id);
+const canvas = $('gameCanvas'), ctx = canvas.getContext('2d');
+const fxCanvas = $('fxCanvas'), fctx = fxCanvas.getContext('2d');
+function sizeFx(){ fxCanvas.width = innerWidth; fxCanvas.height = innerHeight; }
+sizeFx(); addEventListener('resize', sizeFx);
+
+const W = 800, H = 450, GROUND_Y = 386;
+
+/* ---------- THEME / PALETTEN -------------------------------- */
+let psyMode = false;
+const PALETTES = {
+  standard:{
+    skyTop:'#7DD3FC', skyBot:'#E0F2FE', hill1:'#86EFAC', hill2:'#4ADE80',
+    cloud:'#FFFFFF', ground:'#92580C', grass:'#16A34A', plat:'#B45309', platTop:'#22C55E',
+    coin:'#FACC15', coinEdge:'#B45309', flag:'#DC2626', flagPole:'#6B7280',
+    player:'#2563EB', playerCap:'#DC2626', enemy:'#9333EA', enemy2:'#F97316',
+    outline:'#1F2937', shield:'#0D9488', star:'#FFFFFF', text:'#1F2937'
+  },
+  psychedelic:{
+    skyTop:'#0D001A', skyBot:'#000000', hill1:'#003311', hill2:'#00FF41',
+    cloud:'#BF00FF', ground:'#1a0033', grass:'#00FF41', plat:'#330066', platTop:'#FF00FF',
+    coin:'#FFFF00', coinEdge:'#FF6600', flag:'#FF0033', flagPole:'#00FFFF',
+    player:'#00FFFF', playerCap:'#FF00FF', enemy:'#FF00FF', enemy2:'#FF6600',
+    outline:'#00FFFF', shield:'#00FF41', star:'#FFFF00', text:'#F9FAFB'
+  }
+};
+let PAL = PALETTES.standard;
+function setTheme(psy){
+  psyMode = psy;
+  document.documentElement.setAttribute('data-theme', psy?'psychedelic':'standard');
+  PAL = PALETTES[psy?'psychedelic':'standard'];
+}
+$('psyBtn').addEventListener('click', ()=>{
+  ensureAudio(); SND.button();
+  setTheme(!psyMode);
+  if(!REDUCE_MOTION){
+    const wrap = $('canvasWrap');
+    wrap.style.transition='transform .4s'; wrap.style.transform='rotate(3deg) scale(.96)';
+    setTimeout(()=>{ wrap.style.transform='none'; }, 400);
+  }
+});
+
+/* ---------- GAME STATE -------------------------------------- */
+let state = 'splash';   // splash | start | play | question | gameover
+let player, camX, score, hearts, streak, cpPassed, distanceMax;
+let platforms, coins, enemies, flags, clouds, psyStars, fxParticles;
+let genX, nextFlagX, checkpointX;
+let abilities, shield, energy, slowmoActive;
+let questionFlag = null, currentQ = null, qSolved = false;
+let qPools = {1:[],2:[],3:[],4:[]}, qIdx = {1:0,2:0,3:0,4:0};
+let lastTime = 0;
+
+const GRAVITY = 2200, JUMP_V = -760, MOVE_SPD = 320;
+const DASH_SPD = 760, DASH_DUR = .18, DASH_CD = 1.2;
+
+function shuffled(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function resetGame(){
+  player = { x:120, y:GROUND_Y-48, w:34, h:46, vx:0, vy:0, facing:1, onGround:false,
+             jumpsUsed:0, coyote:0, dashTime:0, dashCd:0, invuln:0, anim:0 };
+  camX = 0; score = 0; hearts = 3; streak = 0; cpPassed = 0; distanceMax = 0;
+  platforms = []; coins = []; enemies = []; flags = []; fxParticles = [];
+  genX = 0; nextFlagX = 1800; checkpointX = 120;
+  abilities = { doubleJump:false, dash:false, slowmo:false };
+  shield = false; energy = 100; slowmoActive = false;
+  qPools = {1:[],2:[],3:[],4:[]}; qIdx = {1:0,2:0,3:0,4:0};
+  for(const q of QUESTIONS) qPools[q.lvl].push(q);
+  for(const k in qPools) qPools[k] = shuffled(qPools[k]);
+  clouds = []; for(let i=0;i<8;i++) clouds.push({x:Math.random()*1600, y:30+Math.random()*120, s:.3+Math.random()*.4, w:60+Math.random()*60});
+  psyStars = []; for(let i=0;i<80;i++) psyStars.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*2+.5, tw:Math.random()*6.28});
+  // Sicherer Startboden
+  platforms.push({x:-200, y:GROUND_Y, w:900, h:H-GROUND_Y, ground:true});
+  genX = 700;
+  generateUntil(camX + 2000);
+  updateHud();
+}
+
+/* ---------- PROZEDURALE WELT-GENERIERUNG --------------------- */
+/* Spiel-Schwierigkeit steigt mit jedem Checkpoint (0 → 1.5, später Plateau). */
+function difficulty(){ return Math.min(1.5, cpPassed/5); }
+
+function addEnemy(x, platY, minX, maxX, flying){
+  const d = difficulty();
+  // Lineares Tracking: konstante Pixel/Sekunde, kein exponentielles Annähern
+  const speed = 70 + d*130 + Math.random()*30;
+  if(flying){
+    enemies.push({type:'flyer', x, y:platY-130, baseY:platY-130, w:36, h:30, dir:Math.random()<.5?-1:1, speed:speed*0.9, minX, maxX, t:Math.random()*6});
+  }else{
+    enemies.push({type:'walker', x, y:platY-34, w:36, h:34, dir:Math.random()<.5?-1:1, speed, minX, maxX, t:0});
+  }
+}
+function addCoinRow(x, y, n, step){
+  for(let i=0;i<n;i++) coins.push({x:x+i*(step||44), y, r:12, t:Math.random()*6.28, got:false});
+}
+
+function generateUntil(targetX){
+  while(genX < targetX){
+    // Checkpoint fällig? → garantiert flacher Boden + Flagge
+    if(genX >= nextFlagX){
+      platforms.push({x:genX, y:GROUND_Y, w:520, h:H-GROUND_Y, ground:true});
+      flags.push({x:genX+240, y:GROUND_Y, done:false});
+      addCoinRow(genX+330, GROUND_Y-60, 3);
+      genX += 520;
+      // Strecke zwischen Checkpoints wird länger (mehr Hindernisse pro Zone)
+      nextFlagX = genX + 2600 + cpPassed*200 + Math.random()*800;
+      continue;
+    }
+    const d = difficulty();
+    const r = Math.random();
+    if(r < 0.34){
+      // Flacher Abschnitt, evtl. Gegner + Münzen
+      const len = 320 + Math.random()*240;
+      platforms.push({x:genX, y:GROUND_Y, w:len, h:H-GROUND_Y, ground:true});
+      if(Math.random() < 0.4+d*0.5) addEnemy(genX+len/2, GROUND_Y, genX+30, genX+len-30, Math.random()<d*0.55);
+      // Bei hoher Schwierigkeit: zweiter Gegner im selben Abschnitt
+      if(d>0.8 && Math.random() < (d-0.6)*0.7) addEnemy(genX+len*0.28, GROUND_Y, genX+30, genX+len-30, Math.random()<d*0.4);
+      if(Math.random() < 0.55) addCoinRow(genX+60, GROUND_Y-56, 3+Math.floor(Math.random()*3));
+      genX += len;
+    }else if(r < 0.62){
+      // Lücke — wird mit Schwierigkeit breiter (mit Doppelsprung gekappt, bleibt schaffbar)
+      const maxGap = abilities.doubleJump ? Math.min(290, 150+d*120) : 130;
+      const gap = 90 + Math.random()*Math.max(20, maxGap-90);
+      addCoinRow(genX+gap*0.3, GROUND_Y-110, 2, gap*0.4);
+      genX += gap;
+      const len = 280 + Math.random()*200;
+      platforms.push({x:genX, y:GROUND_Y, w:len, h:H-GROUND_Y, ground:true});
+      if(Math.random() < 0.3+d*0.3) addEnemy(genX+len/2, GROUND_Y, genX+30, genX+len-30, false);
+      genX += len;
+    }else if(r < 0.84){
+      // Schwebende Plattform über Lücke — höher und schmaler bei mehr Schwierigkeit
+      const gap = 200 + Math.random()*120 + d*60;
+      const py = GROUND_Y - (96 + Math.random()*24 + d*36);
+      const pw = Math.max(72, 130 - d*40 + Math.random()*50);
+      platforms.push({x:genX+gap/2-pw/2, y:py, w:pw, h:24, ground:false});
+      addCoinRow(genX+gap/2-pw/2+20, py-44, 2, 44);
+      genX += gap;
+      const len = 300 + Math.random()*180;
+      platforms.push({x:genX, y:GROUND_Y, w:len, h:H-GROUND_Y, ground:true});
+      genX += len;
+    }else{
+      // Treppen aus Plattformen mit Münzbogen
+      const len = 460 + Math.random()*120;
+      platforms.push({x:genX, y:GROUND_Y, w:len, h:H-GROUND_Y, ground:true});
+      const p1y = GROUND_Y-100, p2y = GROUND_Y-180;
+      const sw = Math.max(80, 110 - d*28);   // Treppen-Plattformen werden schmaler
+      platforms.push({x:genX+110, y:p1y, w:sw, h:24, ground:false});
+      platforms.push({x:genX+270, y:p2y, w:sw, h:24, ground:false});
+      addCoinRow(genX+285, p2y-44, 2, 44);
+      if(Math.random() < 0.4+d*0.5) addEnemy(genX+len-90, GROUND_Y, genX+len-200, genX+len-30, Math.random()<d*0.4);
+      genX += len;
+    }
+  }
+  // Aufräumen hinter der Kamera
+  platforms = platforms.filter(p => p.x+p.w > camX-500);
+  coins = coins.filter(c => c.x > camX-400 && !c.got);
+  enemies = enemies.filter(e => e.x > camX-450 && !e.dead);
+  flags = flags.filter(f => f.x > camX-500 || !f.done);
+}
+
+/* ---------- INPUT -------------------------------------------- */
+const input = { left:false, right:false };
+function tryJump(){
+  if(state!=='play') return;
+  const maxJumps = abilities.doubleJump ? 2 : 1;
+  if(player.onGround || player.coyote>0){
+    player.vy = JUMP_V; player.jumpsUsed = 1; player.onGround=false; player.coyote=0; SND.jump();
+  }else if(player.jumpsUsed < maxJumps){
+    player.vy = JUMP_V*0.92; player.jumpsUsed++; SND.jump();
+    spawnFx(player.x+player.w/2, player.y+player.h, 6, PAL.coin);
+  }
+}
+function tryDash(){
+  if(state!=='play' || !abilities.dash || player.dashCd>0) return;
+  player.dashTime = DASH_DUR; player.dashCd = DASH_CD; SND.dash();
+}
+addEventListener('keydown', e=>{
+  if(state==='question'){ return; }
+  if(['ArrowLeft','ArrowRight','ArrowUp',' '].includes(e.key)) e.preventDefault();
+  if(state!=='play') return;
+  ensureAudio();
+  switch(e.key){
+    case 'ArrowLeft': case 'a': case 'A': input.left=true; break;
+    case 'ArrowRight': case 'd': case 'D': input.right=true; break;
+    case ' ': case 'ArrowUp': case 'w': case 'W': if(!e.repeat) tryJump(); break;
+    case 'Shift': case 'x': case 'X': if(!e.repeat) tryDash(); break;
+    case 's': case 'S': if(abilities.slowmo) slowmoActive=true; break;
+  }
+});
+addEventListener('keyup', e=>{
+  switch(e.key){
+    case 'ArrowLeft': case 'a': case 'A': input.left=false; break;
+    case 'ArrowRight': case 'd': case 'D': input.right=false; break;
+    case 's': case 'S': slowmoActive=false; break;
+  }
+});
+/* Touch */
+if(('ontouchstart' in window) || matchMedia('(pointer:coarse)').matches) document.body.classList.add('touch');
+function bindTouch(id, down, up){
+  const el = $(id);
+  el.addEventListener('pointerdown', e=>{ e.preventDefault(); ensureAudio(); down(); });
+  el.addEventListener('pointerup', e=>{ e.preventDefault(); up&&up(); });
+  el.addEventListener('pointerleave', ()=>{ up&&up(); });
+  el.addEventListener('pointercancel', ()=>{ up&&up(); });
+}
+bindTouch('tLeft', ()=>input.left=true, ()=>input.left=false);
+bindTouch('tRight', ()=>input.right=true, ()=>input.right=false);
+bindTouch('tJump', tryJump);
+bindTouch('tDash', tryDash);
+bindTouch('tSlow', ()=>{ if(abilities.slowmo) slowmoActive=true; }, ()=>slowmoActive=false);
+
+/* ---------- PHYSIK & UPDATE ---------------------------------- */
+function update(dt){
+  player.anim += dt*10;
+
+  // Dash
+  if(player.dashCd>0) player.dashCd -= dt;
+  if(player.dashTime>0){
+    player.dashTime -= dt;
+    player.vx = player.facing * DASH_SPD;
+    player.vy = Math.min(player.vy, 0);
+    if(!REDUCE_MOTION && Math.random()<.5) spawnFx(player.x+player.w/2-player.facing*20, player.y+player.h/2, 1, PAL.player);
+  }else{
+    player.vx = (input.right?MOVE_SPD:0) - (input.left?MOVE_SPD:0);
+    if(player.vx>0) player.facing=1; else if(player.vx<0) player.facing=-1;
+    player.vy += GRAVITY*dt;
+  }
+  player.vy = Math.min(player.vy, 1100);
+
+  // Bewegung + Kollision
+  player.x += player.vx*dt;
+  if(player.x < camX) player.x = camX;
+  const wasOnGround = player.onGround;
+  player.y += player.vy*dt;
+  player.onGround = false;
+  for(const p of platforms){
+    if(player.x+player.w > p.x && player.x < p.x+p.w){
+      // Landung von oben
+      if(player.vy >= 0 && player.y+player.h > p.y && player.y+player.h < p.y + Math.max(28, player.vy*dt+12)){
+        player.y = p.y-player.h; player.vy = 0; player.onGround = true; player.jumpsUsed = 0;
+      }
+    }
+  }
+  if(wasOnGround && !player.onGround) player.coyote = .09;
+  else if(player.onGround) player.coyote = 0;
+  else player.coyote = Math.max(0, player.coyote-dt);
+
+  // Kamera & Welt
+  camX = Math.max(camX, player.x-280);
+  generateUntil(camX + W + 1200);
+  distanceMax = Math.max(distanceMax, player.x);
+
+  // In die Grube gefallen
+  if(player.y > H+80) damage(true);
+
+  // Unverwundbarkeit
+  if(player.invuln>0) player.invuln -= dt;
+
+  // Zeitlupen-Energie
+  if(slowmoActive && abilities.slowmo && energy>0){
+    energy = Math.max(0, energy - dt/timeScale()*38);
+    if(energy<=0) slowmoActive=false;
+  }else{
+    energy = Math.min(100, energy + dt/timeScale()*10);
+  }
+
+  // Münzen
+  for(const c of coins){
+    c.t += dt*4;
+    if(!c.got && Math.abs(player.x+player.w/2-c.x)<26 && Math.abs(player.y+player.h/2-c.y)<30){
+      c.got = true; score += 10; SND.coin(); spawnFx(c.x, c.y, 6, PAL.coin); updateHud();
+    }
+  }
+
+  // Gegner — lineare Patrouille (konstante px/s)
+  for(const e of enemies){
+    if(e.dead) continue;
+    e.t += dt;
+    e.x += e.dir*e.speed*dt;
+    if(e.x < e.minX){ e.x=e.minX; e.dir=1; }
+    if(e.x > e.maxX){ e.x=e.maxX; e.dir=-1; }
+    if(e.type==='flyer') e.y = e.baseY + Math.sin(e.t*2.2)*32;
+    // Kollision Spieler
+    if(player.x+player.w > e.x+4 && player.x < e.x+e.w-4 && player.y+player.h > e.y+4 && player.y < e.y+e.h-4){
+      const stomp = player.vy > 60 && (player.y+player.h - e.y) < 20;
+      if(stomp || player.dashTime>0){
+        e.dead = true; score += 50; SND.stomp(); spawnFx(e.x+e.w/2, e.y+e.h/2, 10, PAL.enemy);
+        if(stomp) player.vy = -460;
+        updateHud();
+      }else if(player.invuln<=0){
+        damage(false, e);
+      }
+    }
+  }
+
+  // Checkpoint-Flagge erreicht?
+  for(const f of flags){
+    if(!f.done && player.x+player.w > f.x-6){
+      openQuestion(f);
+      break;
+    }
+  }
+
+  // Score = Distanz + Boni
+  score = Math.max(score, 0);
+  updateProgress();
+}
+
+function timeScale(){ return (slowmoActive && abilities.slowmo && energy>0) ? 0.4 : 1; }
+
+function damage(fell, enemy){
+  if(player.invuln>0 && !fell) return;
+  if(shield && !fell){
+    shield = false; player.invuln = 1.2; SND.shield();
+    spawnFx(player.x+player.w/2, player.y+player.h/2, 12, PAL.shield);
+    updateHud(); return;
+  }
+  hearts--; SND.hurt(); streak = 0;
+  if(!REDUCE_MOTION){
+    const wrap = $('canvasWrap');
+    wrap.style.transition='transform .08s'; wrap.style.transform='translateX(-8px)';
+    setTimeout(()=>{ wrap.style.transform='translateX(8px)'; },80);
+    setTimeout(()=>{ wrap.style.transform='none'; },160);
+  }
+  updateHud();
+  if(hearts<=0){ gameOver(); return; }
+  if(fell){
+    // Respawn: auf sicherem Boden nahe der Kamera (nie über einer Grube)
+    let rx = Math.max(checkpointX, camX+60);
+    let safe = null;
+    for(const p of platforms){
+      if(p.ground && p.x+p.w > camX+60 && (safe===null || p.x < safe.x)) safe = p;
+    }
+    if(safe) rx = Math.min(Math.max(rx, safe.x+30), safe.x+safe.w-60);
+    player.x = rx; player.y = GROUND_Y-200; player.vy = 0; player.invuln = 1.5;
+  }else{
+    player.invuln = 1.5;
+    player.vy = -360; player.x += (player.x+player.w/2 < enemy.x+enemy.w/2 ? -40 : 40);
+  }
+}
+
+/* ---------- CHECKPOINT-FRAGEN -------------------------------- */
+function nextQuestion(){
+  // Schwierigkeit steigt mit jedem Checkpoint: Tier 1 (leicht) → Tier 4 (schwer).
+  // Tier 1–2 = Multiple Choice, Tier 3–4 = Tippen. C1 & C2 gemischt.
+  const tier = tierFor(cpPassed);
+  const pool = qPools[tier];
+  if(qIdx[tier] >= pool.length){ qPools[tier] = shuffled(pool); qIdx[tier] = 0; }
+  const d = qPools[tier][qIdx[tier]++];
+  return { type:d.type, data:d };
+}
+
+function openQuestion(flag){
+  state = 'question';
+  questionFlag = flag;
+  qSolved = false;
+  attemptNum = 1;
+  input.left = input.right = false; slowmoActive = false;
+  showQuestion(nextQuestion(), 1);
+  $('modalOverlay').classList.add('show');
+}
+
+function showQuestion(q, attempt){
+  currentQ = q;
+  const d = q.data;
+  $('qCat').textContent = d.cat;
+  $('qFormat').textContent = q.type==='mc' ? 'MULTIPLE CHOICE' : 'TIPPEN';
+  $('feedbackBox').className = ''; $('feedbackBox').style.display='none';
+  $('modalActions').style.display = 'none';
+  $('attemptInfo').textContent = attempt>1 ? '⚠ '+attempt+'. Versuch — du schaffst das!' : '';
+  $('questionCard').classList.remove('shake');
+
+  if(q.type==='mc'){
+    $('qInstr').textContent = d.instr;
+    $('qSentence').textContent = d.q;
+    $('typeArea').style.display='none';
+    const box = $('answers'); box.innerHTML=''; box.style.display='grid';
+    // Antworten mischen, korrekten Index merken
+    const order = shuffled(d.options.map((_,i)=>i));
+    order.forEach(idx=>{
+      const b = document.createElement('button');
+      b.className='answer-btn'; b.textContent = d.options[idx];
+      b.addEventListener('click', ()=>{ ensureAudio(); answerMC(b, idx===d.correct); });
+      box.appendChild(b);
+    });
+  }else{
+    $('qInstr').textContent = 'Achte auf das Signalwort! Schreibe die fehlende Form ins Feld (z.B. „have seen“ oder „went“):';
+    $('qSentence').textContent = d.q;
+    $('answers').style.display='none';
+    $('typeArea').style.display='block';
+    const inp = $('typeInput');
+    inp.value=''; inp.disabled=false;
+    setTimeout(()=>inp.focus(), 50);
+  }
+}
+
+function normalize(s){
+  return s.toLowerCase().replace(/[.,!?']/g,'').replace(/\s+/g,' ').trim();
+}
+function checkTyped(){
+  const d = currentQ.data;
+  const val = normalize($('typeInput').value);
+  if(!val) return null;
+  return d.accept.some(a => normalize(a) === val);
+}
+
+function answerMC(btn, correct){
+  if(qSolved) return;
+  document.querySelectorAll('.answer-btn').forEach(b=>b.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  handleResult(correct);
+}
+$('typeSubmit').addEventListener('click', ()=>{ ensureAudio(); submitTyped(); });
+$('typeInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ ensureAudio(); submitTyped(); } });
+function submitTyped(){
+  if(qSolved || state!=='question') return;
+  const ok = checkTyped();
+  if(ok===null) return;
+  $('typeInput').disabled = true;
+  handleResult(ok);
+}
+
+let attemptNum = 1;
+function handleResult(correct){
+  const d = currentQ.data;
+  const fb = $('feedbackBox');
+  if(correct){
+    qSolved = true;
+    SND.correct();
+    confettiBurst();
+    streak++;
+    score += 100;
+    let msg = '✅ RICHTIG! +100 Punkte';
+    shield = true;
+    msg += ' · 🛡 Schild aufgeladen!';
+    if(streak>0 && streak%3===0 && hearts<3){ hearts++; msg += ' · ❤️ Extra-Herz!'; }
+    fb.className='good'; fb.innerHTML = msg;
+    $('modalActions').style.display='flex';
+    $('attemptInfo').textContent='';
+    setTimeout(()=>$('continueBtn').focus(), 50);
+  }else{
+    SND.wrong();
+    hearts--;
+    streak = 0;
+    updateHud();
+    if(!REDUCE_MOTION) $('questionCard').classList.add('shake');
+    const solution = currentQ.type==='mc' ? d.options[d.correct] : d.show;
+    fb.className='bad';
+    fb.innerHTML = '❌ <b>Leider falsch.</b> 💔 Ein Herz verloren!<br>'+ d.expl +'<br><b>Richtig wäre:</b> '+ solution +'<br>'+ RULE_HINT;
+    if(hearts<=0){
+      setTimeout(()=>{ closeModal(); gameOver(); }, 2600);
+      return;
+    }
+    // Neue Frage, nächster Versuch
+    attemptNum++;
+    setTimeout(()=>{ showQuestion(nextQuestion(), attemptNum); }, 3200);
+  }
+  updateHud();
+}
+
+$('continueBtn').addEventListener('click', ()=>{
+  ensureAudio(); SND.button();
+  closeModal();
+  questionFlag.done = true;
+  checkpointX = questionFlag.x;
+  cpPassed++;
+  attemptNum = 1;
+  $('levelLabel').textContent = 'ZONE '+(cpPassed+1)+' · '+'★'.repeat(tierFor(cpPassed));
+  // Fähigkeiten freischalten
+  if(cpPassed===1 && !abilities.doubleJump){ abilities.doubleJump=true; unlockToast('⬆⬆ DOPPELSPRUNG freigeschaltet! Drück 2× Springen!'); }
+  else if(cpPassed===2 && !abilities.dash){ abilities.dash=true; unlockToast('⚡ DASH freigeschaltet! Shift / X / ⚡-Button!'); }
+  else if(cpPassed===3 && !abilities.slowmo){ abilities.slowmo=true; unlockToast('🐌 ZEITLUPE freigeschaltet! Halte S gedrückt!'); }
+  else { SND.levelUp(); }
+  state = 'play';
+  updateHud();
+});
+function closeModal(){ $('modalOverlay').classList.remove('show'); }
+function unlockToast(msg){
+  SND.levelUp();
+  confettiBurst();
+  const t = $('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+/* ---------- HUD ----------------------------------------------- */
+function updateHud(){
+  $('scoreBox').textContent = Math.floor(score + distanceMax/10);
+  $('hearts').textContent = '❤️'.repeat(Math.max(0,hearts)) + '🖤'.repeat(Math.max(0,3-hearts));
+  $('abJump').classList.toggle('on', abilities.doubleJump);
+  $('abDash').classList.toggle('on', abilities.dash);
+  $('abSlow').classList.toggle('on', abilities.slowmo);
+  $('abShield').classList.toggle('on', shield);
+}
+function updateProgress(){
+  let next = null;
+  for(const f of flags){ if(!f.done && (next===null || f.x<next)) next = f.x; }
+  if(next===null) next = nextFlagX;
+  const span = next - checkpointX;
+  const pct = span>0 ? Math.min(100, Math.max(0,(player.x-checkpointX)/span*100)) : 0;
+  $('progressFill').style.width = pct+'%';
+  $('energyFill').style.width = energy+'%';
+  $('scoreBox').textContent = Math.floor(score + distanceMax/10);
+}
+
+/* ---------- GAME OVER ------------------------------------------ */
+function gameOver(){
+  state = 'gameover';
+  const total = Math.floor(score + distanceMax/10);
+  const dist = Math.floor(distanceMax/10);
+  const best = Math.max(total, parseInt(localStorage.getItem('ppVsPastHeroBest')||'0',10));
+  localStorage.setItem('ppVsPastHeroBest', best);
+  $('overScore').textContent = 'Score: '+total;
+  $('overStats').innerHTML = '🏃 Distanz: <b>'+dist+' m</b> · 🚩 Checkpoints: <b>'+cpPassed+'</b><br>🏆 Bester Score: <b>'+best+'</b>';
+  $('overTitle').textContent = total>=best && total>0 ? '🏆 NEUER REKORD!' : '💥 GAME OVER';
+  $('overScreen').style.display='flex';
+}
+
+/* ---------- PARTIKEL & KONFETTI -------------------------------- */
+function spawnFx(x, y, n, color){
+  if(REDUCE_MOTION) return;
+  for(let i=0;i<n;i++){
+    fxParticles.push({x, y, vx:(Math.random()-.5)*260, vy:-Math.random()*260, life:.5+Math.random()*.3, color});
+  }
+}
+let confetti = [];
+const CONFETTI_STD = ['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const CONFETTI_PSY = ['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+function confettiBurst(){
+  if(REDUCE_MOTION) return;
+  const colors = psyMode ? CONFETTI_PSY : CONFETTI_STD;
+  const cx = innerWidth/2, cy = innerHeight/2;
+  for(let i=0;i<32;i++){
+    confetti.push({
+      x:cx, y:cy, vx:(Math.random()-.5)*700, vy:-200-Math.random()*450,
+      w:6+Math.random()*8, h:4+Math.random()*6, rot:Math.random()*6.28, vr:(Math.random()-.5)*12,
+      color:colors[i%colors.length], life:1.4
+    });
+  }
+}
+function drawConfetti(dt){
+  fctx.clearRect(0,0,fxCanvas.width,fxCanvas.height);
+  confetti = confetti.filter(c=>c.life>0);
+  for(const c of confetti){
+    c.life -= dt; c.vy += 900*dt; c.x += c.vx*dt; c.y += c.vy*dt; c.rot += c.vr*dt;
+    fctx.save(); fctx.translate(c.x,c.y); fctx.rotate(c.rot);
+    fctx.globalAlpha = Math.min(1, c.life);
+    fctx.fillStyle = c.color; fctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);
+    fctx.restore();
+  }
+  fctx.globalAlpha = 1;
+}
+
+/* ---------- RENDER ---------------------------------------------- */
+let psyHue = 0;
+function render(dt){
+  psyHue = (psyHue + 120*dt) % 360;
+
+  // Himmel
+  const sky = ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,PAL.skyTop); sky.addColorStop(1,PAL.skyBot);
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
+
+  // Psychedelic Sterne
+  if(psyMode){
+    for(const s of psyStars){
+      s.tw += dt*3;
+      ctx.globalAlpha = .4 + Math.sin(s.tw)*.4;
+      ctx.fillStyle = PAL.star;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.28); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Wolken (Parallax)
+  ctx.fillStyle = PAL.cloud;
+  for(const c of clouds){
+    let cx = ((c.x - camX*c.s) % 1700 + 1700) % 1700 - 100;
+    ctx.globalAlpha = psyMode ? .5 : .9;
+    ctx.beginPath();
+    ctx.ellipse(cx, c.y, c.w*.5, c.w*.22, 0, 0, 6.28);
+    ctx.ellipse(cx+c.w*.3, c.y-8, c.w*.3, c.w*.18, 0, 0, 6.28);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Hügel (Parallax)
+  ctx.fillStyle = PAL.hill1;
+  for(let i=-1;i<4;i++){
+    const hx = ((camX*.3)%500)*-1 + i*500;
+    ctx.beginPath(); ctx.ellipse(hx+250, GROUND_Y+90, 320, 150, 0, Math.PI, 0); ctx.fill();
+  }
+
+  ctx.save();
+  ctx.translate(-camX, 0);
+
+  // Plattformen
+  for(const p of platforms){
+    if(p.x+p.w < camX-50 || p.x > camX+W+50) continue;
+    ctx.fillStyle = p.ground ? PAL.ground : PAL.plat;
+    rrect(p.x, p.y, p.w, p.h, p.ground?0:10); ctx.fill();
+    ctx.fillStyle = p.ground ? PAL.grass : PAL.platTop;
+    rrect(p.x, p.y, p.w, 12, p.ground?0:10); ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = PAL.outline;
+    rrect(p.x, p.y, p.w, p.h, p.ground?0:10); ctx.stroke();
+  }
+
+  // Flaggen
+  for(const f of flags){
+    if(f.x < camX-60 || f.x > camX+W+60) continue;
+    ctx.fillStyle = PAL.flagPole;
+    ctx.fillRect(f.x-3, f.y-120, 6, 120);
+    ctx.fillStyle = f.done ? PAL.grass : PAL.flag;
+    ctx.beginPath();
+    const wave = REDUCE_MOTION ? 0 : Math.sin(performance.now()/300)*4;
+    ctx.moveTo(f.x+3, f.y-120);
+    ctx.lineTo(f.x+58+wave, f.y-104);
+    ctx.lineTo(f.x+3, f.y-88);
+    ctx.closePath(); ctx.fill();
+    ctx.lineWidth=2.5; ctx.strokeStyle=PAL.outline; ctx.stroke();
+    ctx.font = '16px Nunito'; ctx.textAlign='center';
+    ctx.fillStyle = PAL.text;
+    ctx.fillText(f.done?'✔':'?', f.x+26+wave/2, f.y-99);
+  }
+
+  // Münzen
+  for(const c of coins){
+    if(c.got || c.x < camX-30 || c.x > camX+W+30) continue;
+    const bob = REDUCE_MOTION ? 0 : Math.sin(c.t)*4;
+    ctx.fillStyle = PAL.coin;
+    if(psyMode){ ctx.shadowColor = PAL.coin; ctx.shadowBlur = 12; }
+    ctx.beginPath(); ctx.arc(c.x, c.y+bob, c.r, 0, 6.28); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth=3; ctx.strokeStyle=PAL.coinEdge; ctx.stroke();
+    ctx.fillStyle = PAL.coinEdge; ctx.font='bold 13px Nunito'; ctx.textAlign='center';
+    ctx.fillText('P', c.x, c.y+bob+5);
+  }
+
+  // Gegner
+  for(const e of enemies){
+    if(e.dead || e.x < camX-50 || e.x > camX+W+50) continue;
+    const col = e.type==='flyer' ? PAL.enemy2 : PAL.enemy;
+    if(psyMode){ ctx.shadowColor = col; ctx.shadowBlur = 14; }
+    ctx.fillStyle = col;
+    rrect(e.x, e.y, e.w, e.h, 10); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth=3; ctx.strokeStyle=PAL.outline; rrect(e.x, e.y, e.w, e.h, 10); ctx.stroke();
+    // Augen (böse)
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(e.x+10, e.y+11, 5, 0, 6.28); ctx.arc(e.x+e.w-10, e.y+11, 5, 0, 6.28); ctx.fill();
+    ctx.fillStyle='#1F2937';
+    const look = e.dir*2;
+    ctx.beginPath(); ctx.arc(e.x+10+look, e.y+11, 2.4, 0, 6.28); ctx.arc(e.x+e.w-10+look, e.y+11, 2.4, 0, 6.28); ctx.fill();
+    ctx.strokeStyle='#1F2937'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(e.x+5, e.y+5); ctx.lineTo(e.x+14, e.y+8); ctx.moveTo(e.x+e.w-5, e.y+5); ctx.lineTo(e.x+e.w-14, e.y+8); ctx.stroke();
+    if(e.type==='flyer'){
+      const fl = REDUCE_MOTION ? 0 : Math.sin(e.t*14)*6;
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.ellipse(e.x-6, e.y+8+fl, 10, 5, -.5, 0, 6.28); ctx.ellipse(e.x+e.w+6, e.y+8-fl, 10, 5, .5, 0, 6.28); ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=PAL.outline;
+      ctx.beginPath(); ctx.ellipse(e.x-6, e.y+8+fl, 10, 5, -.5, 0, 6.28); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(e.x+e.w+6, e.y+8-fl, 10, 5, .5, 0, 6.28); ctx.stroke();
+    }
+  }
+
+  // Spieler
+  const blink = player.invuln>0 && Math.floor(performance.now()/100)%2===0;
+  if(!blink){
+    const px=player.x, py=player.y, pw=player.w, ph=player.h;
+    if(psyMode){ ctx.shadowColor = PAL.player; ctx.shadowBlur = 16; }
+    // Schild-Ring
+    if(shield){
+      ctx.globalAlpha=.5; ctx.lineWidth=4; ctx.strokeStyle=PAL.shield;
+      ctx.beginPath(); ctx.arc(px+pw/2, py+ph/2, 36 + (REDUCE_MOTION?0:Math.sin(performance.now()/200)*3), 0, 6.28); ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+    // Körper
+    ctx.fillStyle = PAL.player;
+    rrect(px, py+8, pw, ph-8, 12); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.lineWidth=3; ctx.strokeStyle=PAL.outline; rrect(px, py+8, pw, ph-8, 12); ctx.stroke();
+    // Kappe
+    ctx.fillStyle = PAL.playerCap;
+    ctx.beginPath(); ctx.ellipse(px+pw/2, py+10, pw/2+3, 9, 0, Math.PI, 0); ctx.fill();
+    ctx.fillRect(px+pw/2-3+player.facing*8, py+4, 14, 5);
+    ctx.lineWidth=2.5; ctx.strokeStyle=PAL.outline;
+    ctx.beginPath(); ctx.ellipse(px+pw/2, py+10, pw/2+3, 9, 0, Math.PI, 0); ctx.stroke();
+    // Augen
+    const eyeX = px+pw/2 + player.facing*6;
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(eyeX-6, py+22, 5.5, 0, 6.28); ctx.arc(eyeX+6, py+22, 5.5, 0, 6.28); ctx.fill();
+    ctx.fillStyle='#1F2937';
+    ctx.beginPath(); ctx.arc(eyeX-6+player.facing*2, py+22, 2.6, 0, 6.28); ctx.arc(eyeX+6+player.facing*2, py+22, 2.6, 0, 6.28); ctx.fill();
+    // Lächeln
+    ctx.strokeStyle='#1F2937'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.arc(eyeX, py+30, 6, .2, Math.PI-.2); ctx.stroke();
+    // Beine (Lauf-Animation)
+    const leg = player.onGround && Math.abs(player.vx)>10 && !REDUCE_MOTION ? Math.sin(player.anim*2)*5 : 0;
+    ctx.fillStyle = PAL.outline;
+    rrect(px+6, py+ph-4+leg*0.5, 9, 6, 3); ctx.fill();
+    rrect(px+pw-15, py+ph-4-leg*0.5, 9, 6, 3); ctx.fill();
+  }
+
+  // Partikel
+  fxParticles = fxParticles.filter(p=>p.life>0);
+  for(const p of fxParticles){
+    p.life -= dt; p.vy += 1200*dt; p.x += p.vx*dt; p.y += p.vy*dt;
+    ctx.globalAlpha = Math.max(0, p.life*2);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x-3, p.y-3, 6, 6);
+  }
+  ctx.globalAlpha = 1;
+
+  ctx.restore();
+
+  // Zeitlupen-Vignette
+  if(slowmoActive && abilities.slowmo && energy>0){
+    ctx.fillStyle = 'rgba(147,51,234,0.12)';
+    ctx.fillRect(0,0,W,H);
+  }
+}
+function rrect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* ---------- MAIN LOOP ------------------------------------------- */
+function loop(t){
+  const rawDt = Math.min(0.033, (t-lastTime)/1000 || 0.016);
+  lastTime = t;
+  if(state==='play'){
+    update(rawDt * timeScale());
+  }
+  if(state==='play' || state==='question'){
+    render(rawDt);
+  }
+  drawConfetti(rawDt);
+  requestAnimationFrame(loop);
+}
+
+/* ---------- SCREEN-WECHSEL --------------------------------------- */
+function showStart(){
+  state = 'start';
+  $('overScreen').style.display='none';
+  $('startScreen').style.display='flex';
+  $('game').classList.remove('active');
+  closeModal();
+}
+function startGame(){
+  ensureAudio(); SND.levelUp();
+  resetGame();
+  $('startScreen').style.display='none';
+  $('overScreen').style.display='none';
+  $('game').classList.add('active');
+  $('levelLabel').textContent = 'ZONE 1 · ★';
+  state = 'play';
+}
+$('startBtn').addEventListener('click', startGame);
+$('retryBtn').addEventListener('click', startGame);
+$('menuBtn').addEventListener('click', ()=>{ SND.button(); showStart(); });
+$('backBtn').addEventListener('click', ()=>{ ensureAudio(); SND.button(); showStart(); });
+
+/* ---------- BOOT: Splash 1s → Start ------------------------------- */
+setTimeout(()=>{
+  $('splash').style.transition='opacity .4s';
+  $('splash').style.opacity='0';
+  setTimeout(()=>{ $('splash').style.display='none'; showStart(); }, 400);
+}, 1000);
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="City Surfer: Irregular Verbs">
+  <meta name="lernspiel:thema"        content="Irregular Verbs">
+  <meta name="lernspiel:stufe"        content="6. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Surf durch die Stadt und meistere die unregelmäßigen Verben.">
+<title>City Surfer 🏄 — Irregular Verbs | School Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============ THEME-VARIABLEN ============ */
+:root[data-theme="standard"] {
+  --bg-main: #FFF9F0;
+  --bg-card: #FFFFFF;
+  --bg-dark: #1E1B4B;
+  --primary-blue: #2563EB;
+  --primary-yellow: #FACC15;
+  --primary-green: #16A34A;
+  --primary-red: #DC2626;
+  --primary-purple: #9333EA;
+  --accent-orange: #F97316;
+  --accent-pink: #EC4899;
+  --accent-teal: #0D9488;
+  --success: #22C55E;
+  --error: #EF4444;
+  --text-dark: #1F2937;
+  --text-light: #F9FAFB;
+  --border-col: #E5E7EB;
+  --shadow-card: 4px 4px 0px #1F2937;
+  --shadow-button: 3px 3px 0px rgba(0,0,0,0.3);
+  --header-bg: #FFFFFF;
+  --quiz-input-bg: #FFF9F0;
+}
+:root[data-theme="psychedelic"] {
+  --bg-main: #000000;
+  --bg-card: #0D001A;
+  --bg-dark: #000000;
+  --primary-blue: #00FFFF;
+  --primary-yellow: #FFFF00;
+  --primary-green: #00FF41;
+  --primary-red: #FF0033;
+  --primary-purple: #BF00FF;
+  --accent-orange: #FF6600;
+  --accent-pink: #FF00FF;
+  --accent-teal: #00FFFF;
+  --success: #00FF41;
+  --error: #FF0033;
+  --text-dark: #F9FAFB;
+  --text-light: #F9FAFB;
+  --border-col: #BF00FF;
+  --shadow-card: 0 0 20px #FF00FF, 0 0 40px #BF00FF;
+  --shadow-button: 0 0 12px #00FFFF, 0 0 24px #00FFFF;
+  --header-bg: #0D001A;
+  --quiz-input-bg: #1a0033;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-main);
+  font-family: "Nunito", "Quicksand", sans-serif;
+  color: var(--text-dark);
+  touch-action: none;
+  transition: background 0.6s;
+}
+
+button { font-family: "Fredoka One", "Nunito", "Comic Sans MS", sans-serif; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-orange); outline-offset: 2px; }
+
+/* ============ SPLASH ============ */
+#splash {
+  position: fixed; inset: 0; z-index: 100;
+  background: #1E1B4B;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px;
+}
+#splash .logo {
+  font-family: "Fredoka One", sans-serif;
+  font-size: 36px;
+  color: #9333EA;
+  animation: splashPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#splash .star { font-size: 64px; animation: splashSpin 1s ease; }
+@keyframes splashPop { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes splashSpin { from { transform: rotate(-180deg) scale(0); } to { transform: rotate(0) scale(1); } }
+
+/* ============ LAYOUT ============ */
+#app {
+  height: 100%;
+  display: flex; flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 8px;
+  gap: 8px;
+}
+
+header {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--header-bg);
+  border: 4px solid var(--text-dark);
+  border-radius: 16px;
+  padding: 8px 16px;
+  box-shadow: var(--shadow-card);
+  min-height: 64px;
+  flex-shrink: 0;
+}
+:root[data-theme="psychedelic"] header { border-color: var(--primary-purple); }
+
+#backBtn {
+  width: 48px; height: 48px;
+  border-radius: 16px;
+  border: none;
+  background: var(--primary-red);
+  color: #fff;
+  font-size: 24px;
+  box-shadow: 3px 3px 0px #7F1D1D;
+  transition: transform 0.15s;
+}
+#backBtn:hover { transform: scale(1.05); }
+#backBtn:active { transform: translate(2px,2px); box-shadow: none; }
+
+#titleBox { flex: 1; text-align: center; min-width: 0; }
+#titleBox h1 {
+  font-family: "Fredoka One", sans-serif;
+  font-size: 22px;
+  color: var(--primary-blue);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#levelLabel { font-weight: 800; font-size: 13px; color: var(--accent-orange); letter-spacing: 0.03em; }
+
+#scoreChip {
+  background: var(--primary-yellow);
+  color: #1F2937;
+  font-family: "Fredoka One", sans-serif;
+  font-size: 18px;
+  border-radius: 999px;
+  padding: 8px 16px;
+  border: 2px solid var(--text-dark);
+  min-width: 88px; text-align: center;
+}
+:root[data-theme="psychedelic"] #scoreChip { box-shadow: 0 0 12px var(--primary-yellow); border-color: var(--primary-yellow); }
+
+.iconBtn {
+  width: 48px; height: 48px;
+  border-radius: 999px;
+  border: 2px solid var(--text-dark);
+  background: var(--bg-card);
+  font-size: 22px;
+  transition: transform 0.15s;
+}
+.iconBtn:hover { transform: scale(1.05); }
+:root[data-theme="psychedelic"] .iconBtn { border-color: var(--accent-pink); box-shadow: 0 0 8px var(--accent-pink); }
+
+/* ============ SPIELBEREICH ============ */
+#gameWrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-card);
+  border: 4px solid var(--text-dark);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+:root[data-theme="psychedelic"] #gameWrap { border-color: var(--primary-purple); }
+canvas { display: block; width: 100%; height: 100%; }
+
+#gameWrap.shake { animation: shakeAnim 0.2s 3; }
+@keyframes shakeAnim {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* ============ FOOTER ============ */
+footer {
+  flex-shrink: 0;
+  background: var(--header-bg);
+  border: 4px solid var(--text-dark);
+  border-radius: 16px;
+  padding: 8px 16px;
+  box-shadow: var(--shadow-card);
+  display: flex; align-items: center; gap: 16px;
+}
+:root[data-theme="psychedelic"] footer { border-color: var(--primary-purple); }
+
+#hearts { font-size: 22px; letter-spacing: 2px; white-space: nowrap; }
+#progressOuter {
+  flex: 1; height: 24px;
+  background: var(--border-col);
+  border-radius: 999px;
+  border: 2px solid var(--text-dark);
+  overflow: hidden;
+}
+#progressInner {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--primary-green), var(--primary-yellow));
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+:root[data-theme="psychedelic"] #progressInner { background: linear-gradient(90deg, #FF00FF, #00FFFF); box-shadow: 0 0 12px #FF00FF; }
+#progressLabel { font-weight: 800; font-size: 13px; white-space: nowrap; }
+
+/* ============ OVERLAYS ============ */
+.overlay {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(30, 27, 75, 0.75);
+  padding: 16px;
+}
+.overlay.hidden { display: none; }
+
+.card {
+  background: var(--bg-card);
+  border: 4px solid var(--text-dark);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  animation: cardIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+:root[data-theme="psychedelic"] .card { border-color: var(--accent-pink); }
+@keyframes cardIn { from { transform: scale(0.5) translateY(40px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+.card h2 { font-family: "Fredoka One", sans-serif; font-size: 28px; color: var(--primary-purple); margin-bottom: 8px; }
+.card p { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+
+.bigBtn {
+  display: inline-block;
+  min-height: 56px;
+  padding: 8px 32px;
+  font-size: 22px;
+  color: #fff;
+  background: var(--primary-blue);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0px #1E3A8A;
+  transition: transform 0.15s;
+  margin-top: 16px;
+}
+.bigBtn:hover { transform: scale(1.05); }
+.bigBtn:active { transform: translate(2px,2px); box-shadow: none; }
+.bigBtn.green { background: var(--primary-green); box-shadow: 4px 4px 0px #14532D; }
+:root[data-theme="psychedelic"] .bigBtn { box-shadow: var(--shadow-button); }
+
+/* Quiz */
+#quizVerb {
+  font-family: "Fredoka One", sans-serif;
+  font-size: 40px;
+  color: var(--accent-orange);
+  margin: 8px 0 0;
+}
+#quizDe { font-size: 16px; font-weight: 700; color: var(--accent-teal); margin-bottom: 16px; }
+.quizRow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; text-align: left; }
+.quizRow label { flex: 0 0 136px; font-weight: 800; font-size: 16px; }
+.quizRow input {
+  flex: 1; min-width: 0;
+  height: 48px;
+  font-family: "Nunito", sans-serif;
+  font-size: 20px; font-weight: 800;
+  text-align: center;
+  border: 3px solid var(--border-col);
+  border-radius: 16px;
+  background: var(--quiz-input-bg);
+  color: var(--text-dark);
+}
+.quizRow input.ok { border-color: var(--success); background: rgba(34,197,94,0.15); }
+.quizRow input.bad { border-color: var(--error); background: rgba(239,68,68,0.15); animation: shakeAnim 0.2s 3; }
+#quizFeedback { min-height: 24px; font-weight: 900; font-size: 18px; margin-top: 8px; }
+#quizFeedback.good { color: var(--success); }
+#quizFeedback.badTxt { color: var(--error); }
+
+/* Countdown */
+#countdownNum {
+  font-family: "Fredoka One", sans-serif;
+  font-size: 120px;
+  color: var(--primary-yellow);
+  text-shadow: 4px 4px 0 #1F2937;
+  animation: countPop 0.9s ease infinite;
+}
+@keyframes countPop { 0% { transform: scale(0.3); opacity: 0; } 40% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 0.9; } }
+#countdownWrap { background: transparent; pointer-events: none; }
+#speedUpMsg { font-family: "Fredoka One", sans-serif; font-size: 26px; color: #fff; text-shadow: 3px 3px 0 #1F2937; }
+
+/* Level-Up Banner */
+#levelUpBanner {
+  position: absolute; top: 24px; left: 50%; z-index: 9;
+  transform: translateX(-50%);
+  font-family: "Fredoka One", sans-serif;
+  font-size: 32px;
+  color: var(--primary-yellow);
+  text-shadow: 3px 3px 0 #1F2937, 0 0 24px rgba(250,204,21,0.8);
+  pointer-events: none;
+  opacity: 0;
+}
+#levelUpBanner.show { animation: levelUp 1.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes levelUp {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.3); }
+  20% { opacity: 1; transform: translateX(-50%) scale(1.3); }
+  40% { transform: translateX(-50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(1) translateY(-24px); }
+}
+
+.kbd {
+  display: inline-block;
+  background: var(--border-col);
+  color: #1F2937;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-weight: 900;
+  font-size: 14px;
+  border: 2px solid #9CA3AF;
+}
+.hintTable { margin: 8px auto 0; font-size: 15px; font-weight: 700; text-align: left; border-spacing: 0 4px; }
+.hintTable td { padding: 0 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 520px) {
+  #titleBox h1 { font-size: 16px; }
+  .quizRow label { flex-basis: 110px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="star">🌟</div>
+  <div class="logo">School Games 🎓</div>
+</div>
+
+<div id="app">
+  <header>
+    <button id="backBtn" aria-label="Zurück" onclick="history.back()">←</button>
+    <div id="titleBox">
+      <h1>City Surfer 🏄</h1>
+      <div id="levelLabel">Level 1</div>
+    </div>
+    <div id="scoreChip">0</div>
+    <button class="iconBtn" id="soundBtn" aria-label="Sound an/aus">🔊</button>
+    <button class="iconBtn" id="psyBtn" aria-label="Psychedelic Mode">🌈</button>
+  </header>
+
+  <div id="gameWrap">
+    <canvas id="gameCanvas"></canvas>
+    <div id="levelUpBanner">LEVEL UP! ⚡</div>
+
+    <!-- START -->
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <h2>City Surfer 🏄</h2>
+        <p>Surfe durch die Stadt, weiche Hindernissen aus und knacke die <b>Irregular Verbs</b> an den ❓-Toren!</p>
+        <table class="hintTable">
+          <tr><td><span class="kbd">←</span> <span class="kbd">→</span></td><td>Spur wechseln (geht auch in der Luft! 🪂)</td></tr>
+          <tr><td><span class="kbd">↑</span> / <span class="kbd">Leertaste</span></td><td>Springen 🦘</td></tr>
+          <tr><td><span class="kbd">↓</span></td><td>Ducken 🦆</td></tr>
+          <tr><td>📱</td><td>Tablet: Wischen in alle Richtungen</td></tr>
+        </table>
+        <p style="margin-top:16px">Nach jeder Frage wirst du <b>schneller</b>. Wie lange hältst du durch?</p>
+        <button class="bigBtn green" id="startBtn">LOS GEHT'S! 🚀</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="overlay hidden" id="quizOverlay">
+      <div class="card" id="quizCard">
+        <h2>❓ Irregular Verb</h2>
+        <div id="quizVerb">go</div>
+        <div id="quizDe">(gehen)</div>
+        <div class="quizRow">
+          <label for="inpPast">Past Simple:</label>
+          <input id="inpPast" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="quizRow">
+          <label for="inpPart">Past Participle:</label>
+          <input id="inpPart" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div id="quizFeedback"></div>
+        <button class="bigBtn green" id="checkBtn">CHECK ✅</button>
+      </div>
+    </div>
+
+    <!-- COUNTDOWN -->
+    <div class="overlay hidden" id="countdownWrap">
+      <div style="text-align:center">
+        <div id="speedUpMsg"></div>
+        <div id="countdownNum">3</div>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div class="overlay hidden" id="gameOverOverlay">
+      <div class="card">
+        <h2>💥 GAME OVER</h2>
+        <p style="font-size:22px">Score: <b id="goScore">0</b></p>
+        <p>🏆 Highscore: <b id="goHigh">0</b></p>
+        <p id="goVerbs"></p>
+        <button class="bigBtn green" id="restartBtn">NOCHMAL! 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div id="hearts">❤️❤️❤️</div>
+    <div id="progressOuter"><div id="progressInner"></div></div>
+    <div id="progressLabel">❓ in 6</div>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   CITY SURFER — Subway-Surfer-artiger Endless Runner, Irregular Verbs
+   School Games OG — Single-File-HTML, kein Build, kein Server.
+   ===================================================================== */
+
+/* ---------- IRREGULAR VERBS (3.–4. Klasse Unterstufe, alle 3 Formen) ---------- */
+/* past/part: Array = alle akzeptierten Schreibweisen */
+const VERBS = [
+  ["be","sein",["was/were","was","were"],["been"]],
+  ["become","werden",["became"],["become"]],
+  ["begin","beginnen",["began"],["begun"]],
+  ["break","brechen",["broke"],["broken"]],
+  ["bring","bringen",["brought"],["brought"]],
+  ["build","bauen",["built"],["built"]],
+  ["buy","kaufen",["bought"],["bought"]],
+  ["catch","fangen",["caught"],["caught"]],
+  ["choose","wählen",["chose"],["chosen"]],
+  ["come","kommen",["came"],["come"]],
+  ["cost","kosten",["cost"],["cost"]],
+  ["cut","schneiden",["cut"],["cut"]],
+  ["do","tun",["did"],["done"]],
+  ["draw","zeichnen",["drew"],["drawn"]],
+  ["drink","trinken",["drank"],["drunk"]],
+  ["drive","fahren",["drove"],["driven"]],
+  ["eat","essen",["ate"],["eaten"]],
+  ["fall","fallen",["fell"],["fallen"]],
+  ["feel","fühlen",["felt"],["felt"]],
+  ["fight","kämpfen",["fought"],["fought"]],
+  ["find","finden",["found"],["found"]],
+  ["fly","fliegen",["flew"],["flown"]],
+  ["forget","vergessen",["forgot"],["forgotten"]],
+  ["get","bekommen",["got"],["got","gotten"]],
+  ["give","geben",["gave"],["given"]],
+  ["go","gehen",["went"],["gone"]],
+  ["grow","wachsen",["grew"],["grown"]],
+  ["have","haben",["had"],["had"]],
+  ["hear","hören",["heard"],["heard"]],
+  ["hide","verstecken",["hid"],["hidden"]],
+  ["hit","schlagen",["hit"],["hit"]],
+  ["hold","halten",["held"],["held"]],
+  ["keep","behalten",["kept"],["kept"]],
+  ["know","wissen",["knew"],["known"]],
+  ["leave","verlassen",["left"],["left"]],
+  ["lend","verleihen",["lent"],["lent"]],
+  ["let","lassen",["let"],["let"]],
+  ["lose","verlieren",["lost"],["lost"]],
+  ["make","machen",["made"],["made"]],
+  ["mean","bedeuten",["meant"],["meant"]],
+  ["meet","treffen",["met"],["met"]],
+  ["pay","zahlen",["paid"],["paid"]],
+  ["put","legen / stellen",["put"],["put"]],
+  ["read","lesen",["read"],["read"]],
+  ["ride","reiten / fahren",["rode"],["ridden"]],
+  ["ring","läuten",["rang"],["rung"]],
+  ["run","laufen",["ran"],["run"]],
+  ["say","sagen",["said"],["said"]],
+  ["see","sehen",["saw"],["seen"]],
+  ["sell","verkaufen",["sold"],["sold"]],
+  ["send","schicken",["sent"],["sent"]],
+  ["sing","singen",["sang"],["sung"]],
+  ["sit","sitzen",["sat"],["sat"]],
+  ["sleep","schlafen",["slept"],["slept"]],
+  ["speak","sprechen",["spoke"],["spoken"]],
+  ["spend","ausgeben",["spent"],["spent"]],
+  ["stand","stehen",["stood"],["stood"]],
+  ["steal","stehlen",["stole"],["stolen"]],
+  ["swim","schwimmen",["swam"],["swum"]],
+  ["take","nehmen",["took"],["taken"]],
+  ["teach","unterrichten",["taught"],["taught"]],
+  ["tell","erzählen",["told"],["told"]],
+  ["think","denken",["thought"],["thought"]],
+  ["throw","werfen",["threw"],["thrown"]],
+  ["understand","verstehen",["understood"],["understood"]],
+  ["wake","aufwachen",["woke"],["woken"]],
+  ["wear","tragen",["wore"],["worn"]],
+  ["win","gewinnen",["won"],["won"]],
+  ["write","schreiben",["wrote"],["written"]],
+];
+
+/* ---------- BALANCING (linear, Werte rückwärts gerechnet) ----------
+   Spawn-Distanz 60 Einheiten. Reaktionszeit = 60 / speed.
+   Level 1: speed 16 → 3.75 s | Level 5: speed 28 → 2.1 s
+   Level 10: speed 43 → 1.4 s | Cap 60 → 1.0 s (Profi-Limit)        */
+const BASE_SPEED   = 16;     // Welt-Einheiten / Sekunde
+const SPEED_INC    = 3;      // linearer Zuwachs pro beantworteter Frage
+const MAX_SPEED    = 60;
+const Z_SPAWN      = 60;     // Spawn-Entfernung
+const GAP_MIN      = 16;     // Mindestabstand zwischen Hindernis-Reihen
+const GAP_MAX      = 24;
+const JUMP_VY      = 13;     // Sprung-Anfangsgeschwindigkeit (Einheiten/s)
+const GRAVITY      = 30;     // Einheiten/s²  → Sprunghöhe ≈ 2.8, Dauer ≈ 0.87 s
+const DUCK_TIME    = 0.55;   // s (Tap/Swipe); Taste halten verlängert
+const LANE_LERP    = 12;     // Spurwechsel-Geschwindigkeit (auch in der Luft!)
+const HIT_INVULN   = 1.6;    // s Unverwundbarkeit nach Treffer
+const POINTS_OBST  = 50;
+const POINTS_COIN  = 10;
+const POINTS_QUIZ  = 200;
+
+/* ---------- THEMES (Canvas) ---------- */
+const THEMES = {
+  standard: {
+    skyTop: "#7DD3FC", skyBottom: "#FDE68A",
+    sun: "#FACC15",
+    buildingsFar: "#94A3B8", buildingsNear: "#64748B",
+    windowCol: "#FDE68A",
+    road: "#475569", roadEdge: "#FACC15", laneLine: "#F9FAFB",
+    sidewalk: "#9CA3AF",
+    barrier1: "#DC2626", barrier2: "#F9FAFB",
+    sign: "#2563EB", signText: "#FFFFFF", post: "#6B7280",
+    carCols: ["#DC2626","#2563EB","#16A34A","#9333EA","#F97316"],
+    coin: "#FACC15", coinEdge: "#D97706",
+    gate: "#9333EA", gateGlow: "rgba(147,51,234,0.5)",
+    player: "#2563EB", playerSkin: "#FCD34D", board: "#F97316",
+    confetti: ["#FACC15","#16A34A","#EC4899","#F97316","#9333EA","#2563EB"],
+    shadow: "rgba(0,0,0,0.25)",
+  },
+  psychedelic: {
+    skyTop: "#0D001A", skyBottom: "#001A0D",
+    sun: "#FF00FF",
+    buildingsFar: "#1a0033", buildingsNear: "#270045",
+    windowCol: "#00FF41",
+    road: "#0a0a14", roadEdge: "#FF00FF", laneLine: "#00FFFF",
+    sidewalk: "#13021f",
+    barrier1: "#FF0033", barrier2: "#FFFF00",
+    sign: "#BF00FF", signText: "#00FF41", post: "#00FFFF",
+    carCols: ["#FF00FF","#00FFFF","#00FF41","#FFFF00","#FF6600"],
+    coin: "#FFFF00", coinEdge: "#FF6600",
+    gate: "#FF00FF", gateGlow: "rgba(255,0,255,0.6)",
+    player: "#00FFFF", playerSkin: "#FFFF00", board: "#FF00FF",
+    confetti: ["#FF00FF","#00FF41","#FFFF00","#00FFFF","#FF6600","#BF00FF"],
+    shadow: "rgba(255,0,255,0.3)",
+  }
+};
+
+/* ---------- SETUP ---------- */
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = r.width; H = r.height;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener("resize", resize);
+
+/* ---------- SOUND (WebAudio, alle Töne < 500 ms) ---------- */
+let audioCtx = null, soundOn = true;
+function ac() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function tone(freq, dur, type, vol, when = 0) {
+  if (!soundOn) return;
+  try {
+    const a = ac();
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, a.currentTime + when);
+    g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + when + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(a.currentTime + when); o.stop(a.currentTime + when + dur);
+  } catch (e) {}
+}
+function isPsy() { return document.documentElement.getAttribute("data-theme") === "psychedelic"; }
+function wave() { return isPsy() ? "sawtooth" : "triangle"; }
+const SND = {
+  correct() { tone(523,0.12,wave(),0.25); tone(659,0.12,wave(),0.25,0.1); tone(784,0.2,wave(),0.25,0.2); },
+  wrong()   { tone(160,0.25,isPsy()?"square":"sawtooth",0.2); tone(110,0.25,isPsy()?"square":"sawtooth",0.2,0.1); },
+  levelUp() { [523,587,659,784,1047].forEach((f,i)=>tone(f,0.1,wave(),0.22,i*0.08)); },
+  button()  { tone(880,0.06,"sine",0.15); },
+  jump()    { tone(330,0.12,wave(),0.15); tone(520,0.1,wave(),0.12,0.06); },
+  duck()    { tone(240,0.1,wave(),0.12); },
+  crash()   { tone(90,0.3,"sawtooth",0.3); },
+  coin()    { tone(1318,0.08,"sine",0.15); tone(1568,0.1,"sine",0.12,0.06); },
+  whoosh()  { tone(440,0.08,"sine",0.08); },
+};
+
+/* ---------- GAME STATE ---------- */
+const S = {
+  running: false, paused: true,
+  speed: BASE_SPEED,
+  level: 1,
+  score: 0,
+  hearts: 3,
+  dist: 0,                 // Gesamtdistanz
+  nextSpawn: 30,           // Distanz bis zur nächsten Hindernis-Reihe
+  obstSinceGate: 0,
+  gateAfter: 6,            // ❓-Tor nach N Hindernis-Reihen (5–7)
+  gatePending: false,
+  invuln: 0,
+  verbsSolved: 0,
+  deck: [],
+  // Spieler
+  lane: 1,                 // Ziel-Spur 0/1/2
+  laneX: 1,                // gleitende Position (Luft-Lenken = immer aktiv)
+  airY: 0, vy: 0, jumping: false,
+  ducking: 0, duckHeld: false,
+  runPhase: 0,
+};
+let obstacles = [];        // {type, lane, z, passed} type: barrier|sign|block|coin|gate
+let particles = [];        // Konfetti / Funken
+let stars = [];            // Psychedelic-Sterne
+let buildings = { l: [], r: [] };
+let hue = 0;
+let highscore = +(localStorage.getItem("citySurferHighscore") || 0);
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function drawVerb() { if (!S.deck.length) S.deck = shuffle([...VERBS]); return S.deck.pop(); }
+function rnd(a, b) { return a + Math.random() * (b - a); }
+
+function genBuildings() {
+  buildings.l = []; buildings.r = [];
+  for (const side of ["l", "r"]) {
+    let z = 2;
+    while (z < Z_SPAWN * 1.4) {
+      buildings[side].push({ z, w: rnd(4, 8), h: rnd(7, 22), col: Math.random() < 0.5 ? 0 : 1, win: Math.random() });
+      z += rnd(4, 9);
+    }
+  }
+}
+function genStars() {
+  stars = [];
+  for (let i = 0; i < 80; i++) stars.push({ x: Math.random(), y: Math.random() * 0.55, r: rnd(0.5, 2), p: Math.random() * 6.28 });
+}
+
+/* ---------- SPAWNING (immer mindestens ein freier Weg) ---------- */
+function spawnRow() {
+  if (S.gatePending) {
+    obstacles.push({ type: "gate", lane: 1, z: Z_SPAWN, passed: false });
+    S.gatePending = false;
+    S.nextSpawn = rnd(GAP_MIN, GAP_MAX) + 14; // Luft nach dem Tor
+    return;
+  }
+  const lanes = shuffle([0, 1, 2]);
+  const n = Math.random() < 0.45 ? 2 : 1;     // 1–2 Hindernisse pro Reihe
+  let blocks = 0;
+  for (let i = 0; i < n; i++) {
+    const r = Math.random();
+    let type = r < 0.38 ? "barrier" : r < 0.66 ? "sign" : "block";
+    if (type === "block" && blocks >= 1 && n === 2) type = "barrier"; // nie 2 volle Blocker nebeneinander
+    if (type === "block") blocks++;
+    obstacles.push({ type, lane: lanes[i], z: Z_SPAWN + i * 1.5, passed: false });
+  }
+  // Münz-Reihe auf einer freien Spur (50 %)
+  if (Math.random() < 0.5) {
+    const free = lanes[n];
+    for (let c = 0; c < 3; c++) obstacles.push({ type: "coin", lane: free, z: Z_SPAWN + 4 + c * 3, passed: false });
+  }
+  S.obstSinceGate++;
+  if (S.obstSinceGate >= S.gateAfter) {
+    S.gatePending = true;
+    S.obstSinceGate = 0;
+    S.gateAfter = 5 + Math.floor(Math.random() * 3); // 5–7
+  }
+  S.nextSpawn = rnd(GAP_MIN, GAP_MAX);
+  updateProgress();
+}
+
+/* ---------- INPUT ---------- */
+function steer(dir) {                       // dir -1 | +1 — funktioniert AUCH in der Luft
+  if (!S.running || S.paused) return;
+  const nl = Math.max(0, Math.min(2, S.lane + dir));
+  if (nl !== S.lane) { S.lane = nl; SND.whoosh(); }
+}
+function jump() {
+  if (!S.running || S.paused || S.jumping) return;
+  S.jumping = true; S.vy = JUMP_VY; S.ducking = 0;
+  SND.jump();
+}
+function duck() {
+  if (!S.running || S.paused) return;
+  if (S.jumping) { S.vy = -JUMP_VY; }       // Schnell-Abstieg aus dem Sprung
+  S.ducking = DUCK_TIME;
+  SND.duck();
+}
+
+window.addEventListener("keydown", e => {
+  if (!document.getElementById("quizOverlay").classList.contains("hidden")) return;
+  switch (e.code) {
+    case "ArrowLeft": case "KeyA": steer(-1); e.preventDefault(); break;
+    case "ArrowRight": case "KeyD": steer(1); e.preventDefault(); break;
+    case "ArrowUp": case "KeyW": case "Space": jump(); e.preventDefault(); break;
+    case "ArrowDown": case "KeyS": duck(); S.duckHeld = true; e.preventDefault(); break;
+  }
+});
+window.addEventListener("keyup", e => {
+  if (e.code === "ArrowDown" || e.code === "KeyS") S.duckHeld = false;
+});
+
+let tX = 0, tY = 0, tT = 0;
+canvas.addEventListener("touchstart", e => { const t = e.changedTouches[0]; tX = t.clientX; tY = t.clientY; tT = Date.now(); }, { passive: true });
+canvas.addEventListener("touchend", e => {
+  const t = e.changedTouches[0];
+  const dx = t.clientX - tX, dy = t.clientY - tY;
+  if (Date.now() - tT > 600) return;
+  if (Math.abs(dx) < 24 && Math.abs(dy) < 24) { jump(); return; }   // Tap = Sprung
+  if (Math.abs(dx) > Math.abs(dy)) steer(dx > 0 ? 1 : -1);
+  else dy < 0 ? jump() : duck();
+}, { passive: true });
+
+/* ---------- PERSPEKTIVE ---------- */
+function persp(z) { return 7 / (7 + z); }   // 1 am Spieler, →0 am Horizont
+function horizonY() { return H * 0.32; }
+function groundY(z) { const s = persp(z); return horizonY() + (H * 0.9 - horizonY()) * s; }
+function laneScreenX(laneF, z) {
+  const s = persp(z);
+  const spread = W * 0.30 * s;
+  return W / 2 + (laneF - 1) * spread;
+}
+
+/* ---------- UPDATE ---------- */
+let lastT = 0;
+function loop(t) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((t - lastT) / 1000, 0.05);
+  lastT = t;
+  if (S.running && !S.paused) update(dt);
+  render(dt);
+}
+
+function update(dt) {
+  S.dist += S.speed * dt;
+  S.score += S.speed * dt * 0.5;
+  S.runPhase += dt * S.speed * 0.8;
+  S.nextSpawn -= S.speed * dt;
+  if (S.nextSpawn <= 0) spawnRow();
+  if (S.invuln > 0) S.invuln -= dt;
+
+  // Spur gleiten — bewusst unabhängig vom Sprungzustand (Luft-Lenken!)
+  S.laneX += (S.lane - S.laneX) * Math.min(1, LANE_LERP * dt);
+
+  // Sprung
+  if (S.jumping) {
+    S.airY += S.vy * dt;
+    S.vy -= GRAVITY * dt;
+    if (S.airY <= 0) { S.airY = 0; S.jumping = false; S.vy = 0; }
+  }
+  // Ducken
+  if (S.ducking > 0 && !S.duckHeld) S.ducking -= dt;
+  if (S.duckHeld) S.ducking = Math.max(S.ducking, 0.1);
+
+  // Gebäude recyceln
+  for (const side of ["l", "r"]) for (const b of buildings[side]) {
+    b.z -= S.speed * dt * 0.9;
+    if (b.z < -3) { b.z += Z_SPAWN * 1.4; b.h = rnd(7, 22); b.w = rnd(4, 8); }
+  }
+
+  // Hindernisse
+  for (const o of obstacles) {
+    o.z -= S.speed * dt;
+    if (!o.passed && o.z <= 0.6) {
+      o.passed = true;
+      handleCross(o);
+    }
+  }
+  obstacles = obstacles.filter(o => o.z > -4 && !o.dead);
+
+  // Partikel
+  for (const p of particles) {
+    p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 600 * dt; p.life -= dt; p.rot += p.vr * dt;
+  }
+  particles = particles.filter(p => p.life > 0);
+
+  updateHUD();
+}
+
+function sameLane(o) { return Math.abs(S.laneX - o.lane) < 0.5; }
+
+function handleCross(o) {
+  switch (o.type) {
+    case "coin":
+      if (sameLane(o) && S.airY < 1.4) { S.score += POINTS_COIN; SND.coin(); o.dead = true; burst(laneScreenX(o.lane, 0), groundY(0) - 40, 6); }
+      return;
+    case "gate":
+      openQuiz();
+      return;
+    case "barrier":
+      if (sameLane(o) && S.airY < 1.2) hit(o); else if (sameLane(o)) S.score += POINTS_OBST;
+      else S.score += POINTS_OBST;
+      return;
+    case "sign":
+      if (sameLane(o) && S.ducking <= 0) hit(o); else S.score += POINTS_OBST;
+      return;
+    case "block":
+      if (sameLane(o)) hit(o); else S.score += POINTS_OBST;
+      return;
+  }
+}
+
+function hit(o) {
+  if (S.invuln > 0) return;
+  S.invuln = HIT_INVULN;
+  S.hearts--;
+  SND.crash();
+  o.dead = true;
+  if (!reduceMotion) {
+    const gw = document.getElementById("gameWrap");
+    gw.classList.remove("shake"); void gw.offsetWidth; gw.classList.add("shake");
+  }
+  updateHUD();
+  if (S.hearts <= 0) gameOver();
+}
+
+/* ---------- QUIZ ---------- */
+let currentVerb = null, quizDone = false;
+const $ = id => document.getElementById(id);
+
+function openQuiz() {
+  S.paused = true;
+  quizDone = false;
+  currentVerb = drawVerb();
+  $("quizVerb").textContent = currentVerb[0];
+  $("quizDe").textContent = "(" + currentVerb[1] + ")";
+  const p1 = $("inpPast"), p2 = $("inpPart");
+  p1.value = ""; p2.value = "";
+  p1.className = ""; p2.className = "";
+  $("quizFeedback").textContent = ""; $("quizFeedback").className = "";
+  $("checkBtn").textContent = "CHECK ✅";
+  $("quizOverlay").classList.remove("hidden");
+  setTimeout(() => p1.focus(), 60);
+}
+
+function norm(s) { return s.trim().toLowerCase().replace(/\s+/g, " "); }
+function matches(input, list) {
+  const v = norm(input);
+  return list.some(a => norm(a) === v);
+}
+
+function checkQuiz() {
+  if (quizDone) { closeQuiz(); return; }
+  const p1 = $("inpPast"), p2 = $("inpPart");
+  const ok1 = matches(p1.value, currentVerb[2]);
+  const ok2 = matches(p2.value, currentVerb[3]);
+  p1.className = ok1 ? "ok" : "bad";
+  p2.className = ok2 ? "ok" : "bad";
+  const fb = $("quizFeedback");
+  quizDone = true;
+  $("checkBtn").textContent = "WEITER 🚀";
+  if (ok1 && ok2) {
+    S.score += POINTS_QUIZ;
+    S.verbsSolved++;
+    fb.textContent = "RICHTIG! +" + POINTS_QUIZ + " 🎉";
+    fb.className = "good";
+    SND.correct();
+    confettiBurst();
+    bounce($("quizCard"));
+  } else {
+    S.hearts--;
+    fb.textContent = "❌ " + currentVerb[0] + " – " + currentVerb[2][0] + " – " + currentVerb[3][0];
+    fb.className = "badTxt";
+    SND.wrong();
+    updateHUD();
+    if (S.hearts <= 0) { setTimeout(() => { $("quizOverlay").classList.add("hidden"); gameOver(); }, 1400); return; }
+  }
+  updateHUD();
+}
+
+function closeQuiz() {
+  $("quizOverlay").classList.add("hidden");
+  // Geschwindigkeit steigt nach JEDER Frage (linear)
+  S.speed = Math.min(MAX_SPEED, S.speed + SPEED_INC);
+  S.level++;
+  S.invuln = 1.2;
+  levelUpFx();
+  countdown(() => { S.paused = false; });
+}
+
+$("checkBtn").addEventListener("click", () => { SND.button(); checkQuiz(); });
+$("inpPast").addEventListener("keydown", e => { if (e.key === "Enter") $("inpPart").focus(); });
+$("inpPart").addEventListener("keydown", e => { if (e.key === "Enter") checkQuiz(); });
+
+function countdown(cb) {
+  const wrap = $("countdownWrap"), num = $("countdownNum");
+  $("speedUpMsg").textContent = "SPEED UP! ⚡ Level " + S.level;
+  wrap.classList.remove("hidden");
+  let n = 3;
+  num.textContent = n;
+  const iv = setInterval(() => {
+    n--;
+    if (n <= 0) { clearInterval(iv); wrap.classList.add("hidden"); cb(); }
+    else { num.textContent = n; tone(660, 0.08, "sine", 0.12); }
+  }, reduceMotion ? 350 : 800);
+  tone(660, 0.08, "sine", 0.12);
+}
+
+function levelUpFx() {
+  SND.levelUp();
+  updateHUD();
+  if (reduceMotion) return;
+  const b = $("levelUpBanner");
+  b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
+  confettiBurst();
+}
+
+function bounce(el) {
+  if (reduceMotion) return;
+  el.style.transition = "transform 0.15s cubic-bezier(0.34,1.56,0.64,1)";
+  el.style.transform = "scale(1.06)";
+  setTimeout(() => { el.style.transform = "scale(1)"; }, 160);
+}
+
+/* ---------- PARTIKEL ---------- */
+function burst(x, y, n) {
+  if (reduceMotion) return;
+  const cols = THEMES[isPsy() ? "psychedelic" : "standard"].confetti;
+  for (let i = 0; i < n; i++) {
+    particles.push({ x, y, vx: rnd(-180, 180), vy: rnd(-320, -60), life: rnd(0.5, 1.1), rot: rnd(0, 6.3), vr: rnd(-8, 8), col: cols[i % cols.length], s: rnd(4, 9) });
+  }
+}
+function confettiBurst() { burst(W / 2, H * 0.4, 28); }  // min. 20 Partikel laut Style-Guide
+
+/* ---------- RENDER ---------- */
+function render(dt) {
+  const T = THEMES[isPsy() ? "psychedelic" : "standard"];
+  const psy = isPsy();
+  if (psy && !reduceMotion) hue = (hue + 1.2) % 360;
+
+  // Himmel
+  const sky = ctx.createLinearGradient(0, 0, 0, horizonY() * 1.4);
+  if (psy && !reduceMotion) {
+    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 900);
+    sky.addColorStop(0, pulse > 0.5 ? "#0D001A" : "#001A0D");
+    sky.addColorStop(1, "#000000");
+  } else { sky.addColorStop(0, T.skyTop); sky.addColorStop(1, T.skyBottom); }
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+
+  // Sonne / Mond
+  ctx.beginPath();
+  ctx.arc(W * 0.78, horizonY() * 0.45, 34, 0, 6.3);
+  ctx.fillStyle = T.sun;
+  if (psy) { ctx.shadowColor = T.sun; ctx.shadowBlur = 32; }
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Sterne (Psychedelic)
+  if (psy) {
+    for (const st of stars) {
+      const tw = reduceMotion ? 1 : 0.4 + 0.6 * Math.abs(Math.sin(performance.now() / 500 + st.p));
+      ctx.globalAlpha = tw;
+      ctx.fillStyle = `hsl(${(hue + st.p * 60) % 360},100%,60%)`;
+      ctx.fillRect(st.x * W, st.y * H, st.r, st.r);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Boden / Gehsteig
+  ctx.fillStyle = T.sidewalk;
+  ctx.fillRect(0, horizonY(), W, H - horizonY());
+
+  // Straße (Trapez)
+  const roadHalfNear = W * 0.46, roadHalfFar = W * 0.04;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - roadHalfFar, horizonY());
+  ctx.lineTo(W / 2 + roadHalfFar, horizonY());
+  ctx.lineTo(W / 2 + roadHalfNear, H);
+  ctx.lineTo(W / 2 - roadHalfNear, H);
+  ctx.closePath();
+  ctx.fillStyle = T.road;
+  ctx.fill();
+
+  // Randstreifen
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(W / 2 + side * roadHalfFar, horizonY());
+    ctx.lineTo(W / 2 + side * roadHalfNear, H);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = psy ? `hsl(${hue},100%,55%)` : T.roadEdge;
+    if (psy) { ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 12; }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Fahrbahn-Markierungen (laufen mit der Distanz)
+  ctx.strokeStyle = T.laneLine;
+  for (const lf of [0.5, 1.5]) {
+    const period = 6;
+    let zOff = period - (S.dist % period);
+    for (let z = zOff; z < Z_SPAWN; z += period) {
+      const s1 = persp(z), s2 = persp(Math.min(z + 2.4, Z_SPAWN));
+      ctx.lineWidth = Math.max(1, 5 * s1);
+      ctx.beginPath();
+      ctx.moveTo(laneScreenX(lf, z), groundY(z));
+      ctx.lineTo(laneScreenX(lf, z + 2.4), groundY(z + 2.4));
+      ctx.stroke();
+    }
+  }
+
+  // Gebäude (hinten → vorn)
+  const allB = [];
+  for (const b of buildings.l) allB.push({ ...b, side: -1 });
+  for (const b of buildings.r) allB.push({ ...b, side: 1 });
+  allB.sort((a, b) => b.z - a.z);
+  for (const b of allB) {
+    if (b.z < -1) continue;
+    const s = persp(b.z);
+    const baseX = W / 2 + b.side * (roadHalfFar + (roadHalfNear - roadHalfFar) * s) + b.side * 8 * s;
+    const gy = groundY(b.z);
+    const bw = b.w * 14 * s * (b.side), bh = b.h * 14 * s;
+    ctx.fillStyle = b.col ? T.buildingsNear : T.buildingsFar;
+    ctx.fillRect(baseX, gy - bh, bw, bh);
+    // Fenster
+    if (s > 0.25) {
+      ctx.fillStyle = T.windowCol;
+      ctx.globalAlpha = psy ? 0.9 : 0.7;
+      const rows = Math.floor(b.h / 3), cols = Math.max(1, Math.floor(b.w / 2.2));
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        if ((r * 7 + c * 3 + Math.floor(b.win * 10)) % 3 === 0) continue;
+        ctx.fillRect(baseX + b.side * (4 * s + c * 26 * s), gy - bh + 6 * s + r * 38 * s, 10 * s, 14 * s);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Hindernisse (hinten → vorn)
+  const sorted = [...obstacles].sort((a, b) => b.z - a.z);
+  for (const o of sorted) drawObstacle(o, T, psy);
+
+  // Spieler
+  drawPlayer(T, psy);
+
+  // Partikel
+  for (const p of particles) {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = Math.min(1, p.life * 2);
+    ctx.fillStyle = p.col;
+    ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawObstacle(o, T, psy) {
+  if (o.z < -2) return;
+  const z = Math.max(o.z, -2);
+  const s = persp(z);
+  const x = laneScreenX(o.lane, z);
+  const gy = groundY(z);
+  const u = 150 * s;                       // Größeneinheit
+
+  ctx.save();
+  if (o.type === "coin") {
+    const bob = reduceMotion ? 0 : Math.sin(performance.now() / 200 + o.z) * 4 * s;
+    ctx.beginPath();
+    ctx.arc(x, gy - u * 0.3 + bob, u * 0.13, 0, 6.3);
+    ctx.fillStyle = T.coin;
+    ctx.strokeStyle = T.coinEdge;
+    ctx.lineWidth = 3 * s;
+    if (psy) { ctx.shadowColor = T.coin; ctx.shadowBlur = 14; }
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = T.coinEdge;
+    ctx.font = `900 ${Math.max(8, u * 0.14)}px Nunito`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("£", x, gy - u * 0.3 + bob);
+  }
+  else if (o.type === "barrier") {        // niedrige Hürde → SPRINGEN
+    const w = u * 0.62, h = u * 0.30;
+    ctx.fillStyle = T.barrier1;
+    rr(x - w / 2, gy - h, w, h, 6 * s);
+    ctx.fill();
+    ctx.fillStyle = T.barrier2;
+    for (let i = 0; i < 3; i++) {
+      ctx.save();
+      ctx.beginPath();
+      rr(x - w / 2, gy - h, w, h, 6 * s); ctx.clip();
+      ctx.translate(x - w / 2 + i * w / 3 + w / 8, gy - h / 2);
+      ctx.rotate(-0.5);
+      ctx.fillRect(-w / 14, -h, w / 7, h * 2);
+      ctx.restore();
+    }
+    ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2.5 * s;
+    rr(x - w / 2, gy - h, w, h, 6 * s); ctx.stroke();
+  }
+  else if (o.type === "sign") {           // hängendes Schild → DUCKEN
+    const w = u * 0.66, h = u * 0.34, top = gy - u * 0.95;
+    ctx.strokeStyle = T.post; ctx.lineWidth = 5 * s;
+    ctx.beginPath();
+    ctx.moveTo(x - w / 2, gy); ctx.lineTo(x - w / 2, top);
+    ctx.moveTo(x + w / 2, gy); ctx.lineTo(x + w / 2, top);
+    ctx.stroke();
+    ctx.fillStyle = T.sign;
+    if (psy) { ctx.shadowColor = T.sign; ctx.shadowBlur = 14; }
+    rr(x - w / 2 - 4 * s, top, w + 8 * s, h, 8 * s); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2.5 * s;
+    rr(x - w / 2 - 4 * s, top, w + 8 * s, h, 8 * s); ctx.stroke();
+    ctx.fillStyle = T.signText;
+    ctx.font = `900 ${Math.max(7, u * 0.15)}px "Fredoka One", Nunito`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("DUCK!", x, top + h / 2);
+  }
+  else if (o.type === "block") {          // Auto → SPUR WECHSELN
+    const w = u * 0.68, h = u * 0.52;
+    const col = T.carCols[(o.lane * 7 + Math.floor(o.z0 || (o.z0 = Math.random() * 5))) % T.carCols.length];
+    ctx.fillStyle = col;
+    if (psy) { ctx.shadowColor = col; ctx.shadowBlur = 16; }
+    rr(x - w / 2, gy - h, w, h * 0.9, 10 * s); ctx.fill();
+    ctx.shadowBlur = 0;
+    // Dach + Fenster
+    ctx.fillStyle = col;
+    rr(x - w * 0.32, gy - h * 1.28, w * 0.64, h * 0.5, 8 * s); ctx.fill();
+    ctx.fillStyle = psy ? "#00FFFF" : "#BFDBFE";
+    rr(x - w * 0.26, gy - h * 1.2, w * 0.52, h * 0.32, 5 * s); ctx.fill();
+    // Lichter
+    ctx.fillStyle = psy ? "#FFFF00" : "#FDE68A";
+    ctx.fillRect(x - w / 2 + 4 * s, gy - h * 0.55, w * 0.16, h * 0.14);
+    ctx.fillRect(x + w / 2 - 4 * s - w * 0.16, gy - h * 0.55, w * 0.16, h * 0.14);
+    ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2.5 * s;
+    rr(x - w / 2, gy - h, w, h * 0.9, 10 * s); ctx.stroke();
+  }
+  else if (o.type === "gate") {           // ❓-Tor über alle Spuren
+    const xl = laneScreenX(-0.35, z), xr = laneScreenX(2.35, z);
+    const top = gy - u * 1.15, h = u * 0.5;
+    const glow = reduceMotion ? 0.7 : 0.55 + 0.45 * Math.sin(performance.now() / 250);
+    ctx.strokeStyle = T.gate; ctx.lineWidth = 6 * s;
+    ctx.beginPath();
+    ctx.moveTo(xl, gy); ctx.lineTo(xl, top);
+    ctx.moveTo(xr, gy); ctx.lineTo(xr, top);
+    ctx.stroke();
+    ctx.fillStyle = T.gate;
+    ctx.shadowColor = T.gateGlow; ctx.shadowBlur = 30 * glow;
+    rr(xl - 6 * s, top - h, xr - xl + 12 * s, h, 10 * s); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#fff";
+    ctx.font = `900 ${Math.max(10, u * 0.3)}px "Fredoka One", Nunito`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("❓ VERB CHECK ❓", (xl + xr) / 2, top - h / 2);
+  }
+  ctx.restore();
+}
+
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawPlayer(T, psy) {
+  const z = 0.6;
+  const x = laneScreenX(S.laneX, z);
+  const gy = groundY(z);
+  const u = 150 * persp(z);
+  const airPx = S.airY * u * 0.22;
+  const duckF = S.ducking > 0 ? 0.55 : 1;     // gestaucht beim Ducken
+  const blink = S.invuln > 0 && Math.floor(performance.now() / 100) % 2 === 0;
+  if (blink) return;
+
+  // Schatten
+  ctx.beginPath();
+  ctx.ellipse(x, gy + 4, u * 0.22 * (1 - S.airY * 0.12), u * 0.05, 0, 0, 6.3);
+  ctx.fillStyle = T.shadow;
+  ctx.fill();
+
+  const py = gy - airPx;
+  const bob = (S.jumping || reduceMotion) ? 0 : Math.sin(S.runPhase) * 3;
+  const lean = (S.lane - S.laneX) * 0.5;      // Lenk-Neigung
+
+  ctx.save();
+  ctx.translate(x, py + bob);
+  ctx.rotate(lean * 0.4 + (S.jumping ? -0.08 : 0));
+  if (psy) { ctx.shadowColor = T.player; ctx.shadowBlur = 18; }
+
+  // Board
+  ctx.fillStyle = T.board;
+  rr(-u * 0.22, -u * 0.05, u * 0.44, u * 0.09, u * 0.045); ctx.fill();
+  ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2;
+  rr(-u * 0.22, -u * 0.05, u * 0.44, u * 0.09, u * 0.045); ctx.stroke();
+  if (S.jumping || psy) {                     // Glow / Trail unterm Board
+    ctx.fillStyle = psy ? `hsl(${hue},100%,60%)` : "rgba(249,115,22,0.4)";
+    ctx.beginPath();
+    ctx.ellipse(0, u * 0.07, u * 0.18, u * 0.035, 0, 0, 6.3);
+    ctx.fill();
+  }
+
+  const bodyH = u * 0.34 * duckF;
+  // Körper
+  ctx.fillStyle = T.player;
+  rr(-u * 0.11, -u * 0.05 - bodyH, u * 0.22, bodyH, u * 0.08); ctx.fill();
+  ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2;
+  rr(-u * 0.11, -u * 0.05 - bodyH, u * 0.22, bodyH, u * 0.08); ctx.stroke();
+  // Arme (ausgestreckt beim Lenken/Springen)
+  ctx.strokeStyle = T.player; ctx.lineWidth = u * 0.05; ctx.lineCap = "round";
+  const armUp = S.jumping ? -u * 0.16 : -u * 0.04;
+  ctx.beginPath();
+  ctx.moveTo(-u * 0.10, -u * 0.05 - bodyH * 0.75);
+  ctx.lineTo(-u * 0.24, -u * 0.05 - bodyH * 0.75 + armUp);
+  ctx.moveTo(u * 0.10, -u * 0.05 - bodyH * 0.75);
+  ctx.lineTo(u * 0.24, -u * 0.05 - bodyH * 0.75 + armUp);
+  ctx.stroke();
+  // Kopf
+  const headY = -u * 0.05 - bodyH - u * 0.085;
+  ctx.beginPath();
+  ctx.arc(0, headY, u * 0.095, 0, 6.3);
+  ctx.fillStyle = T.playerSkin; ctx.fill();
+  ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 2; ctx.stroke();
+  // Kappe
+  ctx.fillStyle = psy ? "#FF00FF" : "#DC2626";
+  ctx.beginPath();
+  ctx.arc(0, headY - u * 0.02, u * 0.095, Math.PI, 0);
+  ctx.fill();
+  ctx.fillRect(-u * 0.095, headY - u * 0.03, u * 0.19, u * 0.025);
+  // Augen
+  ctx.fillStyle = "#1F2937";
+  ctx.beginPath();
+  ctx.arc(-u * 0.03, headY + u * 0.01, u * 0.012, 0, 6.3);
+  ctx.arc(u * 0.03, headY + u * 0.01, u * 0.012, 0, 6.3);
+  ctx.fill();
+  // Mund
+  ctx.strokeStyle = "#1F2937"; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, headY + u * 0.025, u * 0.035, 0.2, Math.PI - 0.2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+/* ---------- HUD ---------- */
+function updateHUD() {
+  $("scoreChip").textContent = Math.floor(S.score);
+  $("levelLabel").textContent = "Level " + S.level + "  ·  🏆 " + highscore;
+  $("hearts").textContent = "❤️".repeat(Math.max(0, S.hearts)) + "🖤".repeat(Math.max(0, 3 - S.hearts));
+}
+function updateProgress() {
+  const done = S.gatePending ? S.gateAfter : S.obstSinceGate;
+  const total = S.gateAfter;
+  $("progressInner").style.width = Math.min(100, (done / total) * 100) + "%";
+  $("progressLabel").textContent = S.gatePending ? "❓ JETZT!" : "❓ in " + (total - done);
+}
+
+/* ---------- GAME FLOW ---------- */
+function startGame() {
+  obstacles = []; particles = [];
+  Object.assign(S, {
+    running: true, paused: false,
+    speed: BASE_SPEED, level: 1, score: 0, hearts: 3,
+    dist: 0, nextSpawn: 26, obstSinceGate: 0, gateAfter: 6, gatePending: false,
+    invuln: 0, verbsSolved: 0,
+    lane: 1, laneX: 1, airY: 0, vy: 0, jumping: false, ducking: 0, duckHeld: false, runPhase: 0,
+  });
+  S.deck = shuffle([...VERBS]);
+  genBuildings();
+  updateHUD(); updateProgress();
+}
+
+function gameOver() {
+  S.running = false; S.paused = true;
+  const sc = Math.floor(S.score);
+  if (sc > highscore) { highscore = sc; localStorage.setItem("citySurferHighscore", highscore); }
+  $("goScore").textContent = sc;
+  $("goHigh").textContent = highscore;
+  $("goVerbs").textContent = "✅ " + S.verbsSolved + " Irregular Verbs gemeistert — Level " + S.level;
+  $("gameOverOverlay").classList.remove("hidden");
+}
+
+$("startBtn").addEventListener("click", () => {
+  SND.button(); ac();
+  $("startOverlay").classList.add("hidden");
+  startGame();
+});
+$("restartBtn").addEventListener("click", () => {
+  SND.button();
+  $("gameOverOverlay").classList.add("hidden");
+  startGame();
+});
+
+/* ---------- TOGGLES ---------- */
+$("psyBtn").addEventListener("click", () => {
+  SND.button();
+  const root = document.documentElement;
+  const toPsy = root.getAttribute("data-theme") !== "psychedelic";
+  root.setAttribute("data-theme", toPsy ? "psychedelic" : "standard");
+  if (toPsy) genStars();
+  if (!reduceMotion) {                        // kurze Warp-Animation
+    const gw = $("gameWrap");
+    gw.style.transition = "transform 0.4s cubic-bezier(0.34,1.56,0.64,1)";
+    gw.style.transform = "rotate(2deg) scale(0.96)";
+    setTimeout(() => { gw.style.transform = "none"; }, 400);
+  }
+});
+$("soundBtn").addEventListener("click", () => {
+  soundOn = !soundOn;
+  $("soundBtn").textContent = soundOn ? "🔊" : "🔇";
+  if (soundOn) SND.button();
+});
+
+/* ---------- BOOT ---------- */
+resize();
+genBuildings();
+genStars();
+setTimeout(() => { document.getElementById("splash").style.display = "none"; resize(); }, 1000);
+requestAnimationFrame(t => { lastT = t; requestAnimationFrame(loop); });
+</script>
+</body>
+</html>

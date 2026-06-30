@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="lernspiel:titel"        content="Austria Free Kick: Passive">
+  <meta name="lernspiel:thema"        content="Aktiv / Passiv">
+  <meta name="lernspiel:stufe"        content="7. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Schieß den Freistoß und beherrsche den Wechsel zwischen Aktiv und Passiv.">
+    <title>Road to USA 2026 - English Free Kick Challenge</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --red: #ed2939;
+        --red-dark: #b91627;
+        --navy: #071323;
+        --paper: #f8f5ed;
+        --ink: #121b25;
+        --muted: #687684;
+        --green: #126d47;
+        font-family: Inter, Arial, Helvetica, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: white;
+        background:
+          radial-gradient(circle at 5% 5%, rgba(237, 41, 57, 0.3), transparent 28rem),
+          linear-gradient(135deg, #071323, #0b1b2d 55%, #071323);
+      }
+
+      button {
+        font: inherit;
+      }
+
+      button:not(:disabled) {
+        cursor: pointer;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 88px;
+        padding: 14px clamp(16px, 3vw, 46px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(4, 14, 26, 0.72);
+      }
+
+      .brand,
+      .stats,
+      .flag-label,
+      .top-score,
+      .difficulty,
+      .controls,
+      .control,
+      .footer-level,
+      .final-team {
+        display: flex;
+        align-items: center;
+      }
+
+      .brand {
+        gap: 13px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .flag {
+        display: grid;
+        width: 30px;
+        height: 19px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .flag i:nth-child(1),
+      .flag i:nth-child(3) {
+        background: var(--red);
+      }
+
+      .flag i:nth-child(2) {
+        background: white;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: #ff8992;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        font-family: Impact, "Arial Narrow Bold", Arial, sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 3px 0 0;
+        font-size: clamp(25px, 3vw, 38px);
+        line-height: 0.95;
+      }
+
+      .stats {
+        gap: 6px;
+      }
+
+      .stat {
+        min-width: 77px;
+        padding: 7px 13px;
+        border-left: 1px solid rgba(255, 255, 255, 0.13);
+      }
+
+      .stat span,
+      .result-box span {
+        display: block;
+        color: #98a6b5;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 23px;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .restart {
+        min-height: 42px;
+        padding: 0 13px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 10px;
+        color: white;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .restart:disabled {
+        opacity: 0.45;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(330px, 0.6fr);
+        gap: 18px;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 18px;
+      }
+
+      .match,
+      .panel {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+      }
+
+      .match {
+        align-self: start;
+        background: #0a1725;
+      }
+
+      .score-strip {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        min-height: 53px;
+        padding: 8px 15px;
+        color: #111b25;
+        background: var(--paper);
+      }
+
+      .flag-label {
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.07em;
+      }
+
+      .top-score {
+        min-height: 28px;
+        padding: 0 12px;
+        border-radius: 99px;
+        color: white;
+        background: #111c29;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+      }
+
+      .difficulty {
+        justify-content: flex-end;
+        gap: 7px;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9cffbc;
+        box-shadow: 0 0 0 4px rgba(156, 255, 188, 0.18);
+      }
+
+      .stage {
+        position: relative;
+        isolation: isolate;
+        aspect-ratio: 16 / 10;
+        min-height: 500px;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse at 50% 12%, rgba(255, 255, 255, 0.18), transparent 28%),
+          linear-gradient(to bottom, #122233 0 23%, #0d573a 23%);
+      }
+
+      .stage::before {
+        position: absolute;
+        z-index: -1;
+        inset: 23% -15% -35%;
+        content: "";
+        background:
+          repeating-linear-gradient(90deg, transparent 0 14%, rgba(255, 255, 255, 0.025) 14% 28%),
+          repeating-linear-gradient(0deg, #147448 0 11%, #126b43 11% 22%);
+      }
+
+      .crowd {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        width: 100%;
+        height: 23%;
+        opacity: 0.75;
+        background:
+          radial-gradient(circle, #fff 0 1px, transparent 1.6px) 0 0 / 13px 11px,
+          radial-gradient(circle, #ed2939 0 1.2px, transparent 1.8px) 4px 5px / 17px 14px,
+          linear-gradient(#17293b, #0d1824);
+      }
+
+      .banner {
+        position: absolute;
+        z-index: 2;
+        top: 17%;
+        padding: 4px 12px;
+        color: white;
+        background: var(--red);
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+      }
+
+      .banner.left {
+        left: 4%;
+      }
+
+      .banner.right {
+        right: 4%;
+        color: #111b25;
+        background: white;
+      }
+
+      .box-line {
+        position: absolute;
+        z-index: 1;
+        top: 28%;
+        left: 14%;
+        width: 72%;
+        height: 39%;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 0;
+        clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+      }
+
+      .arc {
+        position: absolute;
+        z-index: 1;
+        top: 57%;
+        left: 38%;
+        width: 24%;
+        height: 17%;
+        border: 2px solid rgba(255, 255, 255, 0.28);
+        border-top: 0;
+        border-radius: 0 0 50% 50%;
+      }
+
+      .goal {
+        position: absolute;
+        z-index: 3;
+        top: 10%;
+        left: 21%;
+        width: 58%;
+        height: 33%;
+        border: 5px solid white;
+        border-bottom-width: 3px;
+        border-radius: 2px;
+        background:
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.58) 0 1px, transparent 1px 16px),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.52) 0 1px, transparent 1px 13px),
+          linear-gradient(rgba(255, 255, 255, 0.07), rgba(5, 18, 29, 0.28));
+        box-shadow: 0 8px 9px rgba(0, 0, 0, 0.24);
+      }
+
+      .keeper {
+        --dive-rise: 0px;
+        --dive-rotation: 0deg;
+        --keeper-speed: 640ms;
+        position: absolute;
+        z-index: 8;
+        left: 50%;
+        top: 27%;
+        width: 68px;
+        height: 105px;
+        transform: translate(-50%, -35%);
+        transition:
+          left var(--keeper-speed) cubic-bezier(0.16, 0.8, 0.25, 1),
+          top var(--keeper-speed) cubic-bezier(0.16, 0.8, 0.25, 1),
+          transform var(--keeper-speed) cubic-bezier(0.16, 0.8, 0.25, 1);
+        filter: drop-shadow(0 8px 4px rgba(0, 0, 0, 0.22));
+      }
+
+      .keeper.ready {
+        animation: keeper-ready 1.25s ease-in-out infinite;
+      }
+
+      .keeper.diving {
+        transform:
+          translate(-50%, -35%)
+          translateY(var(--dive-rise))
+          rotate(var(--dive-rotation))
+          scale(1.18);
+        filter: drop-shadow(0 13px 5px rgba(0, 0, 0, 0.3));
+      }
+
+      @keyframes keeper-ready {
+        0%,
+        100% {
+          transform: translate(-50%, -35%) translateX(-5px) scaleY(0.97);
+        }
+        50% {
+          transform: translate(-50%, -35%) translateX(5px) scaleY(1.02);
+        }
+      }
+
+      .keeper .head,
+      .player .head,
+      .kicker .head {
+        position: absolute;
+        z-index: 3;
+        border-radius: 50%;
+        background: #dfaa7f;
+      }
+
+      .keeper .head {
+        top: 5px;
+        left: 26px;
+        width: 17px;
+        height: 19px;
+      }
+
+      .keeper .body {
+        position: absolute;
+        z-index: 2;
+        top: 23px;
+        left: 19px;
+        display: grid;
+        place-items: center;
+        width: 31px;
+        height: 43px;
+        border-radius: 9px 9px 3px 3px;
+        color: white;
+        background: #e8b82d;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .limb {
+        position: absolute;
+        display: block;
+        transform-origin: top center;
+        border-radius: 99px;
+      }
+
+      .keeper .arm {
+        z-index: 1;
+        top: 28px;
+        width: 11px;
+        height: 48px;
+        background: #e8b82d;
+      }
+
+      .keeper .arm.l {
+        left: 17px;
+        transform: rotate(58deg);
+      }
+
+      .keeper .arm.r {
+        right: 17px;
+        transform: rotate(-58deg);
+      }
+
+      .keeper .leg {
+        top: 61px;
+        width: 10px;
+        height: 41px;
+        background: #172d43;
+      }
+
+      .keeper .leg.l {
+        left: 25px;
+        transform: rotate(13deg);
+      }
+
+      .keeper .leg.r {
+        right: 25px;
+        transform: rotate(-13deg);
+      }
+
+      .keeper.ready .arm.l {
+        animation: ready-arm-left 1.25s ease-in-out infinite;
+      }
+
+      .keeper.ready .arm.r {
+        animation: ready-arm-right 1.25s ease-in-out infinite;
+      }
+
+      .keeper.diving .arm.l {
+        transform: rotate(86deg);
+        transition: transform 260ms ease-out;
+      }
+
+      .keeper.diving .arm.r {
+        transform: rotate(-86deg);
+        transition: transform 260ms ease-out;
+      }
+
+      .keeper.diving .leg.l {
+        transform: rotate(32deg);
+        transition: transform 300ms ease-out;
+      }
+
+      .keeper.diving .leg.r {
+        transform: rotate(-32deg);
+        transition: transform 300ms ease-out;
+      }
+
+      @keyframes ready-arm-left {
+        50% {
+          transform: rotate(68deg);
+        }
+      }
+
+      @keyframes ready-arm-right {
+        50% {
+          transform: rotate(-68deg);
+        }
+      }
+
+      .wall {
+        position: absolute;
+        z-index: 6;
+        top: 46%;
+        left: 50%;
+        display: flex;
+        transform: translateX(-50%);
+      }
+
+      .player {
+        position: relative;
+        width: 42px;
+        height: 110px;
+        filter: drop-shadow(0 7px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      .player .head {
+        top: 2px;
+        left: 13px;
+        width: 17px;
+        height: 20px;
+      }
+
+      .player .body {
+        position: absolute;
+        z-index: 2;
+        top: 20px;
+        left: 7px;
+        display: grid;
+        place-items: center;
+        width: 29px;
+        height: 43px;
+        border-radius: 7px 7px 2px 2px;
+        color: white;
+        background: #18324d;
+        border-bottom: 8px solid #edf2f4;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .player .leg {
+        top: 60px;
+        width: 9px;
+        height: 42px;
+        background: #edf2f4;
+        border-bottom: 13px solid #1a2b40;
+      }
+
+      .player .leg.l {
+        left: 12px;
+        transform: rotate(4deg);
+      }
+
+      .player .leg.r {
+        right: 12px;
+        transform: rotate(-4deg);
+      }
+
+      .kicker {
+        position: absolute;
+        z-index: 6;
+        top: 69%;
+        left: 62%;
+        width: 80px;
+        height: 130px;
+        transform: rotate(-8deg);
+        filter: drop-shadow(0 8px 5px rgba(0, 0, 0, 0.28));
+      }
+
+      .kicker .head {
+        top: 2px;
+        left: 29px;
+        width: 22px;
+        height: 25px;
+      }
+
+      .kicker .body {
+        position: absolute;
+        z-index: 2;
+        top: 25px;
+        left: 20px;
+        display: grid;
+        place-items: center;
+        width: 41px;
+        height: 55px;
+        border-radius: 11px 11px 4px 4px;
+        color: white;
+        background: var(--red);
+        border-bottom: 10px solid white;
+        font-weight: 900;
+      }
+
+      .kicker .leg {
+        top: 73px;
+        width: 12px;
+        height: 54px;
+        background: white;
+        border-bottom: 18px solid var(--red);
+      }
+
+      .kicker .leg.l {
+        left: 29px;
+        transform: rotate(4deg);
+      }
+
+      .kicker .leg.r {
+        left: 44px;
+        transform: rotate(-52deg);
+      }
+
+      .aim-svg {
+        position: absolute;
+        z-index: 9;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .aim-svg line {
+        stroke: white;
+        stroke-width: 0.55;
+        stroke-dasharray: 1.8 1.2;
+        filter: drop-shadow(0 0 4px white);
+      }
+
+      .target-zone {
+        position: absolute;
+        z-index: 11;
+        top: 10%;
+        left: 21%;
+        display: none;
+        width: 58%;
+        height: 33%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: crosshair;
+      }
+
+      .target {
+        --target-size: 42px;
+        position: absolute;
+        z-index: 12;
+        display: none;
+        place-items: center;
+        width: var(--target-size);
+        height: var(--target-size);
+        transform: translate(-50%, -50%);
+        border: 2px solid white;
+        border-radius: 50%;
+        background: rgba(237, 41, 57, 0.75);
+        box-shadow: 0 0 0 6px rgba(237, 41, 57, 0.18);
+        pointer-events: none;
+        transition:
+          left 45ms linear,
+          top 45ms linear,
+          width 180ms ease,
+          height 180ms ease;
+      }
+
+      .target::before,
+      .target::after {
+        position: absolute;
+        content: "";
+        background: white;
+      }
+
+      .target::before {
+        width: 24px;
+        height: 2px;
+      }
+
+      .target::after {
+        width: 2px;
+        height: 24px;
+      }
+
+      .ball {
+        position: absolute;
+        z-index: 14;
+        left: 50%;
+        top: 82%;
+        width: 34px;
+        aspect-ratio: 1;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(0, 0, 0, 0.45);
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 52% 48%, #1d252b 0 16%, transparent 17%),
+          radial-gradient(circle at 17% 31%, #232b31 0 9%, transparent 10%),
+          radial-gradient(circle at 82% 29%, #232b31 0 8%, transparent 9%),
+          radial-gradient(circle at 73% 80%, #232b31 0 9%, transparent 10%),
+          radial-gradient(circle at 26% 80%, #232b31 0 8%, transparent 9%),
+          radial-gradient(circle at 35% 25%, white, #dbe2e5 70%, #9eaaaf);
+        box-shadow: 0 7px 9px rgba(0, 0, 0, 0.32);
+      }
+
+      .ball.flying {
+        width: 19px;
+        transition:
+          left 850ms cubic-bezier(0.22, 0.72, 0.23, 1),
+          top 850ms cubic-bezier(0.22, 0.72, 0.23, 1),
+          width 850ms ease;
+      }
+
+      .field-callout {
+        position: absolute;
+        z-index: 15;
+        bottom: 22px;
+        left: 22px;
+        max-width: 360px;
+        padding: 10px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 10px;
+        background: rgba(4, 18, 29, 0.76);
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .progress {
+        height: 5px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .progress i {
+        display: block;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, var(--red), #ff7d88);
+        transition: width 300ms ease;
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 590px;
+        padding: clamp(22px, 3vw, 34px);
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.96)),
+          repeating-linear-gradient(45deg, #f2ede3 0 8px, white 8px 16px);
+      }
+
+      .panel-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .pill {
+        min-height: 25px;
+        padding: 6px 9px;
+        border: 1px solid #d7dde0;
+        border-radius: 99px;
+        color: #5d6c7b;
+        background: rgba(255, 255, 255, 0.65);
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .pill.red {
+        color: white;
+        border-color: var(--red);
+        background: var(--red);
+      }
+
+      .question-head {
+        margin-top: 28px;
+      }
+
+      .question-head p,
+      .panel-main > .eyebrow {
+        margin: 0 0 7px;
+        color: var(--red);
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(30px, 3vw, 42px);
+        line-height: 0.98;
+      }
+
+      blockquote {
+        margin: 20px 0;
+        padding: 16px 16px 16px 20px;
+        border-left: 4px solid var(--red);
+        border-radius: 0 10px 10px 0;
+        background: #e9edf0;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .answers {
+        display: grid;
+        gap: 8px;
+      }
+
+      .answer {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 52px;
+        padding: 8px 11px;
+        text-align: left;
+        border: 1px solid #d8dee1;
+        border-radius: 10px;
+        color: #26323c;
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .answer:hover:not(:disabled) {
+        transform: translateX(3px);
+        border-color: #aab6bc;
+        background: white;
+      }
+
+      .answer b {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        color: white;
+        background: #142538;
+        font-size: 10px;
+      }
+
+      .answer strong {
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .answer.wrong {
+        border-color: #dc7b82;
+        background: #fff0f1;
+      }
+
+      .answer.correct {
+        color: #064a32;
+        border-color: #55b48f;
+        background: #e6f7ef;
+      }
+
+      .tip {
+        margin-top: 14px;
+        padding: 11px 12px;
+        border: 1px solid #d9dfe1;
+        border-radius: 10px;
+        color: #60707b;
+        background: rgba(255, 255, 255, 0.5);
+        font-size: 9px;
+        line-height: 1.45;
+      }
+
+      .tip strong {
+        display: block;
+        color: #23313a;
+      }
+
+      .tip.wrong {
+        color: #92323a;
+        border-color: #e8b3b7;
+        background: #fff1f2;
+      }
+
+      .tip.correct {
+        color: #0a6647;
+        border-color: #96d0b9;
+        background: #e8f7f0;
+      }
+
+      .panel-main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .big-icon {
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        color: white;
+        background: var(--red);
+        box-shadow: 0 10px 22px rgba(237, 41, 57, 0.25);
+        font-size: 27px;
+      }
+
+      .panel-main > p:not(.eyebrow) {
+        margin: 15px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+
+      .controls {
+        gap: 8px;
+        margin: 25px 0 18px;
+      }
+
+      .control {
+        flex: 1;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid #d9dfe1;
+        border-radius: 10px;
+        color: var(--red);
+        background: rgba(255, 255, 255, 0.7);
+        font-size: 18px;
+      }
+
+      .control span {
+        color: #71808b;
+        font-size: 8px;
+      }
+
+      .control strong {
+        display: block;
+        color: #1b2730;
+        font-size: 9px;
+      }
+
+      .primary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        min-height: 53px;
+        margin-top: 5px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 10px;
+        color: white;
+        background: linear-gradient(90deg, var(--red-dark), var(--red));
+        box-shadow: 0 12px 24px rgba(237, 41, 57, 0.22);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.13em;
+      }
+
+      .primary:disabled {
+        color: #9ca6ad;
+        background: #d9dee1;
+        box-shadow: none;
+      }
+
+      .secondary {
+        margin: 9px auto 0;
+        padding: 5px 8px;
+        border: 0;
+        color: #71808b;
+        background: transparent;
+        font-size: 9px;
+        font-weight: 900;
+        text-decoration: underline;
+        text-transform: uppercase;
+      }
+
+      .results {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 26px 0 18px;
+      }
+
+      .result-box {
+        padding: 14px;
+        border: 1px solid #d9dfe1;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .result-box strong {
+        display: block;
+        margin-top: 3px;
+        font-size: 24px;
+      }
+
+      .final-score {
+        margin: 24px 0 12px;
+        padding: 15px 17px;
+        border-radius: 10px;
+        color: white;
+        background: #111f30;
+      }
+
+      .final-team {
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+      }
+
+      .final-score > strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 32px;
+      }
+
+      .footer-level {
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 22px;
+        color: #75828c;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .footer-level strong {
+        color: #26333c;
+      }
+
+      button:focus-visible {
+        outline: 3px solid #54b9ff;
+        outline-offset: 3px;
+      }
+
+      @media (max-width: 1080px) {
+        .layout {
+          grid-template-columns: 1fr;
+          max-width: 920px;
+        }
+
+        .panel {
+          min-height: 0;
+        }
+
+        .stat {
+          display: none;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .topbar {
+          min-height: 72px;
+          padding: 10px 13px;
+        }
+
+        .brand-mark {
+          width: 46px;
+          height: 46px;
+          border-radius: 12px;
+        }
+
+        h1 {
+          font-size: 23px;
+        }
+
+        .brand .eyebrow,
+        .restart span {
+          display: none;
+        }
+
+        .layout {
+          gap: 10px;
+          padding: 9px;
+        }
+
+        .match,
+        .panel {
+          border-radius: 13px;
+        }
+
+        .score-strip {
+          grid-template-columns: 1fr auto;
+        }
+
+        .top-score {
+          display: none;
+        }
+
+        .stage {
+          min-height: 315px;
+        }
+
+        .wall {
+          transform: translateX(-50%) scale(0.72);
+          transform-origin: top center;
+        }
+
+        .kicker {
+          transform: rotate(-8deg) scale(0.7);
+          transform-origin: top center;
+        }
+
+        .keeper {
+          transform: translate(-50%, -35%) scale(0.75);
+        }
+
+        .panel {
+          padding: 22px 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <span class="flag" aria-label="Österreich"><i></i><i></i><i></i></span>
+        </div>
+        <div>
+          <p class="eyebrow">English Free Kick Challenge</p>
+          <h1>Road to USA 2026</h1>
+        </div>
+      </div>
+      <div class="stats" aria-label="Spielstand">
+        <div class="stat"><span>Goals</span><strong id="goals">0</strong></div>
+        <div class="stat"><span>Grammar</span><strong id="grammar">0/0</strong></div>
+        <div class="stat"><span>Points</span><strong id="points">0</strong></div>
+        <button class="restart" id="restart" type="button">↻ <span>Restart</span></button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="match" aria-label="Freistoßfeld">
+        <div class="score-strip">
+          <div class="flag-label">
+            <span class="flag" aria-label="Österreich"><i></i><i></i><i></i></span>
+            ÖSTERREICH
+          </div>
+          <div class="top-score" id="round-score">FREE KICK · 1/10</div>
+          <div class="difficulty"><i class="dot" id="difficulty-dot"></i><span id="difficulty-name">Warm-up</span></div>
+        </div>
+
+        <div class="stage" id="stage">
+          <div class="crowd"></div>
+          <div class="banner left">AUSTRIA</div>
+          <div class="banner right">USA 2026</div>
+          <div class="box-line"></div>
+          <div class="arc"></div>
+          <div class="goal"></div>
+
+          <div class="keeper ready" id="keeper" aria-hidden="true">
+            <i class="head"></i><i class="body">1</i>
+            <i class="limb arm l"></i><i class="limb arm r"></i>
+            <i class="limb leg l"></i><i class="limb leg r"></i>
+          </div>
+
+          <div class="wall" aria-label="Spielermauer">
+            <div class="player"><i class="head"></i><i class="body">4</i><i class="limb leg l"></i><i class="limb leg r"></i></div>
+            <div class="player"><i class="head"></i><i class="body">6</i><i class="limb leg l"></i><i class="limb leg r"></i></div>
+            <div class="player"><i class="head"></i><i class="body">8</i><i class="limb leg l"></i><i class="limb leg r"></i></div>
+            <div class="player"><i class="head"></i><i class="body">5</i><i class="limb leg l"></i><i class="limb leg r"></i></div>
+          </div>
+
+          <div class="kicker" aria-hidden="true">
+            <i class="head"></i><i class="body">9</i><i class="limb leg l"></i><i class="limb leg r"></i>
+          </div>
+
+          <svg class="aim-svg" id="aim-svg" viewBox="0 0 100 100" preserveAspectRatio="none" hidden>
+            <line id="aim-line" x1="50" y1="82" x2="50" y2="25"></line>
+          </svg>
+          <button class="target-zone" id="target-zone" type="button" aria-label="Ziel im Tor auswählen"></button>
+          <div class="target" id="target"></div>
+          <div class="ball" id="ball"></div>
+          <div class="field-callout" id="field-callout">Beantworte zuerst die Grammatikfrage und schalte den Freistoß frei.</div>
+        </div>
+        <div class="progress"><i id="progress"></i></div>
+      </section>
+
+      <aside class="panel">
+        <div id="panel-content"></div>
+        <footer class="footer-level">
+          <strong id="footer-level">Warm-up · Present tense</strong>
+          <span>AHS · 7. Schulstufe</span>
+        </footer>
+      </aside>
+    </main>
+
+    <script>
+      const questions = [
+        {
+          tense: "Present tense",
+          direction: "ACTIVE → PASSIVE",
+          task: "The striker kicks the ball.",
+          options: ["The ball is kicked by the striker.", "The ball was kicked by the striker.", "The striker is kicked by the ball.", "The ball kicks the striker."],
+          correct: "The ball is kicked by the striker.",
+          rule: "Present passive: am / is / are + past participle."
+        },
+        {
+          tense: "Present tense",
+          direction: "PASSIVE → ACTIVE",
+          task: "Instructions are given by the coach.",
+          options: ["The coach gives instructions.", "The coach gave instructions.", "Instructions give the coach.", "The coach is giving instructions."],
+          correct: "The coach gives instructions.",
+          rule: "The person doing the action becomes the subject."
+        },
+        {
+          tense: "Present tense",
+          direction: "ACTIVE → PASSIVE",
+          task: "They clean the boots after every match.",
+          options: ["The boots are cleaned after every match.", "The boots were cleaned after every match.", "The boots clean after every match.", "They are cleaned the boots after every match."],
+          correct: "The boots are cleaned after every match.",
+          rule: "Keep the tense: clean becomes are cleaned."
+        },
+        {
+          tense: "Past tense",
+          direction: "ACTIVE → PASSIVE",
+          task: "The referee stopped the match.",
+          options: ["The match was stopped by the referee.", "The match is stopped by the referee.", "The referee was stopped by the match.", "The match stopped the referee."],
+          correct: "The match was stopped by the referee.",
+          rule: "Past passive: was / were + past participle."
+        },
+        {
+          tense: "Past tense",
+          direction: "PASSIVE → ACTIVE",
+          task: "The players were welcomed by the fans.",
+          options: ["The fans welcomed the players.", "The fans welcome the players.", "The players welcomed the fans.", "The fans were welcoming the players."],
+          correct: "The fans welcomed the players.",
+          rule: "Were welcomed is past tense, so use the active past tense."
+        },
+        {
+          tense: "Past tense",
+          direction: "ACTIVE → PASSIVE",
+          task: "The coach chose a new captain.",
+          options: ["A new captain was chosen by the coach.", "A new captain is chose by the coach.", "A new captain was chose by the coach.", "The coach was chosen by a new captain."],
+          correct: "A new captain was chosen by the coach.",
+          rule: "The irregular past participle of choose is chosen."
+        },
+        {
+          tense: "Mixed challenge",
+          direction: "ACTIVE → PASSIVE",
+          task: "They do not play the match in Vienna.",
+          options: ["The match is not played in Vienna.", "The match was not played in Vienna.", "The match does not played in Vienna.", "Vienna is not played by the match."],
+          correct: "The match is not played in Vienna.",
+          rule: "For a present passive negative, put not after is / are."
+        },
+        {
+          tense: "Mixed challenge",
+          direction: "ACTIVE → PASSIVE",
+          task: "Did the referee show the red card?",
+          options: ["Was the red card shown by the referee?", "Is the red card shown by the referee?", "Did the red card shown by the referee?", "Was the referee shown by the red card?"],
+          correct: "Was the red card shown by the referee?",
+          rule: "Past passive question: Was / Were + subject + past participle?"
+        },
+        {
+          tense: "Mixed challenge",
+          direction: "PASSIVE → ACTIVE",
+          task: "Why was the match cancelled by the organisers?",
+          options: ["Why did the organisers cancel the match?", "Why do the organisers cancel the match?", "Why were the organisers cancelling the match?", "Why did the match cancel the organisers?"],
+          correct: "Why did the organisers cancel the match?",
+          rule: "Use did + base form for an active past simple question."
+        },
+        {
+          tense: "Mixed challenge",
+          direction: "ACTIVE → PASSIVE",
+          task: "The team did not score the winning goal.",
+          options: ["The winning goal was not scored by the team.", "The winning goal is not scored by the team.", "The winning goal did not scored by the team.", "The team was not scored by the winning goal."],
+          correct: "The winning goal was not scored by the team.",
+          rule: "Past passive negative: was / were + not + past participle."
+        }
+      ];
+
+      const levels = [
+        { name: "Warm-up", note: "Present tense", color: "#9cffbc" },
+        { name: "Match pace", note: "Past tense", color: "#ffd166" },
+        { name: "Knockout", note: "Mixed forms", color: "#ff8f85" }
+      ];
+
+      const outcomes = {
+        goal: ["TOOOOR FÜR ÖSTERREICH!", "Unhaltbar.", "Starker Abschluss. Grammatik und Technik sitzen.", "★"],
+        saved: ["GEHALTEN", "Der Keeper war dran.", "Gute Idee, aber der Torwart hat die Ecke gelesen.", "▣"],
+        wall: ["IN DER MAUER", "Geblockt.", "Der Schuss war zu flach und zu zentral. Ziele über oder an der Mauer vorbei.", "▦"],
+        post: ["PFOSTEN", "Das war knapp.", "Ein paar Zentimeter fehlen. Beim nächsten Versuch fällt er.", "◎"],
+        miss: ["DANEBEN", "Zu viel Risiko.", "Nimm beim nächsten Freistoß etwas genauer Maß.", "⌖"]
+      };
+
+      const byId = (id) => document.getElementById(id);
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+      const levelIndex = (shot) => shot < 3 ? 0 : shot < 6 ? 1 : 2;
+
+      let state;
+      let timer;
+
+      function freshState() {
+        return {
+          phase: "quiz",
+          shot: 0,
+          goals: 0,
+          points: 0,
+          firstTry: 0,
+          attempts: 0,
+          selected: "",
+          feedback: "",
+          aim: { x: 50, y: 25 },
+          locked: false,
+          outcome: ""
+        };
+      }
+
+      function reset() {
+        clearTimeout(timer);
+        state = freshState();
+        byId("ball").className = "ball";
+        byId("ball").style.left = "50%";
+        byId("ball").style.top = "82%";
+        byId("keeper").style.left = "50%";
+        byId("keeper").style.top = "27%";
+        byId("keeper").className = "keeper ready";
+        byId("keeper").style.setProperty("--dive-rotation", "0deg");
+        byId("keeper").style.setProperty("--dive-rise", "0px");
+        byId("keeper").style.setProperty("--keeper-speed", "640ms");
+        render();
+      }
+
+      function displayShot() {
+        return state.phase === "result" || state.phase === "finished" ? state.shot : Math.min(state.shot + 1, 10);
+      }
+
+      function displayLevelIndex() {
+        return state.phase === "result" || state.phase === "finished" ? levelIndex(Math.max(state.shot - 1, 0)) : levelIndex(state.shot);
+      }
+
+      function updateBase() {
+        const level = levels[displayLevelIndex()];
+        const grammarDenominator = state.shot + (["aim", "flight", "answering"].includes(state.phase) ? 1 : 0);
+        byId("goals").textContent = state.goals;
+        byId("grammar").textContent = `${state.firstTry}/${grammarDenominator}`;
+        byId("points").textContent = state.points;
+        byId("round-score").textContent = `FREE KICK · ${displayShot()}/10`;
+        byId("difficulty-name").textContent = level.name;
+        byId("difficulty-dot").style.background = level.color;
+        byId("footer-level").textContent = `${level.name} · ${level.note}`;
+        byId("progress").style.width = `${state.shot * 10}%`;
+        byId("restart").disabled = state.phase === "answering" || state.phase === "flight";
+
+        const aimVisible = state.phase === "aim" || state.phase === "flight";
+        byId("aim-svg").hidden = !aimVisible;
+        byId("aim-svg").style.display = aimVisible ? "block" : "none";
+        byId("target-zone").style.display = state.phase === "aim" ? "block" : "none";
+        byId("target").style.display = state.phase === "aim" ? "grid" : "none";
+        byId("target").style.left = `${state.aim.x}%`;
+        byId("target").style.top = `${state.aim.y}%`;
+        byId("target").style.setProperty("--target-size", `${[42, 34, 27][levelIndex(state.shot)]}px`);
+        byId("aim-line").setAttribute("x2", state.aim.x);
+        byId("aim-line").setAttribute("y2", state.aim.y);
+        byId("field-callout").style.display = ["quiz", "answering"].includes(state.phase) ? "block" : "none";
+      }
+
+      function questionPanel() {
+        const q = questions[state.shot];
+        const answerButtons = q.options.map((option, index) => {
+          const status = state.feedback === "wrong" && option === state.selected ? "wrong" : state.phase === "answering" && option === q.correct ? "correct" : "";
+          return `<button class="answer ${status}" type="button" data-answer="${index}" ${state.phase === "answering" ? "disabled" : ""}><b>${String.fromCharCode(65 + index)}</b><strong>${option}</strong></button>`;
+        }).join("");
+
+        let tip = `<div class="tip"><strong>Grammar coach</strong>Keep the tense when you change active and passive.</div>`;
+        if (state.feedback === "wrong") tip = `<div class="tip wrong"><strong>Not quite. Try again.</strong>${q.rule}</div>`;
+        if (state.feedback === "correct") tip = `<div class="tip correct"><strong>Correct. Free kick unlocked!</strong>${q.rule}</div>`;
+
+        return `
+          <div class="panel-top"><span class="pill red">Round ${state.shot + 1}</span><span class="pill">${q.tense}</span></div>
+          <div class="question-head"><p>${q.direction}</p><h2>Choose the correct sentence.</h2></div>
+          <blockquote>${q.task}</blockquote>
+          <div class="answers">${answerButtons}</div>
+          ${tip}
+        `;
+      }
+
+      function aimPanel() {
+        if (state.phase === "flight") {
+          return `
+            <div class="panel-main">
+              <div class="big-icon">⚡</div>
+              <p class="eyebrow">Shot in progress</p>
+              <h2>Der Keeper springt!</h2>
+              <p>Der Ball ist unterwegs. Der Torwart reagiert auf Richtung und Höhe deines Schusses.</p>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="panel-main">
+            <div class="big-icon">◎</div>
+            <p class="eyebrow">Step 2 · Take the free kick</p>
+            <h2>Click to shoot.</h2>
+            <p>Bewege den Mauszeiger über das Tor. Sobald du klickst, wird der Ball sofort geschossen. Der Torwart beobachtet deine Bewegung.</p>
+            <div class="controls">
+              <div class="control">↗<span><strong>Move</strong>Schusslinie zielen</span></div>
+              <div class="control">⚡<span><strong>Click</strong>Sofort schießen</span></div>
+            </div>
+            <div class="tip"><strong>Match pressure</strong>Flache, zentrale Schüsse können in der Mauer hängen bleiben. In jeder Stufe reagiert der Keeper schneller.</div>
+          </div>
+        `;
+      }
+
+      function resultPanel() {
+        const copy = outcomes[state.outcome];
+        return `
+          <div class="panel-main">
+            <div class="big-icon">${copy[3]}</div>
+            <p class="eyebrow">${copy[0]}</p>
+            <h2>${copy[1]}</h2>
+            <p>${copy[2]}</p>
+            <div class="results">
+              <div class="result-box"><span>Goals</span><strong>${state.goals}/${state.shot}</strong></div>
+              <div class="result-box"><span>First try</span><strong>${state.firstTry}/${state.shot}</strong></div>
+            </div>
+            <button class="primary" id="next" type="button">${state.shot >= 10 ? "VIEW RESULT" : "NEXT ROUND"}<span>›</span></button>
+          </div>
+        `;
+      }
+
+      function finishPanel() {
+        const title = state.goals >= 7 ? "World-class performance!" : state.goals >= 4 ? "Strong team performance!" : "Good training session!";
+        const verdict = state.firstTry >= 8 ? "Grammar coach: Ready for the knockout stage." : "Grammar coach: Review the tips, then go again.";
+        return `
+          <div class="panel-main">
+            <div class="big-icon">🏅</div>
+            <p class="eyebrow">Full time · USA 2026</p>
+            <h2>${title}</h2>
+            <p>Du hast <strong>${state.goals} Tore</strong> erzielt und <strong>${state.firstTry} von 10</strong> Grammatikfragen beim ersten Versuch gelöst.</p>
+            <div class="final-score">
+              <div class="final-team"><span class="flag"><i></i><i></i><i></i></span>AUT</div>
+              <strong>${state.points} Punkte</strong>
+            </div>
+            <p>${verdict}</p>
+            <button class="primary" id="play-again" type="button">PLAY AGAIN<span>↻</span></button>
+          </div>
+        `;
+      }
+
+      function render() {
+        updateBase();
+        const panel = byId("panel-content");
+        if (state.phase === "quiz" || state.phase === "answering") panel.innerHTML = questionPanel();
+        if (state.phase === "aim" || state.phase === "flight") panel.innerHTML = aimPanel();
+        if (state.phase === "result") panel.innerHTML = resultPanel();
+        if (state.phase === "finished") panel.innerHTML = finishPanel();
+
+        panel.querySelectorAll("[data-answer]").forEach((button) => {
+          button.addEventListener("click", () => answerQuestion(Number(button.dataset.answer)));
+        });
+        byId("next")?.addEventListener("click", nextRound);
+        byId("play-again")?.addEventListener("click", reset);
+      }
+
+      function answerQuestion(index) {
+        if (state.phase !== "quiz") return;
+        const q = questions[state.shot];
+        const answer = q.options[index];
+        state.selected = answer;
+        if (answer === q.correct) {
+          state.feedback = "correct";
+          state.phase = "answering";
+          if (state.attempts === 0) {
+            state.firstTry += 1;
+            state.points += 25;
+          }
+          render();
+          timer = setTimeout(() => {
+            state.phase = "aim";
+            state.feedback = "";
+            state.selected = "";
+            render();
+          }, 720);
+        } else {
+          state.attempts += 1;
+          state.feedback = "wrong";
+          render();
+        }
+      }
+
+      function paintAim() {
+        byId("target").style.left = `${state.aim.x}%`;
+        byId("target").style.top = `${state.aim.y}%`;
+        byId("aim-line").setAttribute("x2", state.aim.x);
+        byId("aim-line").setAttribute("y2", state.aim.y);
+      }
+
+      function trackAimWithKeeper() {
+        const difficulty = levelIndex(state.shot);
+        const horizontalTracking = [0.1, 0.2, 0.31][difficulty];
+        const verticalTracking = [0.03, 0.06, 0.1][difficulty];
+        byId("keeper").style.left = `${50 + (state.aim.x - 50) * horizontalTracking}%`;
+        byId("keeper").style.top = `${27 + (state.aim.y - 27) * verticalTracking}%`;
+      }
+
+      function updateAim(event, fireShot) {
+        if (state.phase !== "aim") return;
+        const bounds = byId("stage").getBoundingClientRect();
+        state.aim = {
+          x: clamp(((event.clientX - bounds.left) / bounds.width) * 100, 21.8, 78.2),
+          y: clamp(((event.clientY - bounds.top) / bounds.height) * 100, 11.8, 42.2)
+        };
+        paintAim();
+        trackAimWithKeeper();
+        if (fireShot) shoot(state.aim);
+      }
+
+      function shoot(target) {
+        if (state.phase !== "aim") return;
+        const difficulty = levelIndex(state.shot);
+        const spread = [4.2, 5.7, 7.2][difficulty] - (state.attempts === 0 ? 0.7 : 0);
+        const final = {
+          x: target.x + (Math.random() - 0.5) * spread * 2,
+          y: target.y + (Math.random() - 0.5) * spread * 1.35
+        };
+        const keeperReads = Math.random() < [0.52, 0.65, 0.78][difficulty];
+        const reactionError = [8.4, 6, 4.2][difficulty];
+        const guessesCorrectSide = Math.random() < [0.42, 0.55, 0.68][difficulty];
+        const guessedSide = guessesCorrectSide ? (final.x < 50 ? 31 : 69) : (Math.random() < 0.5 ? 31 : 69);
+        const keeper = keeperReads
+          ? {
+              x: clamp(final.x + (Math.random() - 0.5) * reactionError * 2, 25, 75),
+              y: clamp(final.y + (Math.random() - 0.5) * reactionError * 1.4, 17, 38)
+            }
+          : { x: guessedSide + (Math.random() - 0.5) * 8, y: 20 + Math.random() * 15 };
+        const inside = final.x > 21.5 && final.x < 78.5 && final.y > 11.5 && final.y < 42.5;
+        const keeperDistance = Math.hypot(final.x - keeper.x, (final.y - keeper.y) * 1.45);
+        const post = Math.abs(final.x - 21.5) < 2.4 || Math.abs(final.x - 78.5) < 2.4 || Math.abs(final.y - 11.5) < 2.1;
+        const wallHit =
+          inside &&
+          final.x > 39 &&
+          final.x < 61 &&
+          final.y > 34.5 &&
+          Math.random() < [0.5, 0.6, 0.7][difficulty];
+        const saveDistance = [9.8, 10.8, 12][difficulty];
+
+        state.outcome = wallHit ? "wall" : !inside ? (post ? "post" : "miss") : keeperDistance < saveDistance ? "saved" : "goal";
+        state.phase = "flight";
+        const keeperElement = byId("keeper");
+        const diveRotation = keeper.x < 44 ? -66 : keeper.x > 56 ? 66 : final.x < 50 ? -20 : 20;
+        const diveRise = keeper.y < 24 ? -13 : keeper.y > 31 ? 7 : 0;
+        keeperElement.className = "keeper diving";
+        keeperElement.style.setProperty("--dive-rotation", `${diveRotation}deg`);
+        keeperElement.style.setProperty("--dive-rise", `${diveRise}px`);
+        keeperElement.style.setProperty("--keeper-speed", `${[720, 620, 520][difficulty]}ms`);
+        keeperElement.style.left = `${keeper.x}%`;
+        keeperElement.style.top = `${keeper.y}%`;
+        render();
+
+        const ball = byId("ball");
+        ball.classList.add("flying");
+        const visualFinal = wallHit ? { x: final.x, y: 47 } : final;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          ball.style.left = `${clamp(visualFinal.x, 12, 88)}%`;
+          ball.style.top = `${clamp(visualFinal.y, 6, 49)}%`;
+        }));
+
+        timer = setTimeout(() => {
+          if (state.outcome === "goal") {
+            state.goals += 1;
+            state.points += 100;
+          } else if (state.outcome === "saved") {
+            state.points += 15;
+          }
+          state.shot += 1;
+          state.phase = "result";
+          render();
+        }, 950);
+      }
+
+      function nextRound() {
+        if (state.shot >= 10) {
+          state.phase = "finished";
+          render();
+          return;
+        }
+        state.phase = "quiz";
+        state.attempts = 0;
+        state.selected = "";
+        state.feedback = "";
+        state.aim = { x: 50, y: 25 };
+        state.locked = false;
+        state.outcome = "";
+        const ball = byId("ball");
+        ball.className = "ball";
+        ball.style.left = "50%";
+        ball.style.top = "82%";
+        byId("keeper").style.left = "50%";
+        byId("keeper").style.top = "27%";
+        byId("keeper").className = "keeper ready";
+        byId("keeper").style.setProperty("--dive-rotation", "0deg");
+        byId("keeper").style.setProperty("--dive-rise", "0px");
+        byId("keeper").style.setProperty("--keeper-speed", "640ms");
+        render();
+      }
+
+      byId("restart").addEventListener("click", reset);
+      byId("target-zone").addEventListener("pointermove", (event) => updateAim(event, false));
+      byId("target-zone").addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        updateAim(event, true);
+      });
+      reset();
+    </script>
+  </body>
+</html>

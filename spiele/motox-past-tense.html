@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="lernspiel:titel"        content="MotoX Past Tense">
+  <meta name="lernspiel:thema"        content="Past Tense">
+  <meta name="lernspiel:stufe"        content="6. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Fahr über die Strecke und wähle die korrekte Past-Tense-Form.">
+<title>MotoX Past Tense — School Games 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================ THEMES ============================ */
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --sky-top:#7DD3FC; --sky-bottom:#FDE68A;
+  --hill-far:#A7F3D0; --hill-near:#6EE7B7;
+  --ground:#8B5E34; --ground-top:#16A34A; --ground-dark:#5C3D1E;
+  --ramp:#F97316; --ramp-dark:#C2410C;
+  --bike:#DC2626; --bike-dark:#7F1D1D; --rider:#1E1B4B; --wheel:#1F2937;
+  --gate:#9333EA; --gate-dark:#6B21A8;
+  --glow:transparent;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FF6600;
+  --text-dark:#F9FAFB; --text-light:#FFFFFF; --border:#BF00FF;
+  --sky-top:#0D001A; --sky-bottom:#001A0D;
+  --hill-far:#3B0066; --hill-near:#BF00FF;
+  --ground:#1A0033; --ground-top:#FF00FF; --ground-dark:#00FF41;
+  --ramp:#FFFF00; --ramp-dark:#FF6600;
+  --bike:#00FFFF; --bike-dark:#00FF41; --rider:#FF00FF; --wheel:#FFFF00;
+  --gate:#FF00FF; --gate-dark:#BF00FF;
+  --glow:#00FFFF;
+}
+
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:"Nunito",sans-serif; font-weight:700;
+  background:var(--bg-main); color:var(--text-dark);
+  display:flex; flex-direction:column; align-items:center;
+  min-height:100%; overflow:hidden; user-select:none;
+  letter-spacing:.01em;
+}
+:root[data-theme="psychedelic"] body{ animation:bgpulse 6s infinite alternate; }
+@keyframes bgpulse{ 0%{background:#0D001A;} 50%{background:#001A0D;} 100%{background:#000000;} }
+h1,h2,h3,.fred{ font-family:"Fredoka",sans-serif; font-weight:600; }
+
+.wrap{ width:100%; max-width:880px; display:flex; flex-direction:column;
+  height:100vh; height:100dvh; padding:8px; gap:8px; }
+
+/* ============================ HEADER ============================ */
+header{ display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:var(--bg-dark); color:var(--text-light);
+  padding:8px 16px; border-radius:16px; box-shadow:0 4px 0 rgba(0,0,0,.25); }
+.h-left,.h-right{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ min-width:48px; min-height:48px; border:none; cursor:pointer;
+  border-radius:16px; background:var(--bg-card); color:var(--text-dark);
+  font-size:22px; font-family:"Fredoka",sans-serif; box-shadow:0 0 10px var(--glow);
+  display:flex; align-items:center; justify-content:center; transition:transform .15s; }
+.icon-btn:active{ transform:translate(2px,2px); }
+.title{ text-align:center; line-height:1.05; }
+.title h1{ font-size:20px; color:var(--text-light); text-shadow:0 0 8px var(--glow); }
+.badge{ display:inline-block; margin-top:2px; background:var(--teal); color:#fff;
+  font-family:"Fredoka",sans-serif; font-size:12px; padding:2px 10px; border-radius:999px; }
+.score{ background:var(--yellow); color:#1F2937; font-weight:800;
+  padding:6px 14px; border-radius:999px; font-family:"Fredoka",sans-serif; font-size:18px;
+  display:flex; align-items:center; gap:6px; box-shadow:0 0 10px var(--glow); }
+.lives{ font-size:18px; letter-spacing:1px; }
+
+/* ============================ GAME AREA ============================ */
+.game-area{ position:relative; flex:1; min-height:0;
+  background:var(--bg-card); border:4px solid var(--bg-dark); border-radius:24px;
+  overflow:hidden; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 0 24px var(--glow); }
+canvas{ display:block; width:100%; height:100%; touch-action:none; }
+.shake{ animation:shake .2s 2; }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);}
+  75%{transform:translateX(8px);} }
+
+/* ============================ FOOTER ============================ */
+footer{ background:var(--bg-dark); border-radius:16px; padding:8px 16px 12px; }
+.prog-label{ color:var(--text-light); font-size:12px; font-weight:700;
+  display:flex; justify-content:space-between; margin-bottom:6px; }
+.prog-track{ height:14px; background:rgba(255,255,255,.15); border-radius:999px; overflow:hidden; }
+.prog-fill{ height:100%; width:0%; border-radius:999px;
+  background:linear-gradient(90deg,var(--teal),var(--yellow));
+  transition:width .2s; box-shadow:0 0 12px var(--glow); }
+
+/* ============================ OVERLAYS ============================ */
+.overlay{ position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; gap:16px;
+  padding:24px; background:rgba(30,27,75,.72); backdrop-filter:blur(3px);
+  color:var(--text-light); z-index:20; }
+.overlay.hidden{ display:none; }
+.card{ background:var(--bg-card); color:var(--text-dark); border-radius:24px;
+  border:4px solid var(--bg-dark); box-shadow:4px 4px 0 #1F2937;
+  padding:24px; max-width:560px; width:100%; }
+:root[data-theme="psychedelic"] .card{ box-shadow:0 0 20px #FF00FF,0 0 40px #BF00FF; }
+.card h2{ font-size:28px; color:var(--purple); margin-bottom:8px; text-shadow:0 0 10px var(--glow); }
+.card p{ font-size:16px; margin-bottom:8px; }
+.keyhint{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+.keyhint span{ background:var(--bg-main); border:2px solid var(--border); border-radius:12px;
+  padding:8px 12px; font-size:14px; }
+
+.btn{ min-height:48px; cursor:pointer; border:none; border-radius:16px;
+  font-family:"Fredoka",sans-serif; font-size:20px; padding:10px 28px; color:#fff;
+  background:var(--blue); box-shadow:4px 4px 0 #1E3A8A; transition:transform .15s; }
+.btn:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 #1E3A8A; }
+.btn.success{ background:var(--green); box-shadow:4px 4px 0 #14532D; }
+.btn.danger{ background:var(--red); box-shadow:4px 4px 0 #7F1D1D; }
+
+/* ---- QUIZ ---- */
+.quiz-tag{ display:inline-block; background:var(--orange); color:#fff; font-family:"Fredoka",sans-serif;
+  font-size:13px; padding:4px 14px; border-radius:999px; margin-bottom:12px; }
+.quiz-q{ font-family:"Fredoka",sans-serif; font-size:24px; line-height:1.35; margin-bottom:16px;
+  color:var(--text-dark); }
+.opts{ display:flex; flex-direction:column; gap:10px; }
+.opt{ min-height:48px; cursor:pointer; border:3px solid var(--blue); border-radius:16px;
+  background:var(--bg-main); color:var(--text-dark); font-family:"Fredoka",sans-serif;
+  font-size:20px; padding:10px 16px; transition:transform .12s, background .2s; }
+.opt:hover{ transform:scale(1.03); }
+.opt.correct{ background:var(--success); color:#fff; border-color:var(--success); }
+.opt.wrong{ background:var(--error); color:#fff; border-color:var(--error); animation:shake .2s 2; }
+.opt:disabled{ cursor:default; }
+
+.fill-row{ font-family:"Fredoka",sans-serif; font-size:22px; margin-bottom:14px; line-height:1.6; }
+.fill-input{ font-family:"Fredoka",sans-serif; font-size:20px; min-height:48px; width:200px;
+  text-align:center; border:3px solid var(--blue); border-radius:16px; padding:6px 10px;
+  background:var(--bg-main); color:var(--text-dark); }
+.fill-input:focus{ outline:3px solid var(--orange); }
+.hintword{ color:var(--teal); font-weight:800; }
+
+.build-target{ min-height:56px; border:3px dashed var(--blue); border-radius:16px;
+  background:var(--bg-main); display:flex; flex-wrap:wrap; gap:8px; padding:10px; margin-bottom:12px;
+  align-items:center; justify-content:center; }
+.build-bank{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:14px; }
+.word{ cursor:pointer; font-family:"Fredoka",sans-serif; font-size:18px; min-height:44px;
+  padding:8px 14px; border-radius:12px; border:3px solid var(--purple);
+  background:var(--bg-card); color:var(--text-dark); transition:transform .12s; }
+.word:hover{ transform:scale(1.06); }
+.word.used{ opacity:.25; pointer-events:none; }
+.feedline{ font-family:"Fredoka",sans-serif; font-size:18px; min-height:26px; margin-top:6px; }
+.feedline.ok{ color:var(--success); } .feedline.no{ color:var(--error); }
+
+/* ---- SPLASH ---- */
+#splash{ position:fixed; inset:0; z-index:100; background:var(--bg-dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  transition:opacity .5s; }
+#splash .logo{ font-family:"Fredoka",sans-serif; font-size:42px; color:var(--purple);
+  text-shadow:0 0 20px var(--purple); }
+#splash .tag{ color:var(--teal); font-size:16px; }
+#splash.gone{ opacity:0; pointer-events:none; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+@media (max-width:560px){
+  .title h1{ font-size:16px; } .card h2{ font-size:22px; } .quiz-q{ font-size:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ BRANDING SPLASH (1s) ============ -->
+<div id="splash"><div class="logo">School Games 🎓</div><div class="tag">Lernen macht Spaß!</div></div>
+
+<div class="wrap">
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div class="h-left">
+      <button class="icon-btn" id="backBtn" title="Zurück" aria-label="Zurück">←</button>
+      <div class="title">
+        <h1>MotoX · Past Tense</h1>
+        <span class="badge">6. Klasse · Standard</span>
+      </div>
+    </div>
+    <div class="h-right">
+      <div class="lives" id="livesVal">❤️❤️❤️</div>
+      <div class="score">⭐ <span id="scoreVal">0</span></div>
+      <button class="icon-btn" id="psyBtn" title="Psychedelic Mode" aria-label="Psychedelic Mode">🌈</button>
+    </div>
+  </header>
+
+  <!-- ============ GAME AREA ============ -->
+  <div class="game-area" id="gameArea">
+    <canvas id="cv"></canvas>
+
+    <!-- START -->
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <h2>🏍️ MotoX: Past Tense Rider</h2>
+        <p>Heize über die Kicker und mach <b>Flips</b> in der Luft!<br>Lande <b>passend zum Hang</b> (Rad parallel) — sonst stürzt du.</p>
+        <div class="keyhint">
+          <span>⬅️ / Links tippen = <b>Backflip</b></span>
+          <span>➡️ / Rechts tippen = <b>Frontflip</b></span>
+        </div>
+        <p style="font-size:14px">Gas gibst du automatisch. An jedem <b style="color:var(--purple)">🚩 Checkpoint</b> wartet eine Past-Simple-Frage — richtig = Speed-Boost!</p>
+        <button class="btn success" id="startBtn">Los geht's! 🚀</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="overlay hidden" id="quizOverlay">
+      <div class="card">
+        <span class="quiz-tag" id="quizTag">CHECKPOINT</span>
+        <div id="quizBody"></div>
+        <div class="feedline" id="quizFeed"></div>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div class="overlay hidden" id="overOverlay">
+      <div class="card">
+        <h2 id="overTitle">Game Over 🏁</h2>
+        <p id="overStats"></p>
+        <p style="font-size:14px" id="overBest"></p>
+        <button class="btn" id="retryBtn">Nochmal fahren 🔁</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER (Fortschritt) ============ -->
+  <footer>
+    <div class="prog-label"><span id="progText">Nächster Checkpoint</span><span id="distText">0 m</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* ===================================================================
+   MotoX Past Tense Rider — School Games OG
+   Einzeldatei, Vanilla JS, kein Build. Doppelklick genügt.
+=================================================================== */
+
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const D2R = Math.PI/180, R2D = 180/Math.PI;
+
+/* ---------- Splash 1s ---------- */
+setTimeout(()=>{ document.getElementById("splash").classList.add("gone"); }, 1000);
+setTimeout(()=>{ const s=document.getElementById("splash"); if(s) s.remove(); }, 1600);
+
+/* ---------- Canvas ---------- */
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+let W=880, H=440;                 // interne Renderauflösung
+function resize(){
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  W = Math.max(480, Math.round(r.width));
+  H = Math.max(300, Math.round(r.height));
+  cv.width = W*dpr; cv.height = H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize", resize);
+
+/* ---------- Konstanten / Physik ---------- */
+const PX_PER_M    = 32;           // Umrechnung für Distanzanzeige
+const BIKE_SX     = 240;          // feste Bildschirm-X des Bikes
+let   GROUND_Y    = 360;          // Boden-Grundlinie (wird in resize gesetzt)
+const GRAV        = 1320;         // px/s^2 (Luft) – kleiner = mehr Hangzeit/Air
+const GRAV_SLOPE  = 640;          // Hang-Beschleunigung (Schwung bergab/bergauf)
+const SPEED_CRUISE= 300;          // px/s Startgeschwindigkeit
+const SPEED_MIN   = 210;          // nie langsamer
+const SPEED_MAX   = 480;          // normaler Deckel (Boost darf kurz drüber)
+const ROT_SPEED   = 360;          // °/s Rotation bei gedrückter Taste (Luft)
+const LAND_TOL    = 55;           // ° max. Abweichung Bike↔Hang – großzügig (kinderfreundlich)
+const FLIP_PTS    = 150;          // Punkte pro vollem Flip
+const WHEEL_HX    = 25;           // halber Radstand (px) – passt zum Bike-Rendering
+
+/* ---------- Spielzustand ---------- */
+let state = "start";              // start | run | quiz | crash | over
+let lastT = 0, animId = null;
+let cameraX = 0;                  // Welt-Scroll
+let speed = SPEED_CRUISE;
+let lives = 3, score = 0, checkpointsPassed = 0;
+let invuln = 0;
+
+const bike = { y:GROUND_Y, vy:0, angle:0, onGround:true,
+               airRot:0, wheelSpin:0, airTime:0, squash:0 };
+
+let features = [];                // Gelände-Features (glatte Höcker)
+let checkpoints = [];             // {x, taken, prevX}
+let genX = 0;                     // nächster Feature-Startpunkt
+let featCount = 0, cpEvery = 4;
+let lastCheckpointX = 0;
+let particles = [];               // Konfetti / Staub
+let floaters = [];                // schwebende Trick-Texte
+let bgHills = [];                 // Parallax-Hügel
+
+let bestScore = +(localStorage.getItem("motox_best")||0);
+let pressLeft=false, pressRight=false;
+
+/* ===================================================================
+   AUDIO (kurze Töne < 500ms)
+=================================================================== */
+let actx=null;
+function beep(freq,dur=0.12,type=null,vol=0.06){
+  try{
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    const psy = document.documentElement.getAttribute("data-theme")==="psychedelic";
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type = type || (psy?"sawtooth":"square");
+    o.frequency.value=freq; g.gain.value=vol;
+    o.connect(g); g.connect(actx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+dur);
+    o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sJump =()=>beep(520,0.10);
+const sFlip =()=>beep(740,0.07,"triangle");
+const sLand =()=>beep(300,0.08,"sine");
+const sCrash=()=>{ beep(150,0.20,"square",0.09); setTimeout(()=>beep(90,0.18,"sawtooth",0.08),60); };
+const sGood =()=>{ beep(660,0.10); setTimeout(()=>beep(880,0.10),90); setTimeout(()=>beep(1175,0.12),180); };
+const sBad  =()=>beep(196,0.22,"sawtooth",0.08);
+const sCheck=()=>beep(440,0.12,"triangle");
+const sClick=()=>beep(420,0.05,"sine",0.05);
+
+/* ===================================================================
+   GRAMMATIK-BANK — Past Simple: Questions & Negations (A1+, 6. Stufe)
+   Mix regelmäßig + häufige unregelmäßige Verben.
+=================================================================== */
+const BANK_MC = [
+  { q:"___ you visit your grandma last weekend?", correct:"Did", distract:["Do","Are"] },
+  { q:"She ___ watch the film yesterday.",        correct:"didn't", distract:["doesn't","wasn't"] },
+  { q:"___ they play football after school?",     correct:"Did", distract:["Do","Was"] },
+  { q:"We ___ go to the park on Sunday.",         correct:"didn't", distract:["don't","weren't"] },
+  { q:"He ___ eat his breakfast this morning.",   correct:"didn't", distract:["don't","isn't"] },
+  { q:"___ she finish her homework last night?",  correct:"Did", distract:["Does","Was"] },
+  { q:"I ___ see Tom at the party.",              correct:"didn't", distract:["don't","wasn't"] },
+  { q:"___ your dad cook dinner yesterday?",      correct:"Did", distract:["Does","Do"] },
+  { q:"They ___ buy the tickets.",                correct:"didn't", distract:["don't","aren't"] },
+  { q:"___ the dog run in the garden?",           correct:"Did", distract:["Does","Do"] },
+  { q:"You ___ call me back.",                    correct:"didn't", distract:["don't","weren't"] },
+  { q:"___ we have a test last Friday?",          correct:"Did", distract:["Do","Was"] },
+];
+const BANK_FILL = [
+  { pre:"Yesterday we ___ football.", verb:"play",        acc:["played"] },
+  { pre:"She ___ to the cinema last night.", verb:"go",   acc:["went"] },
+  { pre:"I ___ a great film last week.", verb:"see",       acc:["saw"] },
+  { pre:"They ___ pizza for dinner.", verb:"eat",          acc:["ate"] },
+  { pre:"My mum ___ a cake for my birthday.", verb:"make", acc:["made"] },
+  { pre:"The boys ___ in the river.", verb:"swim",         acc:["swam"] },
+  { pre:"I ___ my homework before dinner.", verb:"finish", acc:["finished"] },
+  { pre:"He ___ his homework yesterday.", verb:"not / do", acc:["didnt do","did not do"] },
+  { pre:"We ___ the bus this morning.", verb:"not / catch",acc:["didnt catch","did not catch"] },
+  { pre:"You ___ your keys at home.", verb:"not / take",   acc:["didnt take","did not take"] },
+  { pre:"She ___ the answer.", verb:"not / know",          acc:["didnt know","did not know"] },
+  { pre:"Last summer we ___ to Italy.", verb:"travel",     acc:["travelled","traveled"] },
+];
+const BANK_BUILD = [
+  { words:["Did","you","see","the","film","?"],       hint:"Bau eine Frage" },
+  { words:["She","didn't","play","tennis","."],        hint:"Bau einen verneinten Satz" },
+  { words:["Did","they","go","to","the","park","?"],   hint:"Bau eine Frage" },
+  { words:["We","didn't","watch","the","game","."],    hint:"Bau einen verneinten Satz" },
+  { words:["Did","he","eat","the","cake","?"],         hint:"Bau eine Frage" },
+  { words:["I","didn't","do","my","homework","."],     hint:"Bau einen verneinten Satz" },
+  { words:["Did","your","friend","call","you","?"],    hint:"Bau eine Frage" },
+  { words:["They","didn't","win","the","match","."],   hint:"Bau einen verneinten Satz" },
+];
+const usedIdx = { mc:[], fill:[], build:[] };
+function pick(bank, key){
+  let pool = bank.map((_,i)=>i).filter(i=>!usedIdx[key].includes(i));
+  if(pool.length===0){ usedIdx[key]=[]; pool = bank.map((_,i)=>i); }
+  const i = pool[Math.floor(Math.random()*pool.length)];
+  usedIdx[key].push(i);
+  return bank[i];
+}
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function norm(s){ return s.toLowerCase().trim().replace(/['’.]/g,"").replace(/\s+/g," "); }
+
+/* ===================================================================
+   WELTGENERIERUNG
+=================================================================== */
+/* ----- Glattes, flowiges Gelände: aneinandergereihte raised-cosine-Höcker -----
+   Features tilen lückenlos (jeder beginnt, wo der vorige bei 0 endet) →
+   durchgehend stetige, sanfte Strecke. 'kicker' = scharfer Crest (Absprung),
+   gefolgt von 'landing' (Abhang) = saubere Landerampe. */
+function pushCheckpoint(cx){
+  checkpoints.push({ x:cx, taken:false, prevX:lastCheckpointX });
+  lastCheckpointX = cx;
+}
+function ensureWorld(){
+  while(genX < cameraX + W + 800){
+    featCount++;
+    if(featCount % cpEvery === 0){
+      const w=240, cx=genX + w/2;                       // flache Landezone mit Checkpoint
+      features.push({ cx, w, amp:12, type:"flat" });
+      pushCheckpoint(cx);
+      genX += w; cpEvery = 4 + Math.floor(Math.random()*3);
+      continue;
+    }
+    const r=Math.random();
+    if(r < 0.32){                                        // sanfter Roller (bleibt am Boden)
+      const w=260+Math.random()*120, amp=30+Math.random()*34;
+      features.push({ cx:genX+w/2, w, amp, type:"roller" }); genX+=w;
+    } else if(r < 0.74){                                 // Sprung-Einheit: Kicker + Landehang
+      const kw=165+Math.random()*60, kamp=130+Math.random()*75; // schärfer & höher = mehr Air
+      features.push({ cx:genX+kw/2, w:kw, amp:kamp, type:"kicker" }); genX+=kw;
+      const dw=255+Math.random()*100, damp=-(58+Math.random()*52); // längerer, tieferer Landehang
+      features.push({ cx:genX+dw/2, w:dw, amp:damp, type:"landing" }); genX+=dw;
+    } else if(r < 0.9){                                  // Senke / Speed-Tal
+      const w=250+Math.random()*120, amp=-(42+Math.random()*42);
+      features.push({ cx:genX+w/2, w, amp, type:"dip" }); genX+=w;
+    } else {                                             // kurzer Atemzug
+      const w=170+Math.random()*70;
+      features.push({ cx:genX+w/2, w, amp:8, type:"flat" }); genX+=w;
+    }
+  }
+  features    = features.filter(f=> f.cx + f.w/2 > cameraX - 500);
+  checkpoints = checkpoints.filter(c=> c.x > cameraX - 500);
+  while(bgHills.length<8){
+    const last = bgHills.length? bgHills[bgHills.length-1].x : cameraX;
+    bgHills.push({ x:last + 200 + Math.random()*180, r:70+Math.random()*80 });
+  }
+  bgHills = bgHills.filter(hh=> hh.x*0.4 > cameraX*0.4 - 600);
+}
+
+/* Bodenhöhe (Welt-Y; kleiner = höher) — Grundwelle + glatte Feature-Höcker */
+function groundYAt(wx){
+  let y = GROUND_Y - Math.sin(wx*0.0016)*14 - Math.sin(wx*0.00071+1.3)*9;
+  for(const f of features){
+    const half=f.w*0.5;
+    if(wx>=f.cx-half && wx<=f.cx+half){
+      const t=(wx-f.cx)/half;                            // -1..1
+      y -= f.amp * 0.5*(1+Math.cos(t*Math.PI));          // raised cosine: glatt
+    }
+  }
+  return y;
+}
+function slopeAt(wx){ const ds=8; return (groundYAt(wx+ds)-groundYAt(wx-ds))/(2*ds); }
+function curveAt(wx){ const ds=9; return (groundYAt(wx+ds)-2*groundYAt(wx)+groundYAt(wx-ds))/(ds*ds); }
+function landingDust(wx){
+  const n=REDUCE?3:9, gy=groundYAt(wx);
+  for(let i=0;i<n;i++) particles.push({ x:BIKE_SX+(Math.random()-.5)*30, y:gy-4,
+    vx:-speed*0.25+(Math.random()-.5)*120, vy:-Math.random()*120-20, g:520,
+    life:0.5+Math.random()*0.3, size:4+Math.random()*5, rot:0, vr:(Math.random()-.5)*6, c:"--ground" });
+}
+
+/* ===================================================================
+   STEUERUNG
+=================================================================== */
+function onLeftDown(){ pressLeft=true; }
+function onLeftUp(){ pressLeft=false; }
+function onRightDown(){ pressRight=true; }
+function onRightUp(){ pressRight=false; }
+
+function typingInField(e){
+  const t=e.target;
+  return t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.isContentEditable);
+}
+window.addEventListener("keydown", e=>{
+  if(e.repeat) return;
+  // Während Quiz/Tippen: Steuerung NICHT abfangen, sonst kann man kein a/d tippen
+  if(typingInField(e) || state==="quiz") return;
+  if(e.code==="ArrowLeft"||e.code==="KeyA"){ e.preventDefault(); onLeftDown(); }
+  if(e.code==="ArrowRight"||e.code==="KeyD"){ e.preventDefault(); onRightDown(); }
+  if(e.code==="Space"||e.code==="Enter"){
+    if(state==="start"){ startGame(); }
+    else if(state==="over"){ startGame(); }
+  }
+});
+window.addEventListener("keyup", e=>{
+  if(typingInField(e)) return;
+  if(e.code==="ArrowLeft"||e.code==="KeyA"){ onLeftUp(); }
+  if(e.code==="ArrowRight"||e.code==="KeyD"){ onRightUp(); }
+});
+// Touch / Maus: linke Hälfte = Backflip, rechte Hälfte = Frontflip
+function pointerSide(e){
+  const r = cv.getBoundingClientRect();
+  const x = (e.touches? e.touches[0].clientX : e.clientX) - r.left;
+  return x < r.width/2 ? "L" : "R";
+}
+cv.addEventListener("pointerdown", e=>{
+  if(state!=="run") return;
+  e.preventDefault();
+  if(pointerSide(e)==="L") onLeftDown(); else onRightDown();
+});
+cv.addEventListener("pointerup", e=>{ onLeftUp(); onRightUp(); });
+cv.addEventListener("pointercancel", ()=>{ onLeftUp(); onRightUp(); });
+cv.addEventListener("pointerleave", ()=>{ onLeftUp(); onRightUp(); });
+
+/* ===================================================================
+   SPIEL-FLOW
+=================================================================== */
+function startGame(){
+  resize();
+  GROUND_Y = H - 80;
+  state="run";
+  cameraX=0; speed=SPEED_CRUISE;
+  lives=3; score=0; checkpointsPassed=0; invuln=0;
+  features=[]; checkpoints=[]; particles=[]; floaters=[]; bgHills=[];
+  genX=0; featCount=0; cpEvery=4; lastCheckpointX=0;
+  usedIdx.mc=[]; usedIdx.fill=[]; usedIdx.build=[];
+  ensureWorld();
+  bike.y=groundYAt(cameraX+BIKE_SX); bike.vy=0; bike.angle=0; bike.onGround=true;
+  bike.airRot=0; bike.airTime=0; bike.wheelSpin=0; bike.squash=0;
+  hide("startOverlay"); hide("quizOverlay"); hide("overOverlay");
+  updateHud();
+  lastT=performance.now();
+  if(animId) cancelAnimationFrame(animId);
+  animId=requestAnimationFrame(loop);
+}
+function gameOver(){
+  state="over";
+  if(score>bestScore){ bestScore=score; localStorage.setItem("motox_best",bestScore); }
+  document.getElementById("overStats").innerHTML =
+    `⭐ Score: <b>${score}</b><br>🚩 Checkpoints: <b>${checkpointsPassed}</b><br>📏 Distanz: <b>${Math.floor(cameraX/PX_PER_M)} m</b>`;
+  document.getElementById("overBest").textContent = `🏆 Bestleistung: ${bestScore}`;
+  show("overOverlay");
+}
+
+/* ===================================================================
+   UPDATE
+=================================================================== */
+function update(dt){
+  const bikeWX = cameraX + BIKE_SX;
+
+  // --- Schwung: Hangneigung beschleunigt/bremst, sanfter Overspeed-Abbau ---
+  if(bike.onGround){
+    const sa = Math.atan(slopeAt(bikeWX));
+    speed += Math.sin(sa)*GRAV_SLOPE*dt;          // bergab (sa>0) schneller
+  }
+  if(speed>SPEED_MAX) speed += (SPEED_MAX-speed)*Math.min(1,dt*0.8);
+  if(speed<SPEED_MIN) speed = SPEED_MIN;
+
+  cameraX += speed*dt;
+  ensureWorld();
+  if(invuln>0) invuln-=dt;
+  if(bike.squash>0) bike.squash=Math.max(0, bike.squash - dt*6);
+  bike.wheelSpin += speed*dt*0.06;
+
+  if(bike.onGround){
+    // Zwei-Rad-Modell: Neigung aus der Linie zwischen Hinter- und Vorderrad
+    const rearY  = groundYAt(bikeWX - WHEEL_HX);
+    const frontY = groundYAt(bikeWX + WHEEL_HX);
+    const groundAng = Math.atan2(frontY - rearY, 2*WHEEL_HX);   // rad, + = bergab
+    const contactY  = (rearY + frontY)/2;
+    // Abheben am Crest: fällt der Boden schneller weg als g zieht?
+    const downAccel = -curveAt(bikeWX) * speed*speed;
+    if(downAccel > GRAV*0.9 && groundAng > -0.05){
+      bike.onGround=false; bike.vy=Math.tan(groundAng)*speed; bike.airRot=0; bike.airTime=0; sJump();
+    } else {
+      // weiche Federung: Körper gleitet auf die Radspanne, klebt nicht starr
+      bike.y     += (contactY - bike.y) * Math.min(1, dt*17);
+      bike.angle += (groundAng*R2D - bike.angle) * Math.min(1, dt*11);
+      bike.vy = Math.tan(groundAng)*speed;
+    }
+  } else {
+    bike.vy += GRAV*dt;
+    bike.y  += bike.vy*dt;
+    bike.airTime += dt;
+    let rot=0;
+    if(pressLeft)  rot -= ROT_SPEED*dt;   // Backflip
+    if(pressRight) rot += ROT_SPEED*dt;   // Frontflip
+    if(rot!==0){
+      const before=Math.floor(Math.abs(bike.airRot)/180);
+      bike.angle += rot; bike.airRot += rot;
+      if(Math.floor(Math.abs(bike.airRot)/180) > before) sFlip();
+    }
+    if(bike.y >= groundYAt(bikeWX) && bike.vy>0) evaluateLanding(bikeWX);
+  }
+
+  // Checkpoints nur am Boden auslösen (fair)
+  if(bike.onGround){
+    for(const c of checkpoints){
+      if(!c.taken && bikeWX >= c.x){ c.taken=true; openQuiz(); break; }
+    }
+  }
+
+  stepParticles(dt);
+  updateHud();
+}
+
+/* Landung: Bike-Winkel muss zum HANG passen (Motocross-Feeling) */
+function evaluateLanding(wx){
+  bike.onGround=true;
+  // Hangwinkel + Aufsetzpunkt aus der Radspanne (konsistent mit Fahrmodell)
+  const rearY=groundYAt(wx-WHEEL_HX), frontY=groundYAt(wx+WHEEL_HX);
+  const slopeRad=Math.atan2(frontY-rearY, 2*WHEEL_HX), slopeDeg=slopeRad*R2D;
+  bike.y = (rearY+frontY)/2;
+  let a = ((bike.angle%360)+360)%360; if(a>180) a-=360;
+  let diff = a - slopeDeg; diff=((diff%360)+360)%360; if(diff>180) diff-=360;
+  const adiff = Math.abs(diff);
+  const flips = Math.floor((Math.abs(bike.airRot)+LAND_TOL)/360);
+  bike.squash = 1; landingDust(wx);
+
+  if(adiff <= LAND_TOL){
+    bike.angle = slopeDeg; bike.vy = Math.tan(slopeRad)*speed;
+    let pts=0, label="";
+    if(flips>=1){ const dir=bike.airRot<0?"BACKFLIP":"FRONTFLIP"; pts+=flips*FLIP_PTS; label=(flips>1?flips+"× ":"")+dir+"! "; }
+    if(adiff<16){ pts+=40; label+="PERFECT "; speed=Math.min(SPEED_MAX+120, speed+70); }
+    else if(!label){ label="SMOOTH "; }
+    if(bike.airTime>0.4) pts+=10;
+    if(pts>0){ addScore(pts);
+      floaters.push({ x:BIKE_SX, y:bike.y-78, vy:-52, life:1.25, text:label.trim()+" +"+pts, color:"--yellow" }); }
+    if(flips>=1 || adiff<10){ confettiBurst(BIKE_SX, bike.y-44, flips>=1?18:10); sGood(); } else sLand();
+    bike.airRot=0; bike.airTime=0;
+  } else {
+    crash();
+  }
+}
+
+function crash(){
+  const wx=cameraX+BIKE_SX;
+  if(invuln>0){ bike.onGround=true; bike.vy=0; bike.angle=Math.atan(slopeAt(wx))*R2D; bike.airRot=0; return; }
+  sCrash(); lives--; updateHud(); doShake(); landingDust(wx);
+  floaters.push({ x:BIKE_SX, y:bike.y-66, vy:-44, life:1.1, text:"CRASH! 💥", color:"--red" });
+  if(lives<=0){ gameOver(); return; }
+  // sanfter Respawn auf dem Boden, kurz unverwundbar
+  invuln=1.6; speed=Math.max(SPEED_MIN, speed*0.6);
+  bike.onGround=true; bike.y=groundYAt(wx); bike.vy=0;
+  bike.angle=Math.atan(slopeAt(wx))*R2D; bike.airRot=0; bike.airTime=0; bike.squash=0.6;
+}
+
+function addScore(n){ score+=n; const el=document.getElementById("scoreVal"); el.textContent=score;
+  el.parentElement.animate?.([{transform:"scale(1)"},{transform:"scale(1.25)"},{transform:"scale(1)"}],{duration:300}); }
+
+/* ===================================================================
+   QUIZ
+=================================================================== */
+const fmtCycle = ["mc","fill","build"];
+let quizActive=false;
+function openQuiz(){
+  state="quiz"; quizActive=true;
+  pressLeft=pressRight=false;
+  sCheck();
+  const fmt = fmtCycle[checkpointsPassed % 3];
+  const tag = {mc:"MULTIPLE CHOICE", fill:"LÜCKENTEXT", build:"SATZBAU"}[fmt];
+  document.getElementById("quizTag").textContent = "🚩 CHECKPOINT · " + tag;
+  document.getElementById("quizFeed").textContent=""; document.getElementById("quizFeed").className="feedline";
+  const body = document.getElementById("quizBody");
+  if(fmt==="mc")   renderMC(body);
+  else if(fmt==="fill") renderFill(body);
+  else renderBuild(body);
+  show("quizOverlay");
+}
+function closeQuiz(correct){
+  quizActive=false;
+  checkpointsPassed++;
+  if(correct){
+    addScore(120);
+    speed = Math.min(SPEED_MAX+140, speed+130);   // Schub
+    confettiBurst(W/2, H/2, 28);
+  } else {
+    speed = Math.max(SPEED_MIN, speed-90);        // kurzer Tempoverlust
+  }
+  hide("quizOverlay");
+  state="run";
+  lastT=performance.now();
+  updateHud();
+}
+
+function renderMC(body){
+  const item = pick(BANK_MC,"mc");
+  const opts = shuffle([item.correct, ...item.distract]);
+  let html = `<div class="quiz-q">${item.q.replace("___","<u>&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;</u>")}</div><div class="opts">`;
+  opts.forEach(o=> html += `<button class="opt" data-v="${o}">${o}</button>`);
+  html += `</div>`;
+  body.innerHTML = html;
+  body.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const all = body.querySelectorAll(".opt");
+      all.forEach(b=> b.disabled=true);
+      const ok = btn.dataset.v === item.correct;
+      if(ok){ btn.classList.add("correct"); feed(true, "Richtig! 🎉"); sGood(); }
+      else {
+        btn.classList.add("wrong"); sBad();
+        all.forEach(b=>{ if(b.dataset.v===item.correct) b.classList.add("correct"); });
+        feed(false, "Richtig wäre: " + item.correct);
+      }
+      setTimeout(()=>closeQuiz(ok), ok?900:1600);
+    });
+  });
+}
+
+function renderFill(body){
+  const item = pick(BANK_FILL,"fill");
+  body.innerHTML =
+    `<div class="quiz-q">Setz das Verb ins Past Simple:</div>
+     <div class="fill-row">${item.pre.replace("___",'<input class="fill-input" id="fillIn" autocomplete="off" autocapitalize="off" spellcheck="false">')}</div>
+     <div style="margin-bottom:14px">Verb: <span class="hintword">${item.verb}</span></div>
+     <button class="btn success" id="fillSubmit">Prüfen ✔️</button>`;
+  const inp = body.querySelector("#fillIn");
+  inp.focus();
+  const submit = ()=>{
+    const val = norm(inp.value);
+    if(!val) return;
+    const ok = item.acc.some(a=> norm(a)===val);
+    inp.disabled=true; body.querySelector("#fillSubmit").disabled=true;
+    if(ok){ inp.style.borderColor="var(--success)"; feed(true,"Richtig! 🎉"); sGood(); }
+    else { inp.style.borderColor="var(--error)"; feed(false,"Richtig wäre: " + item.acc[item.acc.length-1]); sBad(); doShake(); }
+    setTimeout(()=>closeQuiz(ok), ok?900:1700);
+  };
+  body.querySelector("#fillSubmit").addEventListener("click", submit);
+  inp.addEventListener("keydown", e=>{ if(e.code==="Enter") submit(); });
+}
+
+function renderBuild(body){
+  const item = pick(BANK_BUILD,"build");
+  const scrambled = shuffle(item.words.map((w,i)=>({w,i})));
+  let chips = scrambled.map((o,idx)=> `<button class="word" data-idx="${idx}">${o.w}</button>`).join("");
+  body.innerHTML =
+    `<div class="quiz-q">${item.hint}:</div>
+     <div class="build-target" id="buildTarget"><span style="opacity:.5">tippe die Wörter der Reihe nach an</span></div>
+     <div class="build-bank" id="buildBank">${chips}</div>
+     <button class="btn success" id="buildSubmit">Prüfen ✔️</button>
+     <button class="btn danger" id="buildClear" style="font-size:16px;padding:8px 18px">↺ Reset</button>`;
+  const target = body.querySelector("#buildTarget");
+  const chosen = []; // {word, btn}
+  function redrawTarget(){
+    target.innerHTML = chosen.length
+      ? chosen.map((c,k)=>`<span class="word" data-k="${k}" style="border-color:var(--blue)">${c.word}</span>`).join("")
+      : `<span style="opacity:.5">tippe die Wörter der Reihe nach an</span>`;
+    target.querySelectorAll("span.word").forEach(sp=>{
+      sp.addEventListener("click", ()=>{
+        const k=+sp.dataset.k; const rem=chosen.splice(k,1)[0];
+        rem.btn.classList.remove("used"); sClick(); redrawTarget();
+      });
+    });
+  }
+  body.querySelectorAll("#buildBank .word").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.classList.contains("used")) return;
+      btn.classList.add("used"); sClick();
+      chosen.push({ word:btn.textContent, btn }); redrawTarget();
+    });
+  });
+  body.querySelector("#buildClear").addEventListener("click", ()=>{
+    chosen.length=0; body.querySelectorAll("#buildBank .word").forEach(b=>b.classList.remove("used")); redrawTarget();
+  });
+  body.querySelector("#buildSubmit").addEventListener("click", ()=>{
+    if(chosen.length!==item.words.length){ feed(false,"Benutze alle Wörter!"); return; }
+    const ok = chosen.every((c,k)=> c.word===item.words[k]);
+    body.querySelector("#buildSubmit").disabled=true; body.querySelector("#buildClear").disabled=true;
+    if(ok){ feed(true,"Richtig! 🎉"); sGood(); }
+    else { feed(false,"Richtig: " + item.words.join(" ")); sBad(); doShake(); }
+    setTimeout(()=>closeQuiz(ok), ok?900:1900);
+  });
+}
+
+function feed(ok,msg){
+  const f=document.getElementById("quizFeed");
+  f.textContent=msg; f.className="feedline "+(ok?"ok":"no");
+}
+
+/* ===================================================================
+   PARTIKEL / KONFETTI / FLOATER
+=================================================================== */
+const CONFETTI=["--yellow","--green","--pink","--orange","--purple","--blue"];
+function cssc(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#fff"; }
+function confettiBurst(x,y,n){
+  if(REDUCE){ n=Math.min(n,6); }
+  for(let i=0;i<n;i++){
+    particles.push({ x,y,
+      vx:(Math.random()-.5)*260, vy:-Math.random()*320-60,
+      g:600+Math.random()*200, life:1+Math.random()*0.6,
+      size:5+Math.random()*6, rot:Math.random()*6, vr:(Math.random()-.5)*12,
+      c:CONFETTI[Math.floor(Math.random()*CONFETTI.length)] });
+  }
+}
+function stepParticles(dt){
+  particles.forEach(p=>{ p.vy+=p.g*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt; p.life-=dt; });
+  particles = particles.filter(p=>p.life>0 && p.y<H+40);
+  floaters.forEach(f=>{ f.y+=f.vy*dt; f.life-=dt; });
+  floaters = floaters.filter(f=>f.life>0);
+}
+
+/* ===================================================================
+   RENDER
+=================================================================== */
+function drawBackground(){
+  // Himmel
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, cssc("--sky-top")); g.addColorStop(1, cssc("--sky-bottom"));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // Parallax-Hügel
+  ctx.fillStyle=cssc("--hill-far");
+  bgHills.forEach((hh,i)=>{
+    const sx = hh.x - cameraX*0.35;
+    ctx.beginPath(); ctx.arc(sx, GROUND_Y+20, hh.r, Math.PI, 0); ctx.fill();
+  });
+  ctx.fillStyle=cssc("--hill-near"); ctx.globalAlpha=.85;
+  bgHills.forEach((hh,i)=>{
+    const sx = hh.x*1.0 - cameraX*0.55 + 80;
+    ctx.beginPath(); ctx.arc(sx, GROUND_Y+40, hh.r*0.8, Math.PI, 0); ctx.fill();
+  });
+  ctx.globalAlpha=1;
+}
+function drawGround(){
+  const step=6;
+  // Erdkörper
+  ctx.beginPath(); ctx.moveTo(0,H);
+  for(let sx=0; sx<=W; sx+=step) ctx.lineTo(sx, groundYAt(cameraX+sx));
+  ctx.lineTo(W,H); ctx.closePath();
+  ctx.fillStyle=cssc("--ground"); ctx.fill();
+  // dunklere Tiefenschicht
+  ctx.globalAlpha=.22; ctx.fillStyle=cssc("--ground-dark");
+  ctx.beginPath(); ctx.moveTo(0,H);
+  for(let sx=0; sx<=W; sx+=step) ctx.lineTo(sx, groundYAt(cameraX+sx)+30);
+  ctx.lineTo(W,H); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+  // Gras-/Oberkante (dick, gerundet → flowy)
+  ctx.lineWidth=7; ctx.lineJoin="round"; ctx.strokeStyle=cssc("--ground-top");
+  if(cssc("--glow")!=="transparent"){ ctx.shadowColor=cssc("--glow"); ctx.shadowBlur=10; }
+  ctx.beginPath();
+  for(let sx=0; sx<=W; sx+=step){ const y=groundYAt(cameraX+sx); if(sx===0)ctx.moveTo(sx,y); else ctx.lineTo(sx,y); }
+  ctx.stroke();
+  ctx.shadowBlur=0;
+}
+function drawCheckpoints(){
+  checkpoints.forEach(c=>{
+    const sx=c.x-cameraX; if(sx<-40||sx>W+40) return;
+    const gy=groundYAt(c.x);
+    ctx.save();
+    ctx.strokeStyle=cssc("--gate-dark"); ctx.lineWidth=6;
+    ctx.beginPath(); ctx.moveTo(sx, gy); ctx.lineTo(sx, gy-130); ctx.stroke();
+    // Flagge
+    ctx.fillStyle = c.taken? cssc("--ground-top") : cssc("--gate");
+    ctx.beginPath(); ctx.moveTo(sx, gy-130); ctx.lineTo(sx+44, gy-118); ctx.lineTo(sx, gy-100); ctx.closePath(); ctx.fill();
+    ctx.font="22px Fredoka, sans-serif"; ctx.textAlign="center";
+    ctx.fillText("🚩", sx, gy-140);
+    ctx.restore();
+  });
+}
+/* Hilfs-Rechteck mit runden Ecken (Fallback wenn roundRect fehlt) */
+function rr(x,y,w,h,r){
+  if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(x,y,w,h,r); return; }
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function drawBike(){
+  const blink = invuln>0 && Math.floor(invuln*12)%2===0;
+  ctx.save();
+  ctx.translate(BIKE_SX, bike.y);
+  ctx.rotate(bike.angle*D2R);
+  ctx.scale(1, 1-0.12*(bike.squash||0));   // Landungs-Stauchung
+  if(blink) ctx.globalAlpha=0.45;
+  if(cssc("--glow")!=="transparent"){ ctx.shadowColor=cssc("--glow"); ctx.shadowBlur=14; }
+
+  const R=16, rear=-25, front=25, axle=-R;
+  const wheel=cssc("--wheel"), frame=cssc("--bike"), frameD=cssc("--bike-dark"),
+        rider=cssc("--rider"), card=cssc("--bg-card");
+  ctx.lineCap="round"; ctx.lineJoin="round";
+
+  // --- Räder mit Stollen + Speichen ---
+  function drawWheel(cx){
+    ctx.save(); ctx.translate(cx,axle);
+    ctx.fillStyle=cssc("--text-dark"); ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=wheel; ctx.beginPath(); ctx.arc(0,0,R-3,0,Math.PI*2); ctx.fill();   // Felge
+    ctx.rotate(bike.wheelSpin);
+    ctx.strokeStyle=cssc("--text-dark"); ctx.lineWidth=2;                              // Stollen
+    for(let k=0;k<10;k++){ ctx.rotate(Math.PI/5); ctx.beginPath(); ctx.moveTo(0,R-2); ctx.lineTo(0,R+1); ctx.stroke(); }
+    ctx.strokeStyle=frameD; ctx.lineWidth=2;                                           // Speichen
+    for(let k=0;k<3;k++){ ctx.rotate(Math.PI/3); ctx.beginPath(); ctx.moveTo(0,-(R-4)); ctx.lineTo(0,R-4); ctx.stroke(); }
+    ctx.fillStyle=frameD; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill();     // Nabe
+    ctx.restore();
+  }
+  drawWheel(rear); drawWheel(front);
+
+  // --- Federung: Gabel vorn, Schwinge hinten ---
+  ctx.strokeStyle=frameD; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(front,axle); ctx.lineTo(front-4,axle-24); ctx.stroke();  // Gabel
+  ctx.lineWidth=6;
+  ctx.beginPath(); ctx.moveTo(rear,axle); ctx.lineTo(0,axle-12); ctx.stroke();          // Schwinge
+
+  // --- Auspuff ---
+  ctx.strokeStyle=cssc("--orange"); ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(-4,axle-8); ctx.lineTo(rear+3,axle-3); ctx.stroke();
+
+  // --- Rahmen ---
+  ctx.strokeStyle=frame; ctx.lineWidth=6;
+  ctx.beginPath();
+  ctx.moveTo(rear,axle); ctx.lineTo(-7,axle-16); ctx.lineTo(11,axle-17); ctx.lineTo(front-4,axle-24);
+  ctx.stroke();
+
+  // Motorblock
+  ctx.fillStyle=frameD; rr(-9,axle-9,19,12,3); ctx.fill();
+
+  // Sitz + Tank + Kotflügel
+  ctx.fillStyle=frame;
+  rr(-17,axle-22,18,7,3); ctx.fill();                 // Sitz
+  rr(2,axle-24,15,9,4); ctx.fill();                   // Tank
+  ctx.strokeStyle=frame; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(front,axle,R+7,-Math.PI*0.95,-Math.PI*0.35); ctx.stroke(); // vorderer Kotflügel
+  ctx.beginPath(); ctx.arc(rear,axle,R+7,-Math.PI*0.75,-Math.PI*0.1); ctx.stroke();   // hinterer Kotflügel
+
+  // Nummerntafel vorn
+  ctx.fillStyle=cssc("--yellow"); rr(front-12,axle-29,11,10,3); ctx.fill();
+  ctx.fillStyle=cssc("--text-dark"); ctx.font="700 8px Fredoka, sans-serif"; ctx.textAlign="center";
+  ctx.fillText("7", front-6, axle-21);
+
+  // Lenker
+  ctx.strokeStyle=frameD; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(front-4,axle-24); ctx.lineTo(front+3,axle-33); ctx.stroke();
+
+  // --- Fahrer (aktive Pose, nach vorn gelehnt) ---
+  const hipX=-3, hipY=axle-26, shX=9, shY=axle-37, barX=front+3, barY=axle-33;
+  ctx.strokeStyle=rider; ctx.lineWidth=6;
+  ctx.beginPath(); ctx.moveTo(hipX,hipY); ctx.lineTo(-4,axle-12); ctx.lineTo(2,axle-3); ctx.stroke(); // Bein→Rast
+  ctx.beginPath(); ctx.moveTo(hipX,hipY); ctx.lineTo(shX,shY); ctx.stroke();                          // Rumpf
+  ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(shX,shY); ctx.lineTo(barX,barY); ctx.stroke();                          // Arm→Lenker
+  // Helm + Visier
+  ctx.fillStyle=rider; ctx.beginPath(); ctx.arc(shX+6,shY-6,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=card; rr(shX+8,shY-9,6,5,2); ctx.fill();
+
+  ctx.restore();
+}
+function drawParticles(){
+  particles.forEach(p=>{
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+    ctx.globalAlpha=Math.max(0,Math.min(1,p.life));
+    ctx.fillStyle=cssc(p.c); ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+    ctx.restore();
+  });
+  ctx.globalAlpha=1;
+  floaters.forEach(f=>{
+    ctx.save(); ctx.globalAlpha=Math.max(0,Math.min(1,f.life));
+    ctx.font="700 26px Fredoka, sans-serif"; ctx.textAlign="center";
+    ctx.fillStyle=cssc(f.color); ctx.strokeStyle=cssc("--bg-dark"); ctx.lineWidth=4;
+    ctx.strokeText(f.text, f.x, f.y); ctx.fillText(f.text, f.x, f.y);
+    ctx.restore();
+  });
+  ctx.globalAlpha=1;
+}
+function drawAirMeter(){
+  if(bike.onGround || bike.airTime<0.06) return;
+  const turned=Math.abs(bike.airRot);
+  const dir = bike.airRot<0 ? "BACKFLIP" : "FRONTFLIP";
+  ctx.save();
+  ctx.font="700 16px Fredoka, sans-serif"; ctx.textAlign="center";
+  ctx.fillStyle=cssc("--warning"); ctx.strokeStyle=cssc("--bg-dark"); ctx.lineWidth=4;
+  const txt = turned>40 ? (dir+" "+Math.floor(turned)+"°") : "↶ DREHEN ↷";
+  ctx.strokeText(txt, BIKE_SX, bike.y-70); ctx.fillText(txt, BIKE_SX, bike.y-70);
+  ctx.restore();
+}
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawBackground();
+  drawGround();
+  drawCheckpoints();
+  drawBike();
+  drawAirMeter();
+  drawParticles();
+}
+
+/* ===================================================================
+   HUD
+=================================================================== */
+function updateHud(){
+  document.getElementById("scoreVal").textContent=score;
+  document.getElementById("livesVal").textContent="❤️".repeat(Math.max(0,lives))+"🖤".repeat(Math.max(0,3-lives));
+  // nächster Checkpoint
+  const bikeWX=cameraX+BIKE_SX;
+  let next=null;
+  for(const c of checkpoints){ if(!c.taken && c.x>=bikeWX){ next=c; break; } }
+  const toNext = next? Math.max(0,(next.x-bikeWX)/PX_PER_M) : 0;
+  document.getElementById("distText").textContent = Math.ceil(toNext)+" m";
+  // Fortschritt bis nächster Checkpoint (Segment)
+  let pct=0;
+  if(next){
+    const seg = (next.prevX!=null && next.prevX>0)? next.prevX : Math.max(0, next.x-1700);
+    const segLen = Math.max(200, next.x - seg);
+    pct = Math.min(100, Math.max(0, (bikeWX - seg)/segLen*100));
+  }
+  document.getElementById("progFill").style.width = pct+"%";
+  document.getElementById("progText").textContent = "🚩 Nächster Checkpoint · "+checkpointsPassed+" geschafft";
+}
+
+/* ===================================================================
+   LOOP
+=================================================================== */
+function loop(t){
+  animId=requestAnimationFrame(loop);
+  let dt=(t-lastT)/1000; lastT=t;
+  if(dt>0.05) dt=0.05;            // Tab-Wechsel abfangen
+  if(state==="run") update(dt);
+  else stepParticles(dt);        // Konfetti läuft auch im Quiz/Over weiter
+  render();
+}
+
+/* ===================================================================
+   UI-HELFER
+=================================================================== */
+function show(id){ document.getElementById(id).classList.remove("hidden"); }
+function hide(id){ document.getElementById(id).classList.add("hidden"); }
+function doShake(){
+  if(REDUCE) return;
+  const a=document.getElementById("gameArea");
+  a.classList.remove("shake"); void a.offsetWidth; a.classList.add("shake");
+}
+
+/* Psychedelic Toggle */
+document.getElementById("psyBtn").addEventListener("click", ()=>{
+  const root=document.documentElement;
+  const psy = root.getAttribute("data-theme")==="psychedelic";
+  root.setAttribute("data-theme", psy? "standard":"psychedelic");
+  sClick();
+  if(!psy && !REDUCE){
+    cv.animate?.([{filter:"hue-rotate(0deg)"},{filter:"hue-rotate(360deg)"}],{duration:600});
+  }
+});
+/* Zurück-Button: zurück zum Startbildschirm */
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  if(animId) cancelAnimationFrame(animId);
+  state="start"; pressLeft=pressRight=false;
+  hide("quizOverlay"); hide("overOverlay"); show("startOverlay");
+  // sanfter Hintergrund weiterlaufen lassen
+  resize(); GROUND_Y=H-80; render();
+});
+
+document.getElementById("startBtn").addEventListener("click", startGame);
+document.getElementById("retryBtn").addEventListener("click", startGame);
+
+/* Init */
+window.addEventListener("load", ()=>{ resize(); GROUND_Y=H-80; ensureWorld(); render(); });
+resize(); GROUND_Y=H-80;
+</script>
+</body>
+</html>

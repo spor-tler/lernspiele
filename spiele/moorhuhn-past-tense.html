@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="lernspiel:titel"        content="Moorhuhn Blaster: Past Tense">
+  <meta name="lernspiel:thema"        content="Past Tense (Irregular)">
+  <meta name="lernspiel:stufe"        content="6. Schulstufe">
+  <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+  <meta name="lernspiel:beschreibung" content="Schieße die Moorhühner mit der richtigen unregelmäßigen Vergangenheitsform ab.">
+<title>Moorhuhn Blaster — Past Tense | School Games 🎓</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-main:#FFF9F0; --bg-dark:#1E1B4B; --blue:#2563EB; --yellow:#FACC15;
+  --green:#16A34A; --red:#DC2626; --purple:#9333EA; --orange:#F97316;
+  --pink:#EC4899; --teal:#0D9488; --success:#22C55E; --error:#EF4444;
+  --text:#1F2937; --light:#F9FAFB; --border:#E5E7EB;
+  --sky:linear-gradient(180deg,#87CEEB 0%,#C8E6F5 60%,#D4EDAA 100%);
+  --shadow-card:4px 4px 0px #1F2937; --shadow-btn:3px 3px 0px rgba(0,0,0,.3);
+  --score-color:#FACC15; --title-color:#FACC15; --pts-color:#FACC15;
+  --ground-top:#6B8E5A; --ground-bot:#4A6741; --ground-border:#3D5E36;
+}
+[data-theme="psychedelic"] {
+  --bg-main:#000; --bg-dark:#0D001A;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033;
+  --purple:#BF00FF; --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --text:#FFF; --light:#FFF; --border:#FF00FF;
+  --sky:linear-gradient(180deg,#0D001A 0%,#001A0D 100%);
+  --shadow-card:0 0 20px #FF00FF,0 0 40px #BF00FF; --shadow-btn:0 0 12px #00FFFF;
+  --score-color:#FF00FF; --title-color:#00FFFF; --pts-color:#FF00FF;
+  --ground-top:#001A0D; --ground-bot:#000; --ground-border:#00FF41;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg-main);overflow:hidden;height:100vh;width:100vw;user-select:none}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#1E1B4B;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#splash h1{font-family:'Fredoka One',sans-serif;font-size:52px;color:#9333EA;text-shadow:0 0 20px #9333EA;animation:popIn .6s cubic-bezier(.34,1.56,.64,1)}
+#splash p{color:#FACC15;font-size:20px;margin-top:8px}
+
+/* MENU */
+#menu{position:fixed;inset:0;background:linear-gradient(135deg,#1E1B4B,#4C1D95);display:flex;align-items:center;justify-content:center;z-index:400}
+#menu-card{background:#FFF9F0;border-radius:24px;border:4px solid #FACC15;box-shadow:8px 8px 0 #92400E;padding:40px 48px;text-align:center;max-width:480px;width:90%}
+#menu-card h1{font-family:'Fredoka One',sans-serif;font-size:38px;color:#DC2626;margin-bottom:4px}
+#menu-card .sub{font-family:'Nunito',sans-serif;font-size:17px;color:#9333EA;font-weight:700;margin-bottom:8px}
+#menu-card .desc{font-size:14px;color:#6B7280;margin-bottom:28px;line-height:1.5}
+#start-btn{display:block;width:100%;padding:16px;background:#16A34A;color:#fff;border:none;border-radius:16px;font-family:'Fredoka One',sans-serif;font-size:26px;cursor:pointer;box-shadow:4px 4px 0 #14532D;transition:transform .1s}
+#start-btn:hover{transform:translateY(-3px)}
+#start-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #14532D}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.chip{background:#EFF6FF;color:#2563EB;border:2px solid #2563EB;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+
+/* LAYOUT */
+#app{width:100vw;height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+#hdr{height:60px;background:var(--bg-dark);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100;flex-shrink:0}
+.hdr-l,.hdr-r{display:flex;align-items:center;gap:10px;min-width:180px}
+.hdr-r{justify-content:flex-end}
+.hdr-c{display:flex;flex-direction:column;align-items:center;flex:1}
+#game-title{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--title-color)}
+#lvl-label{font-size:12px;color:#A5B4FC;font-weight:700}
+#back-btn{background:#9333EA;color:#fff;border:none;border-radius:12px;padding:7px 14px;font-family:'Fredoka One',sans-serif;font-size:16px;cursor:pointer;box-shadow:3px 3px 0 #5B21B6;transition:transform .1s}
+#back-btn:hover{transform:scale(1.05)}
+#score{font-family:'Fredoka One',sans-serif;font-size:28px;color:var(--score-color);text-shadow:2px 2px 0 rgba(0,0,0,.5)}
+#psycho-btn{background:none;border:2px solid #9333EA;border-radius:10px;padding:5px 9px;font-size:18px;cursor:pointer;transition:transform .1s}
+#psycho-btn:hover{transform:scale(1.1)}
+
+/* ARENA */
+#arena{flex:1;position:relative;background:var(--sky);cursor:none;overflow:hidden}
+#ground{position:absolute;bottom:0;left:0;right:0;height:72px;background:linear-gradient(180deg,var(--ground-top),var(--ground-bot));border-top:4px solid var(--ground-border)}
+.bush{position:absolute;bottom:52px;font-size:28px;pointer-events:none}
+.cloud{position:absolute;pointer-events:none;animation:cloudFloat linear infinite}
+@keyframes cloudFloat{from{transform:translateX(-200px)}to{transform:translateX(calc(100vw + 200px))}}
+
+/* CROSSHAIR */
+#xhair{position:absolute;width:48px;height:48px;pointer-events:none;transform:translate(-50%,-50%);z-index:50}
+#xhair svg{width:100%;height:100%}
+
+/* MUZZLE FLASH */
+.flash{position:absolute;pointer-events:none;font-size:36px;z-index:60;transform:translate(-50%,-50%);animation:flashGone .2s ease forwards}
+@keyframes flashGone{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}}
+
+/* BIRDS */
+.bird{position:absolute;cursor:none;z-index:20;transition:none;filter:drop-shadow(2px 2px 1px rgba(0,0,0,.3))}
+.bird-die{animation:birdDie .35s ease forwards}
+@keyframes birdDie{0%{transform:scale(1.4) rotate(0deg);opacity:1}60%{transform:scale(.4) rotate(200deg);opacity:.5}100%{transform:scale(0) rotate(380deg);opacity:0}}
+.pts{position:absolute;font-family:'Fredoka One',sans-serif;font-size:26px;color:var(--pts-color);text-shadow:2px 2px 0 #000;pointer-events:none;z-index:70;animation:ptsFloat 1s ease forwards}
+@keyframes ptsFloat{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-55px) scale(1.3);opacity:0}}
+
+/* AMMO */
+#ammo-box{position:absolute;bottom:82px;right:16px;z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+#ammo-lbl{font-family:'Fredoka One',sans-serif;font-size:13px;color:#fff;text-shadow:1px 1px 0 #000}
+#ammo-row{display:flex;gap:5px}
+.bullet{width:11px;height:26px;background:#FACC15;border-radius:5px 5px 3px 3px;border:2px solid #92400E;transition:background .15s,transform .15s}
+.bullet.spent{background:#6B7280;border-color:#374151;transform:scaleY(.65)}
+[data-theme="psychedelic"] .bullet{background:#FF00FF;border-color:#BF00FF;box-shadow:0 0 6px #FF00FF}
+[data-theme="psychedelic"] .bullet.spent{background:#333;border-color:#555;box-shadow:none}
+
+/* KILLS */
+#kills-box{position:absolute;bottom:82px;left:16px;z-index:30}
+.kills-lbl{font-family:'Fredoka One',sans-serif;font-size:13px;color:#fff;text-shadow:1px 1px 0 #000}
+#kills-track{width:110px;height:11px;background:rgba(0,0,0,.4);border-radius:6px;border:2px solid #fff;margin-top:4px}
+#kills-fill{height:100%;background:#22C55E;border-radius:4px;transition:width .3s ease}
+#kills-txt{font-family:'Fredoka One',sans-serif;font-size:12px;color:#fff;text-shadow:1px 1px 0 #000;margin-top:3px}
+
+/* BOSS */
+.boss-wrap{position:absolute;pointer-events:none;z-index:25}
+.boss-hpbar{position:absolute;top:-14px;left:0;right:0;height:7px;background:#EF4444;border-radius:4px;border:1px solid #000}
+.boss-hpfill{height:100%;background:#22C55E;border-radius:3px;transition:width .2s}
+#boss-warn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka One',sans-serif;font-size:58px;color:#DC2626;text-shadow:3px 3px 0 #000;pointer-events:none;z-index:80;display:none;animation:warnPulse .4s ease infinite alternate}
+@keyframes warnPulse{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.08)}}
+
+/* FOOTER */
+#ftr{height:38px;background:var(--bg-dark);display:flex;align-items:center;padding:0 16px;gap:10px;z-index:100;flex-shrink:0}
+#ftr-lbl{font-family:'Fredoka One',sans-serif;font-size:13px;color:#A5B4FC;white-space:nowrap}
+#prog-wrap{flex:1;height:14px;background:rgba(255,255,255,.1);border-radius:7px;border:2px solid rgba(255,255,255,.2);overflow:hidden}
+#prog-bar{height:100%;background:linear-gradient(90deg,#22C55E,#FACC15);border-radius:7px;transition:width .4s ease}
+[data-theme="psychedelic"] #prog-bar{background:linear-gradient(90deg,#FF00FF,#00FFFF)}
+#lvl-dots{display:flex;gap:5px}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);transition:all .3s}
+.dot.active{background:#FACC15;border-color:#FACC15}
+.dot.done{background:#22C55E;border-color:#22C55E}
+
+/* QUESTION OVERLAY */
+#q-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(3px)}
+#q-overlay.on{display:flex}
+#q-card{background:#FFF9F0;border-radius:24px;border:4px solid #2563EB;box-shadow:6px 6px 0 #1E3A8A;padding:28px;max-width:580px;width:92%;animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+[data-theme="psychedelic"] #q-card{background:#0D001A;border-color:#FF00FF;box-shadow:0 0 20px #FF00FF,0 0 40px #BF00FF}
+#q-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+#q-typelbl{font-family:'Fredoka One',sans-serif;font-size:15px;color:#2563EB;background:#EFF6FF;padding:4px 12px;border-radius:999px;border:2px solid #2563EB}
+[data-theme="psychedelic"] #q-typelbl{color:#000;background:#FF00FF;border-color:#FF00FF}
+#q-reload{font-family:'Fredoka One',sans-serif;font-size:18px;color:#DC2626;margin-left:auto}
+[data-theme="psychedelic"] #q-reload{color:#FF0033}
+#q-text{font-family:'Fredoka One',sans-serif;font-size:24px;color:var(--text);margin-bottom:20px;line-height:1.35;white-space:pre-line}
+
+/* MC */
+#mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mco{background:#fff;border:3px solid #E5E7EB;border-radius:14px;padding:13px 18px;font-family:'Fredoka One',sans-serif;font-size:19px;cursor:pointer;text-align:center;transition:all .15s;box-shadow:var(--shadow-btn)}
+.mco:hover{border-color:#2563EB;background:#EFF6FF;transform:translateY(-2px)}
+.mco.right{background:#DCFCE7;border-color:#22C55E;box-shadow:3px 3px 0 #15803D;animation:bounce .4s ease}
+.mco.wrong{background:#FEE2E2;border-color:#EF4444;animation:shake .3s ease}
+[data-theme="psychedelic"] .mco{background:#1A0029;color:#00FFFF;border-color:#BF00FF}
+[data-theme="psychedelic"] .mco:hover{background:#2D0045;border-color:#FF00FF}
+
+/* FILL */
+#fill-area{display:flex;flex-direction:column;gap:14px}
+#fill-sent{font-family:'Nunito',sans-serif;font-size:20px;color:var(--text);font-weight:700}
+#fill-in{width:100%;padding:13px 18px;font-family:'Fredoka One',sans-serif;font-size:22px;border:3px solid #E5E7EB;border-radius:14px;outline:none;text-align:center;transition:border-color .2s;background:#fff;color:#1F2937}
+#fill-in:focus{border-color:#2563EB}
+#fill-in.right{border-color:#22C55E;background:#DCFCE7;animation:bounce .4s}
+#fill-in.wrong{border-color:#EF4444;background:#FEE2E2;animation:shake .3s}
+[data-theme="psychedelic"] #fill-in{background:#1A0029;color:#00FFFF;border-color:#BF00FF}
+#fill-btn{background:#2563EB;color:#fff;border:none;border-radius:14px;padding:13px 28px;font-family:'Fredoka One',sans-serif;font-size:20px;cursor:pointer;box-shadow:4px 4px 0 #1E3A8A;transition:transform .1s}
+#fill-btn:hover{transform:translateY(-2px)}
+#fill-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #1E3A8A}
+
+/* WORD SORT */
+#ws-area{display:flex;flex-direction:column;gap:12px}
+#ws-drop{min-height:56px;border:3px dashed #CBD5E1;border-radius:14px;padding:10px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+#ws-drop.right{border-color:#22C55E;background:#DCFCE7;animation:bounce .4s}
+#ws-drop.wrong{border-color:#EF4444;background:#FEE2E2;animation:shake .3s}
+[data-theme="psychedelic"] #ws-drop{border-color:#FF00FF;background:#0D001A}
+#ws-pool{display:flex;flex-wrap:wrap;gap:7px}
+.wchip{background:#2563EB;color:#fff;border:none;border-radius:999px;padding:8px 15px;font-family:'Fredoka One',sans-serif;font-size:16px;cursor:pointer;box-shadow:3px 3px 0 #1E3A8A;transition:transform .1s;opacity:1}
+.wchip:hover{transform:scale(1.05)}
+.wchip.used{opacity:.35;pointer-events:none}
+.pchip{background:#9333EA;color:#fff;border:none;border-radius:999px;padding:8px 15px;font-family:'Fredoka One',sans-serif;font-size:16px;cursor:pointer;box-shadow:3px 3px 0 #5B21B6}
+[data-theme="psychedelic"] .wchip{background:#BF00FF;box-shadow:0 0 8px #BF00FF}
+[data-theme="psychedelic"] .pchip{background:#00FFFF;color:#000;box-shadow:0 0 8px #00FFFF}
+#ws-btn{background:#16A34A;color:#fff;border:none;border-radius:14px;padding:13px 28px;font-family:'Fredoka One',sans-serif;font-size:20px;cursor:pointer;box-shadow:4px 4px 0 #14532D;transition:transform .1s}
+#ws-btn:hover{transform:translateY(-2px)}
+
+/* TRUE/FALSE */
+#tf-row{display:flex;gap:14px}
+.tf-btn{flex:1;padding:18px;font-family:'Fredoka One',sans-serif;font-size:26px;border:none;border-radius:14px;cursor:pointer;transition:transform .1s}
+#tf-t{background:#22C55E;color:#fff;box-shadow:4px 4px 0 #14532D}
+#tf-f{background:#EF4444;color:#fff;box-shadow:4px 4px 0 #7F1D1D}
+.tf-btn:hover{transform:scale(1.04)}
+.tf-btn.right{animation:bounce .4s}
+.tf-btn.wrong{animation:shake .3s}
+
+/* FEEDBACK */
+#q-fb{margin-top:14px;padding:11px 15px;border-radius:12px;font-size:17px;font-weight:700;display:none}
+#q-fb.right{background:#DCFCE7;color:#15803D;border:2px solid #22C55E;display:block}
+#q-fb.wrong{background:#FEE2E2;color:#B91C1C;border:2px solid #EF4444;display:block}
+
+/* LEVEL COMPLETE */
+#lvl-done{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:300}
+#lvl-done.on{display:flex}
+#lvl-done-card{background:#FFF9F0;border-radius:24px;border:4px solid #FACC15;box-shadow:6px 6px 0 #92400E;padding:40px;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+#lvl-done-card h2{font-family:'Fredoka One',sans-serif;font-size:44px;color:#F97316;margin-bottom:8px}
+#lvl-done-card p{font-size:18px;color:#1F2937;margin-bottom:22px}
+#next-btn{background:#2563EB;color:#fff;border:none;border-radius:14px;padding:15px 36px;font-family:'Fredoka One',sans-serif;font-size:24px;cursor:pointer;box-shadow:4px 4px 0 #1E3A8A;transition:transform .1s}
+#next-btn:hover{transform:translateY(-3px)}
+
+/* WIN / GAMEOVER */
+#win,#over{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:500}
+#win.on,#over.on{display:flex}
+#win{background:rgba(30,27,75,.95)}
+#over{background:rgba(220,38,38,.9)}
+.end-card{background:#FFF9F0;border-radius:24px;padding:44px;text-align:center;max-width:460px;width:90%;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+.end-card h2{font-family:'Fredoka One',sans-serif;font-size:46px;margin-bottom:12px}
+.end-pts{font-family:'Fredoka One',sans-serif;font-size:34px;color:#F97316;margin-bottom:22px}
+.end-btn{background:#2563EB;color:#fff;border:none;border-radius:14px;padding:15px 36px;font-family:'Fredoka One',sans-serif;font-size:22px;cursor:pointer;box-shadow:4px 4px 0 #1E3A8A;transition:transform .1s}
+.end-btn:hover{transform:translateY(-3px)}
+
+/* CONFETTI */
+.conf{position:fixed;pointer-events:none;z-index:1000;animation:confFall linear forwards}
+@keyframes confFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* KEYFRAMES */
+@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bounce{0%{transform:scale(1)}50%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body data-theme="standard">
+
+<!-- Splash -->
+<div id="splash">
+  <h1>School Games 🎓</h1>
+  <p>Lernen macht Spaß!</p>
+</div>
+
+<!-- Menu -->
+<div id="menu">
+  <div id="menu-card">
+    <h1>🦆 Moorhuhn Blaster</h1>
+    <p class="sub">Past Tense Edition · 6. Schulstufe</p>
+    <p class="desc">Schieß die Moorhühner ab! Nach jedem leeren Magazin musst du eine Grammatikfrage richtig beantworten, um nachzuladen. Schnellere Vögel = mehr Punkte!</p>
+    <button id="start-btn" onclick="G.startGame()">🎯 Jetzt spielen!</button>
+    <div class="chips">
+      <span class="chip">5 Level</span>
+      <span class="chip">Simple Past</span>
+      <span class="chip">Did / Didn't</span>
+      <span class="chip">Boss Birds</span>
+      <span class="chip">4 Fragetypen</span>
+    </div>
+  </div>
+</div>
+
+<!-- Game -->
+<div id="app">
+  <div id="hdr">
+    <div class="hdr-l">
+      <button id="back-btn" onclick="G.toMenu()">← Menü</button>
+    </div>
+    <div class="hdr-c">
+      <div id="game-title">🦆 Moorhuhn Blaster</div>
+      <div id="lvl-label">Level 1 — Simple Past</div>
+    </div>
+    <div class="hdr-r">
+      <div id="score">0</div>
+      <button id="psycho-btn" onclick="G.togglePsycho()">🌈</button>
+    </div>
+  </div>
+
+  <div id="arena" onclick="G.shoot(event)" onmousemove="G.moveCross(event)">
+    <div id="ground">
+      <span class="bush" style="left:4%">🌿</span>
+      <span class="bush" style="left:18%">🌲</span>
+      <span class="bush" style="left:37%">🌿</span>
+      <span class="bush" style="left:58%">🌲</span>
+      <span class="bush" style="left:78%">🌿</span>
+      <span class="bush" style="left:92%">🌲</span>
+    </div>
+    <div id="xhair">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="19" stroke="#DC2626" stroke-width="2.5"/>
+        <circle cx="24" cy="24" r="2.8" fill="#DC2626"/>
+        <line x1="24" y1="2" x2="24" y2="11" stroke="#DC2626" stroke-width="2.5"/>
+        <line x1="24" y1="37" x2="24" y2="46" stroke="#DC2626" stroke-width="2.5"/>
+        <line x1="2" y1="24" x2="11" y2="24" stroke="#DC2626" stroke-width="2.5"/>
+        <line x1="37" y1="24" x2="46" y2="24" stroke="#DC2626" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div id="ammo-box">
+      <div id="ammo-lbl">🔫 Magazin</div>
+      <div id="ammo-row"></div>
+    </div>
+    <div id="kills-box">
+      <div class="kills-lbl">🎯 Abschüsse</div>
+      <div id="kills-track"><div id="kills-fill" style="width:0%"></div></div>
+      <div id="kills-txt">0 / 0</div>
+    </div>
+    <div id="boss-warn">⚠️ BOSS!</div>
+  </div>
+
+  <div id="ftr">
+    <div id="ftr-lbl">Fortschritt</div>
+    <div id="prog-wrap"><div id="prog-bar" style="width:0%"></div></div>
+    <div id="lvl-dots">
+      <div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div>
+      <div class="dot" id="d3"></div>
+      <div class="dot" id="d4"></div>
+      <div class="dot" id="d5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Question Overlay -->
+<div id="q-overlay">
+  <div id="q-card">
+    <div id="q-top">
+      <span style="font-size:30px">🔫</span>
+      <span id="q-typelbl">Multiple Choice</span>
+      <span id="q-reload">Magazin leer! Nachlade-Quiz!</span>
+    </div>
+    <div id="q-text">Frage</div>
+    <div id="mc-grid" style="display:none"></div>
+    <div id="fill-area" style="display:none">
+      <div id="fill-sent"></div>
+      <input id="fill-in" type="text" placeholder="Your answer..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button id="fill-btn" onclick="G.checkFill()">Check ✓</button>
+    </div>
+    <div id="ws-area" style="display:none">
+      <div id="ws-drop"></div>
+      <div id="ws-pool"></div>
+      <button id="ws-btn" onclick="G.checkWS()">Check ✓</button>
+    </div>
+    <div id="tf-row" style="display:none">
+      <button class="tf-btn" id="tf-t" onclick="G.checkTF(true)">✓ True</button>
+      <button class="tf-btn" id="tf-f" onclick="G.checkTF(false)">✗ False</button>
+    </div>
+    <div id="q-fb"></div>
+  </div>
+</div>
+
+<!-- Level Complete -->
+<div id="lvl-done">
+  <div id="lvl-done-card">
+    <h2>🎉 Level geschafft!</h2>
+    <p id="lvl-done-txt">Super gemacht!</p>
+    <button id="next-btn" onclick="G.nextLevel()">Weiter →</button>
+  </div>
+</div>
+
+<!-- Win -->
+<div id="win">
+  <div class="end-card">
+    <h2>🏆 Gewonnen!</h2>
+    <p style="font-size:18px;color:#6B7280;margin-bottom:8px">Past Tense Master!</p>
+    <div class="end-pts" id="win-pts">0 Punkte</div>
+    <button class="end-btn" onclick="G.restart()">🔄 Nochmal</button>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div id="over">
+  <div class="end-card">
+    <h2>💥 Game Over</h2>
+    <div class="end-pts" id="over-pts">0 Punkte</div>
+    <button class="end-btn" onclick="G.restart()">🔄 Nochmal</button>
+  </div>
+</div>
+
+<script>
+// ─── GRAMMAR DATA ─────────────────────────────────────────────────────────────
+// Curated sentence bank — every sentence makes real-world sense.
+// s = subject (capital), ls = lowercase subject, v = base form, p = past, r = rest of sentence
+const REG_SENTS = [
+  {s:'Tom',   ls:'Tom',   v:'walk',    p:'walked',   r:'to school yesterday'},
+  {s:'She',   ls:'she',   v:'play',    p:'played',   r:'football last Monday'},
+  {s:'They',  ls:'they',  v:'watch',   p:'watched',  r:'a film last night'},
+  {s:'We',    ls:'we',    v:'cook',    p:'cooked',   r:'dinner last Sunday'},
+  {s:'He',    ls:'he',    v:'clean',   p:'cleaned',  r:'his room yesterday'},
+  {s:'Lisa',  ls:'Lisa',  v:'listen',  p:'listened', r:'to music this morning'},
+  {s:'Anna',  ls:'Anna',  v:'visit',   p:'visited',  r:'her grandma last weekend'},
+  {s:'Max',   ls:'Max',   v:'help',    p:'helped',   r:'his mum in the garden yesterday'},
+  {s:'They',  ls:'they',  v:'work',    p:'worked',   r:'on a school project last week'},
+  {s:'She',   ls:'she',   v:'call',    p:'called',   r:'her best friend last night'},
+  {s:'He',    ls:'he',    v:'open',    p:'opened',   r:'the window this morning'},
+  {s:'We',    ls:'we',    v:'finish',  p:'finished', r:'our homework before dinner yesterday'},
+  {s:'Tom',   ls:'Tom',   v:'start',   p:'started',  r:'a new book last week'},
+  {s:'She',   ls:'she',   v:'talk',    p:'talked',   r:'to her teacher after class yesterday'},
+  {s:'They',  ls:'they',  v:'jump',    p:'jumped',   r:'into the lake last summer'},
+  {s:'He',    ls:'he',    v:'ask',     p:'asked',    r:'a question in class yesterday'},
+  {s:'Lisa',  ls:'Lisa',  v:'use',     p:'used',     r:'her phone to take photos yesterday'},
+  {s:'We',    ls:'we',    v:'want',    p:'wanted',   r:'to go to the cinema last Friday'},
+  {s:'Anna',  ls:'Anna',  v:'answer',  p:'answered', r:'all the questions correctly yesterday'},
+  {s:'Max',   ls:'Max',   v:'turn',    p:'turned',   r:'off the TV and went to bed last night'},
+];
+const IRR_SENTS = [
+  {s:'Tom',   ls:'Tom',   v:'go',     p:'went',     r:'to the park with his dog yesterday'},
+  {s:'She',   ls:'she',   v:'come',   p:'came',     r:'home late after football practice last night'},
+  {s:'They',  ls:'they',  v:'see',    p:'saw',      r:'a great concert last Saturday'},
+  {s:'He',    ls:'he',    v:'have',   p:'had',      r:'a great time at the birthday party last week'},
+  {s:'We',    ls:'we',    v:'get',    p:'got',      r:'good marks in the English test last Monday'},
+  {s:'Lisa',  ls:'Lisa',  v:'make',   p:'made',     r:'a birthday cake for her mum yesterday'},
+  {s:'Anna',  ls:'Anna',  v:'say',    p:'said',     r:'good morning to her teacher today'},
+  {s:'Max',   ls:'Max',   v:'take',   p:'took',     r:'the bus to school yesterday'},
+  {s:'She',   ls:'she',   v:'give',   p:'gave',     r:'a birthday present to her friend last week'},
+  {s:'He',    ls:'he',    v:'find',   p:'found',    r:'his lost keys under the sofa this morning'},
+  {s:'They',  ls:'they',  v:'think',  p:'thought',  r:'the film was really boring last night'},
+  {s:'Tom',   ls:'Tom',   v:'eat',    p:'ate',      r:'a huge pizza for lunch yesterday'},
+  {s:'She',   ls:'she',   v:'run',    p:'ran',      r:'five kilometres in the park this morning'},
+  {s:'He',    ls:'he',    v:'buy',    p:'bought',   r:'a new video game last Saturday'},
+  {s:'Lisa',  ls:'Lisa',  v:'write',  p:'wrote',    r:'a long letter to her pen pal last week'},
+  {s:'They',  ls:'they',  v:'swim',   p:'swam',     r:'in the outdoor pool last summer'},
+  {s:'Max',   ls:'Max',   v:'sit',    p:'sat',      r:'next to Anna on the school trip yesterday'},
+  {s:'She',   ls:'she',   v:'sleep',  p:'slept',    r:'for ten hours after the long hike last night'},
+  {s:'We',    ls:'we',    v:'fly',    p:'flew',     r:'to London for a class trip last year'},
+  {s:'Anna',  ls:'Anna',  v:'fall',   p:'fell',     r:'off her bike on the way to school yesterday'},
+];
+const ALL_SENTS = [...REG_SENTS, ...IRR_SENTS];
+
+// Short sentences for word sort (subject + verb + 2–3 word rest = 6–7 chips max)
+const WS_SENTS = [
+  {s:'Tom',   ls:'Tom',   v:'go',    p:'went',    r:'to the park yesterday'},
+  {s:'She',   ls:'she',   v:'eat',   p:'ate',     r:'a pizza yesterday'},
+  {s:'He',    ls:'he',    v:'play',  p:'played',  r:'football last Monday'},
+  {s:'Lisa',  ls:'Lisa',  v:'watch', p:'watched', r:'TV last night'},
+  {s:'Max',   ls:'Max',   v:'run',   p:'ran',     r:'in the park yesterday'},
+  {s:'She',   ls:'she',   v:'buy',   p:'bought',  r:'a new book last week'},
+  {s:'He',    ls:'he',    v:'swim',  p:'swam',    r:'in the pool yesterday'},
+  {s:'Anna',  ls:'Anna',  v:'call',  p:'called',  r:'her mum last night'},
+  {s:'They',  ls:'they',  v:'cook',  p:'cooked',  r:'dinner last Sunday'},
+  {s:'We',    ls:'we',    v:'see',   p:'saw',     r:'a film last Friday'},
+  {s:'Tom',   ls:'Tom',   v:'find',  p:'found',   r:'his keys this morning'},
+  {s:'She',   ls:'she',   v:'clean', p:'cleaned', r:'her room yesterday'},
+  {s:'He',    ls:'he',    v:'take',  p:'took',    r:'the bus yesterday'},
+  {s:'Lisa',  ls:'Lisa',  v:'make',  p:'made',    r:'a cake yesterday'},
+  {s:'Max',   ls:'Max',   v:'write', p:'wrote',   r:'a letter last week'},
+];
+
+// All past forms for generating wrong MC options
+const ALL_PAST = ALL_SENTS.map(s=>s.p);
+
+function sentPool(lvl){
+  if(lvl<=1) return REG_SENTS;
+  if(lvl<=2) return ALL_SENTS;
+  return IRR_SENTS;
+}
+
+const CONFCOLS = ['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const PSYCHOCOLS = ['#FF00FF','#00FFFF','#FFFF00','#00FF41'];
+
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+function shufl(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+// ─── QUESTION GENERATORS ──────────────────────────────────────────────────────
+function genMC(lvl){
+  const sent=rnd(sentPool(lvl));
+  const wrong=shufl(ALL_PAST.filter(p=>p!==sent.p)).slice(0,3);
+  return{type:'mc',q:`What is the past tense of "${sent.v}"?`,
+    correct:sent.p,opts:shufl([sent.p,...wrong]),
+    explain:`"${sent.v}" → "${sent.p}" (Simple Past)`};
+}
+
+function genFill(lvl){
+  const sent=rnd(sentPool(lvl));
+  if(lvl>=3&&Math.random()>.5){
+    if(Math.random()>.5){
+      return{type:'fill',q:'Complete the question:',
+        sent:`___ ${sent.ls} ${sent.v} ${sent.r}?`,hint:'(Did / Does / Was)',
+        correct:'did',explain:'Yes/No questions in Simple Past always use "Did"'};
+    } else {
+      return{type:'fill',q:'Complete the negation:',
+        sent:`${sent.s} ___ ${sent.v} ${sent.r}.`,hint:`(didn't / doesn't / wasn't)`,
+        correct:"didn't",explain:"Negations in Simple Past use \"didn't\" + base form"};
+    }
+  }
+  return{type:'fill',q:'Fill in the correct past tense form:',
+    sent:`${sent.s} ___ (${sent.v}) ${sent.r}.`,hint:'',
+    correct:sent.p,explain:`"${sent.v}" → "${sent.p}" in Simple Past`};
+}
+
+function genWS(lvl){
+  const sent=rnd(lvl<=2?WS_SENTS:WS_SENTS.filter(s=>IRR_SENTS.some(i=>i.v===s.v)||Math.random()>.3));
+  const isQ=Math.random()>.5;
+  let correct,words;
+  if(isQ){
+    correct=`Did ${sent.ls} ${sent.v} ${sent.r}?`;
+    words=shufl(['Did',sent.ls,sent.v,...sent.r.split(' '),'?']);
+  } else {
+    correct=`${sent.s} didn't ${sent.v} ${sent.r}.`;
+    words=shufl([sent.s,"didn't",sent.v,...sent.r.split(' '),'.']);
+  }
+  return{type:'ws',
+    q:isQ?'Build a Yes/No question in Simple Past:':'Build a negation in Simple Past:',
+    correct,words,
+    explain:isQ?"Questions: Did + subject + BASE form + …?":"Negation: Subject + didn't + BASE form + …"};
+}
+
+function genTF(lvl){
+  const sent=rnd(sentPool(lvl));
+  const ok=Math.random()>.5;
+  const mode=lvl<=2?'past':rnd(['past','didq','neg']);
+  let sentence,ans,expl;
+  if(mode==='past'){
+    if(ok){
+      sentence=`${sent.s} ${sent.p} ${sent.r}.`;ans=true;
+      expl=`Correct! "${sent.v}" → "${sent.p}"`;
+    } else {
+      sentence=`${sent.s} ${sent.v} ${sent.r}.`;ans=false;
+      expl=`Wrong! Use the past form: "${sent.p}", not the base form "${sent.v}"`;
+    }
+  } else if(mode==='didq'){
+    if(ok){sentence=`Did ${sent.ls} ${sent.v} ${sent.r}?`;ans=true;expl='Correct! Did + subject + BASE form';}
+    else{sentence=`Did ${sent.ls} ${sent.p} ${sent.r}?`;ans=false;expl=`Wrong! After "Did" use BASE form "${sent.v}", not "${sent.p}"`;}
+  } else {
+    if(ok){sentence=`${sent.s} didn't ${sent.v} ${sent.r}.`;ans=true;expl="Correct! didn't + BASE form";}
+    else{sentence=`${sent.s} didn't ${sent.p} ${sent.r}.`;ans=false;expl=`Wrong! After "didn't" use BASE form "${sent.v}", not "${sent.p}"`;}
+  }
+  return{type:'tf',q:'Is this sentence grammatically correct?',sent:sentence,ans,expl};
+}
+
+function makeQ(lvl){
+  const t=rnd(['mc','fill','ws','tf']);
+  if(t==='mc') return genMC(lvl);
+  if(t==='fill') return genFill(lvl);
+  if(t==='ws') return genWS(lvl);
+  return genTF(lvl);
+}
+
+// ─── LEVEL CONFIG ─────────────────────────────────────────────────────────────
+const LEVELS=[
+  {shots:3,kills:6, bossHP:2,rate:2200,label:'Regular Past'},
+  {shots:3,kills:8, bossHP:2,rate:1900,label:'Irregular Past'},
+  {shots:4,kills:10,bossHP:3,rate:1600,label:'Did Questions'},
+  {shots:4,kills:11,bossHP:3,rate:1300,label:'Negation'},
+  {shots:5,kills:13,bossHP:4,rate:1050,label:'Past Tense Master'},
+];
+
+const BIRD_TYPES=[
+  {em:'🦆',speed:1.1,pts:1,sz:44,label:'slow'},
+  {em:'🐦',speed:2.1,pts:2,sz:36,label:'mid'},
+  {em:'🕊️',speed:3.3,pts:3,sz:28,label:'fast'},
+];
+
+// ─── GAME OBJECT ──────────────────────────────────────────────────────────────
+const G={
+  lvl:0, score:0, ammo:3, maxAmmo:3, kills:0, killsNeeded:6,
+  birds:[], boss:null, bossOn:false,
+  running:false, psycho:false,
+  spawnT:null, raf:null,
+  curQ:null, qDone:false,
+  bidx:0,
+
+  // ── INIT ──
+  init(){
+    setTimeout(()=>{document.getElementById('splash').classList.add('hide')},1600);
+  },
+
+  startGame(){
+    document.getElementById('menu').style.display='none';
+    this.lvl=0; this.score=0;
+    this.$('score').textContent='0';
+    this.raf=null;
+    this.startLvl();
+    this.addClouds();
+  },
+
+  toMenu(){
+    this.running=false;
+    clearInterval(this.spawnT);
+    cancelAnimationFrame(this.raf); this.raf=null;
+    document.querySelectorAll('.bird,.boss-wrap').forEach(e=>e.remove());
+    document.getElementById('menu').style.display='flex';
+    document.getElementById('q-overlay').classList.remove('on');
+    document.getElementById('lvl-done').classList.remove('on');
+  },
+
+  startLvl(){
+    const cfg=LEVELS[this.lvl];
+    this.ammo=cfg.shots; this.maxAmmo=cfg.shots;
+    this.kills=0; this.killsNeeded=cfg.kills;
+    this.bossOn=false; this.birds=[];
+    this.boss=null;
+    document.querySelectorAll('.bird,.boss-wrap').forEach(e=>e.remove());
+    this.$('lvl-label').textContent=`Level ${this.lvl+1} — ${cfg.label}`;
+    this.updAmmo(); this.updKills(); this.updProg();
+    for(let i=1;i<=5;i++){
+      const d=this.$(`d${i}`);
+      if(i-1<this.lvl) d.className='dot done';
+      else if(i-1===this.lvl) d.className='dot active';
+      else d.className='dot';
+    }
+    this.running=true;
+    this.spawnBird(); this.spawnBird(); this.spawnBird();
+    this.spawnT=setInterval(()=>{
+      if(this.birds.length<9&&!this.bossOn&&this.running) this.spawnBird();
+    },cfg.rate);
+    if(!this.raf) this.loop();
+  },
+
+  restart(){
+    document.getElementById('win').classList.remove('on');
+    document.getElementById('over').classList.remove('on');
+    document.querySelectorAll('.bird,.boss-wrap').forEach(e=>e.remove());
+    cancelAnimationFrame(this.raf); this.raf=null;
+    clearInterval(this.spawnT);
+    this.startGame();
+  },
+
+  // ── BIRD SPAWN ──
+  spawnBird(){
+    const arena=this.$('arena');
+    const aH=arena.offsetHeight-80;
+    const r=Math.random();
+    const type=r<.45?BIRD_TYPES[0]:r<.8?BIRD_TYPES[1]:BIRD_TYPES[2];
+    const goR=Math.random()>.5;
+    const y=28+Math.random()*(aH*.65);
+    const x=goR?-70:window.innerWidth+70;
+    const spd=type.speed*(0.75+Math.random()*.5);
+    const id=this.bidx++;
+    const el=document.createElement('div');
+    el.className='bird'; el.id=`b${id}`;
+    el.style.cssText=`left:${x}px;top:${y}px;font-size:${type.sz}px;transform:scaleX(${goR?1:-1});position:absolute;cursor:none;z-index:20`;
+    el.textContent=type.em;
+    arena.appendChild(el);
+    this.birds.push({id,type,x,y,goR,spd,ph:Math.random()*Math.PI*2,alive:true,el});
+  },
+
+  spawnBoss(){
+    this.bossOn=true;
+    const arena=this.$('arena');
+    const aH=arena.offsetHeight-120;
+    const w=this.$('boss-warn');
+    w.style.display='block';
+    setTimeout(()=>{w.style.display='none'},2200);
+    const hp=LEVELS[this.lvl].bossHP;
+    const el=document.createElement('div');
+    el.className='boss-wrap'; el.id='boss';
+    el.style.cssText=`left:-110px;top:${aH*.28}px;font-size:76px;position:absolute;z-index:25`;
+    el.innerHTML=`<div class="boss-hpbar"><div class="boss-hpfill" id="bfill" style="width:100%"></div></div><span>🦅</span>`;
+    arena.appendChild(el);
+    this.boss={x:-110,y:aH*.28,hp,maxHP:hp,spd:2.4+this.lvl*.5,dx:1,dy:1,vspd:.75,el,alive:true};
+    this.snd('boss');
+  },
+
+  // ── GAME LOOP ──
+  loop(){
+    this.moveBirds();
+    this.raf=requestAnimationFrame(()=>this.loop());
+  },
+
+  moveBirds(){
+    const aW=window.innerWidth;
+    const arena=this.$('arena');
+    const aH=arena.offsetHeight-80;
+    this.birds=this.birds.filter(b=>{
+      if(!b.alive) return false;
+      b.x+=b.goR?b.spd:-b.spd;
+      b.ph+=0.08;
+      const yo=Math.sin(b.ph)*4;
+      if(b.x>aW+90||b.x<-90){b.el.remove();return false;}
+      b.el.style.left=b.x+'px';
+      b.el.style.top=(b.y+yo)+'px';
+      return true;
+    });
+    if(this.boss&&this.boss.alive){
+      const bo=this.boss;
+      bo.x+=bo.spd*bo.dx;
+      bo.y+=bo.vspd*bo.dy;
+      if(bo.x>aW-120){bo.dx=-1;bo.el.style.transform='scaleX(-1)';}
+      if(bo.x<10){bo.dx=1;bo.el.style.transform='scaleX(1)';}
+      if(bo.y<10) bo.dy=1;
+      if(bo.y>aH-10) bo.dy=-1;
+      bo.el.style.left=bo.x+'px';
+      bo.el.style.top=bo.y+'px';
+    }
+  },
+
+  // ── SHOOT ──
+  shoot(e){
+    if(!this.running) return;
+    if(this.ammo<=0) return;
+    if(this.$('q-overlay').classList.contains('on')) return;
+    const rect=this.$('arena').getBoundingClientRect();
+    const cx=e.clientX-rect.left, cy=e.clientY-rect.top;
+    // Flash
+    const fl=document.createElement('div');
+    fl.className='flash'; fl.textContent='💥';
+    fl.style.left=cx+'px'; fl.style.top=cy+'px';
+    this.$('arena').appendChild(fl);
+    setTimeout(()=>fl.remove(),220);
+    this.snd('shoot');
+    let hit=false;
+    // Boss hit
+    if(this.boss&&this.boss.alive&&this.bossOn){
+      const br=this.boss.el.getBoundingClientRect();
+      const ar=this.$('arena').getBoundingClientRect();
+      const bx=br.left-ar.left+br.width/2, by=br.top-ar.top+br.height/2;
+      if(Math.hypot(cx-bx,cy-by)<55){hit=true;this.hitBoss(cx,cy);}
+    }
+    if(!hit){
+      for(const b of this.birds){
+        if(!b.alive) continue;
+        const br=b.el.getBoundingClientRect();
+        const ar=this.$('arena').getBoundingClientRect();
+        const bx=br.left-ar.left+br.width/2, by=br.top-ar.top+br.height/2;
+        const hr=b.type.sz*.55;
+        if(Math.hypot(cx-bx,cy-by)<hr){hit=true;this.hitBird(b,cx,cy);break;}
+      }
+    }
+    this.ammo--;
+    this.updAmmo();
+    if(this.ammo<=0) setTimeout(()=>this.showQ(),350);
+  },
+
+  hitBird(b,x,y){
+    b.alive=false;
+    const pts=Math.round(b.type.pts*(1+this.lvl*.5));
+    this.addScore(pts);
+    this.showPts(`+${pts}`,x,y);
+    this.snd('hit');
+    b.el.classList.add('bird-die');
+    setTimeout(()=>{try{b.el.remove()}catch(e){}},350);
+    this.kills++;
+    this.updKills();
+    if(this.kills>=this.killsNeeded&&!this.bossOn){
+      clearInterval(this.spawnT);
+      this.birds.forEach(bi=>{try{bi.el.remove()}catch(e){}});
+      this.birds=[];
+      setTimeout(()=>this.spawnBoss(),1600);
+    }
+  },
+
+  hitBoss(x,y){
+    const bo=this.boss;
+    bo.hp--;
+    const pct=(bo.hp/bo.maxHP)*100;
+    this.$('bfill').style.width=pct+'%';
+    const pts=(12+this.lvl*3);
+    this.addScore(pts);
+    this.showPts(`+${pts} 💥`,x,y);
+    this.snd('hit');
+    bo.el.style.filter='brightness(3)';
+    setTimeout(()=>{if(bo.el)bo.el.style.filter=''},120);
+    if(bo.hp<=0){
+      bo.alive=false;
+      bo.el.classList.add('bird-die');
+      setTimeout(()=>{try{bo.el.remove()}catch(e){}},350);
+      this.bossOn=false;
+      setTimeout(()=>this.lvlDone(),900);
+    }
+  },
+
+  // ── QUESTION ──
+  showQ(){
+    if(!this.running) return;
+    this.$('q-overlay').classList.add('on');
+    this.qDone=false;
+    const q=makeQ(this.lvl+1);
+    this.curQ=q;
+    const typeMap={mc:'🎯 Multiple Choice',fill:'✏️ Lückentext',ws:'🔀 Wörter ordnen',tf:'✓✗ Wahr / Falsch'};
+    this.$('q-typelbl').textContent=typeMap[q.type];
+    ['mc-grid','fill-area','ws-area','tf-row'].forEach(id=>this.$(id).style.display='none');
+    this.$('q-fb').className=''; this.$('q-fb').textContent='';
+    if(q.type==='mc'){
+      this.$('q-text').textContent=q.q;
+      this.$('mc-grid').style.display='grid';
+      this.$('mc-grid').innerHTML='';
+      q.opts.forEach(o=>{
+        const btn=document.createElement('button');
+        btn.className='mco'; btn.textContent=o;
+        btn.onclick=()=>this.checkMC(o,btn);
+        this.$('mc-grid').appendChild(btn);
+      });
+    } else if(q.type==='fill'){
+      this.$('q-text').textContent=q.q;
+      this.$('fill-area').style.display='flex';
+      this.$('fill-sent').textContent=q.sent+(q.hint?` ${q.hint}`:'');
+      this.$('fill-in').value=''; this.$('fill-in').className='';
+      this.$('fill-in').onkeydown=ev=>{if(ev.key==='Enter')this.checkFill();};
+      setTimeout(()=>this.$('fill-in').focus(),120);
+    } else if(q.type==='ws'){
+      this.$('q-text').textContent=q.q;
+      this.$('ws-area').style.display='flex';
+      this.renderWS(q);
+    } else {
+      this.$('q-text').textContent=`${q.q}\n\n"${q.sent}"`;
+      this.$('tf-row').style.display='flex';
+      this.$('tf-t').className='tf-btn'; this.$('tf-f').className='tf-btn';
+    }
+  },
+
+  checkMC(ans,btn){
+    if(this.qDone) return;
+    this.qDone=true;
+    if(ans===this.curQ.correct){
+      btn.classList.add('right');
+      this.fb(true,this.curQ.explain);
+      this.snd('correct');
+      setTimeout(()=>this.reload(),1300);
+    } else {
+      btn.classList.add('wrong');
+      this.fb(false,`Wrong! ${this.curQ.explain}`);
+      this.snd('wrong');
+      setTimeout(()=>{this.qDone=false;btn.classList.remove('wrong');this.$('q-fb').className='';},1800);
+    }
+  },
+
+  checkFill(){
+    if(this.qDone) return;
+    const val=this.$('fill-in').value.trim().toLowerCase();
+    if(!val) return;
+    this.qDone=true;
+    if(val===this.curQ.correct.toLowerCase()){
+      this.$('fill-in').classList.add('right');
+      this.fb(true,this.curQ.explain);
+      this.snd('correct');
+      setTimeout(()=>this.reload(),1300);
+    } else {
+      this.$('fill-in').classList.add('wrong');
+      this.fb(false,`Wrong! Correct: "${this.curQ.correct}". ${this.curQ.explain}`);
+      this.snd('wrong');
+      setTimeout(()=>{
+        this.qDone=false;
+        this.$('fill-in').classList.remove('wrong');
+        this.$('fill-in').value='';
+        this.$('q-fb').className='';
+        this.$('fill-in').focus();
+      },2000);
+    }
+  },
+
+  renderWS(q){
+    const drop=this.$('ws-drop'), pool=this.$('ws-pool');
+    drop.innerHTML=''; drop.className=''; pool.innerHTML='';
+    q.words.forEach((w,i)=>{
+      const chip=document.createElement('button');
+      chip.className='wchip'; chip.textContent=w; chip.dataset.i=i;
+      chip.onclick=()=>{
+        if(chip.classList.contains('used')) return;
+        chip.classList.add('used');
+        const pc=document.createElement('button');
+        pc.className='pchip'; pc.textContent=w;
+        pc.onclick=()=>{pc.remove();chip.classList.remove('used');};
+        drop.appendChild(pc);
+      };
+      pool.appendChild(chip);
+    });
+  },
+
+  checkWS(){
+    if(this.qDone) return;
+    const placed=[...this.$('ws-drop').querySelectorAll('.pchip')].map(e=>e.textContent);
+    const built=placed.join(' ');
+    const norm=s=>s.replace(/\s*([?.!,])/g,'$1').trim();
+    if(norm(built)===norm(this.curQ.correct)){
+      this.qDone=true;
+      this.$('ws-drop').classList.add('right');
+      this.fb(true,this.curQ.explain);
+      this.snd('correct');
+      setTimeout(()=>this.reload(),1300);
+    } else {
+      this.$('ws-drop').classList.add('wrong');
+      this.fb(false,`Not quite! ${this.curQ.explain}`);
+      this.snd('wrong');
+      setTimeout(()=>{
+        this.$('ws-drop').classList.remove('wrong');
+        this.$('q-fb').className='';
+      },1600);
+    }
+  },
+
+  checkTF(ans){
+    if(this.qDone) return;
+    this.qDone=true;
+    const btn=ans?this.$('tf-t'):this.$('tf-f');
+    if(ans===this.curQ.ans){
+      btn.classList.add('right');
+      this.fb(true,this.curQ.expl);
+      this.snd('correct');
+      setTimeout(()=>this.reload(),1300);
+    } else {
+      btn.classList.add('wrong');
+      this.fb(false,this.curQ.expl);
+      this.snd('wrong');
+      setTimeout(()=>{this.qDone=false;btn.classList.remove('wrong');this.$('q-fb').className='';},1900);
+    }
+  },
+
+  fb(ok,txt){
+    const el=this.$('q-fb');
+    el.className=ok?'right':'wrong';
+    el.textContent=(ok?'✓ ':'✗ ')+txt;
+    if(ok) this.confetti(22);
+  },
+
+  reload(){
+    this.$('q-overlay').classList.remove('on');
+    this.ammo=LEVELS[this.lvl].shots;
+    this.updAmmo();
+    this.snd('reload');
+  },
+
+  // ── LEVEL DONE ──
+  lvlDone(){
+    if(!this.running) return;
+    this.running=false;
+    clearInterval(this.spawnT);
+    const d=this.$(`d${this.lvl+1}`);
+    d.classList.remove('active'); d.classList.add('done');
+    this.confetti(70);
+    this.snd('levelup');
+    this.$('lvl-done-txt').textContent=`Level ${this.lvl+1} geschafft! Score: ${this.score} Punkte`;
+    this.$('lvl-done').classList.add('on');
+  },
+
+  nextLevel(){
+    this.$('lvl-done').classList.remove('on');
+    this.lvl++;
+    if(this.lvl>=LEVELS.length){this.win();return;}
+    this.startLvl();
+  },
+
+  win(){
+    this.running=false;
+    this.$('win-pts').textContent=this.score+' Punkte';
+    this.$('win').classList.add('on');
+    this.confetti(120);
+    this.snd('levelup');
+  },
+
+  // ── UI HELPERS ──
+  updAmmo(){
+    const row=this.$('ammo-row'); row.innerHTML='';
+    for(let i=0;i<this.maxAmmo;i++){
+      const b=document.createElement('div');
+      b.className='bullet'+(i>=this.ammo?' spent':'');
+      row.appendChild(b);
+    }
+  },
+
+  updKills(){
+    const pct=Math.min(100,(this.kills/this.killsNeeded)*100);
+    this.$('kills-fill').style.width=pct+'%';
+    this.$('kills-txt').textContent=`${Math.min(this.kills,this.killsNeeded)} / ${this.killsNeeded}`;
+  },
+
+  updProg(){
+    const pct=(this.lvl/LEVELS.length)*100;
+    this.$('prog-bar').style.width=pct+'%';
+  },
+
+  addScore(n){
+    this.score+=n;
+    this.$('score').textContent=this.score;
+  },
+
+  showPts(txt,x,y){
+    const el=document.createElement('div');
+    el.className='pts'; el.textContent=txt;
+    el.style.left=x+'px'; el.style.top=y+'px';
+    this.$('arena').appendChild(el);
+    setTimeout(()=>el.remove(),1050);
+  },
+
+  moveCross(e){
+    const r=this.$('arena').getBoundingClientRect();
+    const xh=this.$('xhair');
+    xh.style.left=(e.clientX-r.left)+'px';
+    xh.style.top=(e.clientY-r.top)+'px';
+  },
+
+  // ── PSYCHO ──
+  togglePsycho(){
+    this.psycho=!this.psycho;
+    document.body.setAttribute('data-theme',this.psycho?'psychedelic':'standard');
+    this.$('psycho-btn').textContent=this.psycho?'🔮':'🌈';
+  },
+
+  // ── CLOUDS ──
+  addClouds(){
+    const arena=this.$('arena');
+    ['☁️','🌤️','⛅'].forEach((em,i)=>{
+      const el=document.createElement('div');
+      el.className='cloud'; el.textContent=em;
+      el.style.cssText=`top:${5+i*9}%;font-size:${32+i*8}px;opacity:${.4+i*.1};animation-duration:${22+i*10}s;animation-delay:${-i*8}s;`;
+      arena.appendChild(el);
+    });
+  },
+
+  // ── SOUND ──
+  _ac:null,
+  ac(){if(!this._ac)this._ac=new(window.AudioContext||window.webkitAudioContext)();return this._ac;},
+  tone(f,dur,type='square',g=.13){
+    try{
+      const c=this.ac(),o=c.createOscillator(),gn=c.createGain();
+      o.connect(gn);gn.connect(c.destination);
+      o.type=type;o.frequency.setValueAtTime(f,c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(f*.5,c.currentTime+dur);
+      gn.gain.setValueAtTime(g,c.currentTime);
+      gn.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);
+      o.start();o.stop(c.currentTime+dur);
+    }catch(e){}
+  },
+  snd(t){
+    const p=this.psycho;
+    const S={
+      shoot:()=>this.tone(p?700:850,.07,p?'sawtooth':'square',.1),
+      hit:()=>{this.tone(p?500:480,.09,p?'sawtooth':'triangle');this.tone(p?250:220,.12,'sine',.07);},
+      correct:()=>{const ns=p?[440,600,800,1000]:[523,659,784];ns.forEach((f,i)=>setTimeout(()=>this.tone(f,.1,'sine',.13),i*65));},
+      wrong:()=>this.tone(p?180:210,.28,p?'sawtooth':'triangle',.17),
+      reload:()=>{[350,500,650].forEach((f,i)=>setTimeout(()=>this.tone(f,.06,'square',.09),i*45));},
+      levelup:()=>{[523,587,659,784,880,1047].forEach((f,i)=>setTimeout(()=>this.tone(f,.12,'sine',.14),i*75));},
+      boss:()=>{[180,150,120,90].forEach((f,i)=>setTimeout(()=>this.tone(f,.28,'sawtooth',.18),i*110));},
+    };
+    if(S[t]) S[t]();
+  },
+
+  // ── CONFETTI ──
+  confetti(n){
+    const cols=this.psycho?PSYCHOCOLS:CONFCOLS;
+    for(let i=0;i<n;i++){
+      setTimeout(()=>{
+        const el=document.createElement('div');
+        el.className='conf';
+        const c=rnd(cols);
+        el.style.cssText=`left:${Math.random()*100}vw;top:-12px;background:${c};border-radius:${Math.random()>.5?'50%':'0'};width:${7+Math.random()*9}px;height:${7+Math.random()*9}px;animation-duration:${1.2+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),3800);
+      },i*18);
+    }
+  },
+
+  $(id){return document.getElementById(id)},
+};
+
+G.init();
+</script>
+</body>
+</html>
