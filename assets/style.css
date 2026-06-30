@@ -1,0 +1,225 @@
+/* Lernspiele-Galerie — Design "Forest & Brass" */
+
+@font-face {
+  font-family: "Anton";
+  src: url("fonts/Anton-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Caveat";
+  src: url("fonts/Caveat-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/Inter-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --cream:  #EEE9DD;
+  --forest: #233028;
+  --brass:  #C99A3A;
+  --sage:   #8A9A6B;
+
+  --body-dark:  #3A423A;
+  --muted-dark: #74796D;
+  --card-bg:    #FFFFFF;
+  --line:       rgba(35, 48, 40, 0.10);
+
+  --radius: 16px;
+  --shadow: 0 6px 24px rgba(35, 48, 40, 0.10);
+  --shadow-hover: 0 12px 36px rgba(35, 48, 40, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--body-dark);
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(138, 154, 107, 0.12), transparent 70%),
+    var(--cream);
+  background-attachment: fixed;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background:
+    radial-gradient(800px 400px at 80% -100px, rgba(201, 154, 58, 0.18), transparent 70%),
+    var(--forest);
+  color: var(--cream);
+  padding: 48px 24px 40px;
+  text-align: center;
+  border-bottom: 4px solid var(--brass);
+}
+.site-header .kicker {
+  font-family: "Caveat", cursive;
+  font-size: 1.6rem;
+  color: var(--brass);
+  margin: 0 0 4px;
+}
+.site-header h1 {
+  font-family: "Anton", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  margin: 0;
+  line-height: 1.05;
+}
+.site-header p {
+  margin: 12px auto 0;
+  max-width: 560px;
+  color: #DEDACD;
+  font-size: 1.02rem;
+}
+
+/* ---------- Controls ---------- */
+.controls {
+  max-width: 1080px;
+  margin: 32px auto 0;
+  padding: 0 24px;
+}
+.search-wrap { margin-bottom: 20px; }
+#search {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--forest);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  outline: none;
+}
+#search:focus { border-color: var(--brass); }
+
+.filter-group { margin-bottom: 16px; }
+.filter-group h3 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-dark);
+  margin: 0 0 8px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  color: var(--body-dark);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip:hover { border-color: var(--brass); }
+.chip.active {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- Grid ---------- */
+.count {
+  max-width: 1080px;
+  margin: 8px auto 0;
+  padding: 0 24px;
+  color: var(--muted-dark);
+  font-size: 0.9rem;
+}
+.grid {
+  max-width: 1080px;
+  margin: 16px auto 64px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  right: -40px; top: -40px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(138, 154, 107, 0.10);
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--brass);
+}
+.card .badges {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 14px;
+}
+.badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.badge.thema { background: rgba(201, 154, 58, 0.16); color: #8a661f; }
+.badge.stufe { background: var(--forest); color: var(--cream); }
+.badge.fach  { background: rgba(138, 154, 107, 0.20); color: #4f5a37; }
+.card h2 {
+  font-family: "Anton", sans-serif;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+  color: var(--forest);
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+.card p {
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  color: var(--body-dark);
+}
+.card .play {
+  margin-top: auto;
+  font-family: "Caveat", cursive;
+  font-size: 1.3rem;
+  color: var(--brass);
+  font-weight: 700;
+}
+
+.empty {
+  max-width: 1080px;
+  margin: 40px auto;
+  padding: 0 24px;
+  text-align: center;
+  color: var(--muted-dark);
+}
+
+.site-footer {
+  text-align: center;
+  padding: 28px 24px 40px;
+  color: var(--muted-dark);
+  font-size: 0.85rem;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================= -->
+  <!--  PFLICHT: Diese Meta-Tags beschreiben das Spiel für die       -->
+  <!--  Galerie. build.js liest sie aus. titel/thema/stufe füllen,   -->
+  <!--  fach + beschreibung sind optional aber empfohlen.            -->
+  <!-- ============================================================= -->
+  <meta name="lernspiel:titel"        content="Einmaleins-Trainer">
+  <meta name="lernspiel:thema"        content="Einmaleins / Multiplikation">
+  <meta name="lernspiel:stufe"        content="2.–3. Klasse">
+  <meta name="lernspiel:fach"         content="Mathematik">
+  <meta name="lernspiel:beschreibung" content="Übe das kleine Einmaleins mit zufälligen Aufgaben und Punktezählung.">
+
+  <title>Einmaleins-Trainer</title>
+  <style>
+    :root { --cream:#EEE9DD; --forest:#233028; --brass:#C99A3A; --sage:#8A9A6B; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(900px 500px at 50% -150px, rgba(138,154,107,.18), transparent 70%), var(--cream);
+      color: var(--forest);
+    }
+    .game {
+      width: min(440px, 92vw);
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(35,48,40,.15);
+      padding: 36px 32px; text-align: center;
+    }
+    h1 { font-size: 1.4rem; margin: 0 0 4px; }
+    .sub { color: #74796D; font-size: .9rem; margin-bottom: 24px; }
+    .frage { font-size: 3rem; font-weight: 800; margin: 12px 0 20px; letter-spacing: .02em; }
+    input {
+      width: 160px; font-size: 1.6rem; text-align: center; padding: 10px;
+      border: 2px solid rgba(35,48,40,.15); border-radius: 12px; outline: none;
+    }
+    input:focus { border-color: var(--brass); }
+    button {
+      display: block; width: 100%; margin-top: 18px; padding: 14px;
+      font-size: 1.1rem; font-weight: 700; color: #fff; background: var(--brass);
+      border: none; border-radius: 999px; cursor: pointer;
+    }
+    button:hover { filter: brightness(.95); }
+    .feedback { min-height: 28px; margin-top: 16px; font-weight: 700; font-size: 1.1rem; }
+    .ok { color: var(--sage); } .no { color: #b5482f; }
+    .score { margin-top: 20px; color: #74796D; font-size: .95rem; }
+    .score b { color: var(--brass); }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>✖️ Einmaleins-Trainer</h1>
+    <div class="sub">Tippe das Ergebnis ein und drücke Enter.</div>
+    <div class="frage" id="frage">– × – </div>
+    <input id="antwort" type="number" inputmode="numeric" autocomplete="off" autofocus>
+    <button id="check">Prüfen</button>
+    <div class="feedback" id="feedback"></div>
+    <div class="score">Richtig: <b id="richtig">0</b> &nbsp;·&nbsp; Versuche: <b id="gesamt">0</b></div>
+  </div>
+
+  <script>
+    let a, b, richtig = 0, gesamt = 0;
+    const $ = id => document.getElementById(id);
+
+    function neueFrage() {
+      a = Math.floor(Math.random() * 9) + 1;
+      b = Math.floor(Math.random() * 9) + 1;
+      $("frage").textContent = `${a} × ${b}`;
+      $("antwort").value = "";
+      $("antwort").focus();
+    }
+    function pruefen() {
+      const wert = parseInt($("antwort").value, 10);
+      if (isNaN(wert)) return;
+      gesamt++;
+      if (wert === a * b) {
+        richtig++;
+        $("feedback").textContent = "✅ Richtig!";
+        $("feedback").className = "feedback ok";
+        setTimeout(neueFrage, 700);
+      } else {
+        $("feedback").textContent = `❌ ${a} × ${b} = ${a * b}`;
+        $("feedback").className = "feedback no";
+        setTimeout(neueFrage, 1400);
+      }
+      $("richtig").textContent = richtig;
+      $("gesamt").textContent = gesamt;
+    }
+    $("check").addEventListener("click", pruefen);
+    $("antwort").addEventListener("keydown", e => { if (e.key === "Enter") pruefen(); });
+    neueFrage();
+  </script>
+</body>
+</html>
