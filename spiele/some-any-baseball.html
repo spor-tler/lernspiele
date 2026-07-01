@@ -713,9 +713,9 @@ const MIN_BOUNCE = 0.55;   // vy below this → switch to rolling (springt läng
 const PX_PER_M   = 3.5;
 
 function createBall(accuracy) {
-  // Simple launch: speed & angle scale linearly with timing accuracy → weiterer Flug
-  const speed = 9 + accuracy * 18;
-  const angle = Math.PI * (0.26 + accuracy * 0.12);
+  // Flacher, moderater Abschuss → kurze Bögen: der Ball kommt oft auf und springt wie ein Gummiball weiter
+  const speed = 8 + accuracy * 7;
+  const angle = Math.PI * (0.15 + accuracy * 0.10);
   return {
     x:  0.5, y: 0.0,
     vx: Math.cos(angle) * speed / PX_PER_M,
@@ -909,9 +909,10 @@ function answer(ans) {
       modal.classList.remove('open');
       // frischer Schlag: der Ball wird neu abgeschossen und fliegt zum nächsten Checkpoint
       if(ball){
-        const bspeed = 18 + boostCount*2;        // jeder Treffer in Folge → etwas stärker
-        const bangle = Math.PI*0.34;             // schöner Bogen
+        const bspeed = 10 + Math.min(boostCount,6)*0.9;  // etwas stärker pro Treffer, aber gedeckelt → bleibt springend
+        const bangle = Math.PI*0.19;                     // flacher Bogen → springt mehrfach weiter
         ball.rolling = false;
+        ball.bounces = 0;
         ball.y = Math.max(ball.y, 2);
         ball.vx = Math.cos(bangle)*bspeed/PX_PER_M + 1;
         ball.vy = Math.sin(bangle)*bspeed;
