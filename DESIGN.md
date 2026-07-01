@@ -42,16 +42,24 @@ Kontrast: mindestens WCAG AA (4.5:1) für Text.
 ## Header (Analog-Games)
 
 Der Header ist der Signature-Block. Bausteine:
-- **Board-Textur:** dezentes 44px-Raster + zwei radiale Glows (Messing oben, Salbei unten) auf Tannengrün.
-- **Emblem:** kreisförmiges Medaillon mit Messing-Ring und Würfel (Augenzahl 5), Mitte-Pip in Messing.
-- **Deko-Spielsteine:** Salbei-Würfel, Messing-Spielfigur (Pawn), zwei Funken/Sparkles — absolut positioniert, dezent, auf Mobil ausgeblendet.
+- **Hero-Bild:** `assets/img/header-retro.jpg` — originelle, KI-generierte Retro-Gaming-Szene
+  (CRT-TV, Arcade-Automat, Konsolen, Controller, Joystick, Würfel, Pixel-Herzen) exakt in
+  der Markenpalette. Rein generisch — **keine** geschützten Figuren/Marken/Logos.
+- **Verlauf-Overlay:** dunkler Tannengrün-Gradient (oben & unten stärker, Mitte transparent),
+  damit der Titel lesbar bleibt und die Bildmitte sichtbar ist.
+- **Titel:** Caveat-Kicker (leicht schräg) + Anton-`UPPERCASE`-H1, mit Textschatten.
 - **Board-Pfad:** gepunktete Messing-Linie als Trenner zum Body.
-- **Bewegung:** sanftes Schweben/Twinkling — **nur** unter `@media (prefers-reduced-motion: no-preference)`.
+- Header ist `min-height: 380px`, Bild `background-size: cover`.
+
+Bild-Erzeugung lief über die **kie.ai 4o-Image-API** (`gpt4o-image/generate`, Seitenverhältnis 3:2),
+danach mit `sips` zu JPEG (~430 KB) optimiert. Neues Motiv → gleiche Palette & Prompt-Regel
+(„original/generisch, keine Marken") beibehalten.
 
 ## Icon-/Deko-Sprache
 
-Inline-**SVG** in den Markenfarben (keine externen Bilder, keine Icon-Fonts).
-Motive aus der analogen Spielwelt: Würfel, Spielfiguren, Spielbrett-Pfade, Funken.
+Kleinere Deko als Inline-**SVG** in den Markenfarben (keine Icon-Fonts). Motive aus der
+analogen Spielwelt: Würfel, Spielfiguren, Spielbrett-Pfade, Funken. Das große Hero-Bild
+ist die Ausnahme (Raster), muss aber der Palette folgen.
 
 ---
 
