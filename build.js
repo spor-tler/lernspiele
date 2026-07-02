@@ -70,7 +70,10 @@ fs.writeFileSync(
 
 // ---- 3. index.html rendern ---------------------------------------------
 const themen = [...new Set(spiele.map((s) => s.thema).filter(Boolean))].sort();
-const stufen = [...new Set(spiele.map((s) => s.stufe).filter(Boolean))].sort();
+// Mehrere Stufen pro Spiel möglich: kommagetrennt in lernspiel:stufe
+const stufen = [...new Set(
+  spiele.flatMap((s) => (s.stufe || "").split(",").map((x) => x.trim()))
+).values()].filter(Boolean).sort();
 
 const chip = (gruppe, wert) =>
   `<button class="chip" data-group="${gruppe}" data-value="${htmlEscape(wert)}">${htmlEscape(wert)}</button>`;
@@ -135,7 +138,7 @@ const indexHtml = `<!DOCTYPE html>
     function card(s) {
       const badges = [];
       if (s.thema) badges.push('<span class="badge thema">' + esc(s.thema) + '</span>');
-      if (s.stufe) badges.push('<span class="badge stufe">' + esc(s.stufe) + '</span>');
+      if (s.stufe) s.stufe.split(",").forEach(st => badges.push('<span class="badge stufe">' + esc(st.trim()) + '</span>'));
       if (s.fach)  badges.push('<span class="badge fach">' + esc(s.fach) + '</span>');
       return '<a class="card" href="' + esc(s.datei) + '" target="_blank" rel="noopener">' +
         '<div class="badges">' + badges.join("") + '</div>' +
@@ -150,7 +153,7 @@ const indexHtml = `<!DOCTYPE html>
       const q = state.q.toLowerCase();
       const list = SPIELE.filter(s =>
         (!state.thema || s.thema === state.thema) &&
-        (!state.stufe || s.stufe === state.stufe) &&
+        (!state.stufe || (s.stufe || "").split(",").map(x => x.trim()).includes(state.stufe)) &&
         (!q || (s.titel + " " + s.thema + " " + s.fach + " " + s.beschreibung).toLowerCase().includes(q))
       );
       grid.innerHTML = list.map(card).join("");
