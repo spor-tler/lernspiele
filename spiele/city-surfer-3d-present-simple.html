@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="lernspiel:titel"        content="City Surfer 3D: Present Simple">
+<meta name="lernspiel:thema"        content="Present Simple">
+<meta name="lernspiel:stufe"        content="5. Schulstufe">
+<meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+<meta name="lernspiel:beschreibung" content="3D-Runner durch die Stadt: An jedem Checkpoint warten Fragen und Verneinungen mit do/does — danach wird's schneller!">
+<title>City Surfer 3D — Present Simple | School Games 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<style>
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --shadow-card:4px 4px 0px #1F2937; --shadow-btn:3px 3px 0px rgba(0,0,0,.3);
+  --hud-bg:rgba(255,249,240,.92); --chip-bg:#FFFFFF;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FFFF00;
+  --text-dark:#F9FAFB; --text-light:#F9FAFB; --border:#BF00FF;
+  --shadow-card:0 0 20px #FF00FF,0 0 40px #BF00FF; --shadow-btn:0 0 12px #00FFFF,0 0 24px #00FFFF;
+  --hud-bg:rgba(10,0,20,.88); --chip-bg:#14002A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background:var(--bg-main);color:var(--text-dark)}
+button{font-family:'Fredoka One','Nunito',sans-serif;cursor:pointer;border:none;min-height:48px}
+h1,h2,h3{font-family:'Fredoka One','Nunito',sans-serif;font-weight:400}
+
+/* ---------- Splash ---------- */
+#splash{position:fixed;inset:0;background:#1E1B4B;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:8px}
+#splash .logo{font-family:'Fredoka One';font-size:44px;color:#9333EA;text-shadow:0 0 24px rgba(147,51,234,.6)}
+#splash .tag{color:#F9FAFB;font-size:18px;font-weight:700}
+:root[data-theme="psychedelic"] #splash .logo{color:#FF00FF;text-shadow:0 0 16px #FF00FF,0 0 40px #BF00FF}
+
+/* ---------- Menü ---------- */
+#menu{position:fixed;inset:0;background:var(--bg-main);z-index:90;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;overflow:auto}
+#menu.show{display:flex}
+#menu h1{font-size:clamp(32px,6vw,52px);color:var(--purple);text-align:center}
+#menu .sub{font-size:20px;font-weight:800;color:var(--text-dark);text-align:center}
+#menu .topic{background:var(--bg-card);border:4px solid var(--blue);border-radius:24px;box-shadow:var(--shadow-card);padding:16px 24px;max-width:560px;text-align:center;font-size:16px;font-weight:700}
+#menu .topic b{color:var(--blue)}
+.diffRow{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.diffBtn{padding:16px 32px;border-radius:16px;color:#fff;font-size:24px;box-shadow:var(--shadow-btn);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.diffBtn:hover{transform:scale(1.05)}
+.diffBtn:active{transform:translate(2px,2px)}
+.diffBtn small{display:block;font-family:'Nunito';font-weight:800;font-size:13px;opacity:.95}
+#dLeicht{background:var(--green)} #dMittel{background:var(--orange)} #dSchwer{background:var(--red)}
+#menu .controls{font-size:15px;font-weight:700;text-align:center;line-height:1.7;max-width:560px}
+#menu .best{font-size:15px;font-weight:800;color:var(--teal)}
+kbd{background:var(--bg-card);border:2px solid var(--border);border-radius:8px;padding:2px 8px;font-family:'Nunito';font-weight:900}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;z-index:20;display:none;pointer-events:none}
+#hud.show{display:block}
+header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--hud-bg);pointer-events:auto;gap:8px}
+#backBtn{width:48px;height:48px;border-radius:16px;background:var(--red);color:#fff;font-size:22px;box-shadow:var(--shadow-btn)}
+#gameTitle{text-align:center;font-family:'Fredoka One';font-size:clamp(14px,2.6vw,22px);color:var(--purple);flex:1}
+#gameTitle span{display:block;font-family:'Nunito';font-weight:900;font-size:13px;color:var(--teal)}
+.hudRight{display:flex;align-items:center;gap:8px}
+#score{background:var(--yellow);color:#1F2937;font-family:'Fredoka One';font-size:18px;padding:8px 16px;border-radius:999px;box-shadow:var(--shadow-btn);min-width:96px;text-align:center}
+#lives{font-size:20px;letter-spacing:2px}
+#psyBtn{width:48px;height:48px;border-radius:999px;background:var(--purple);font-size:22px;box-shadow:var(--shadow-btn)}
+footer{position:absolute;bottom:0;left:0;right:0;padding:8px 16px 12px;background:var(--hud-bg)}
+#progressWrap{height:16px;background:var(--border);border-radius:999px;overflow:hidden;border:2px solid var(--text-dark)}
+:root[data-theme="psychedelic"] #progressWrap{border-color:var(--purple)}
+#progressBar{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:999px;transition:width .2s linear}
+#progressLabel{text-align:center;font-size:12px;font-weight:900;margin-top:4px;color:var(--text-dark)}
+
+/* ---------- Frage-Banner (Tor-Checkpoint) ---------- */
+#questionBanner{position:absolute;top:72px;left:50%;transform:translateX(-50%);max-width:min(720px,92vw);background:var(--bg-card);border:4px solid var(--blue);border-radius:24px;box-shadow:var(--shadow-card);padding:16px 24px;text-align:center;display:none;pointer-events:none}
+#questionBanner.show{display:block;animation:slideDown .3s cubic-bezier(.34,1.56,.64,1)}
+#questionBanner .qLabel{font-size:13px;font-weight:900;color:var(--orange);letter-spacing:.06em}
+#questionBanner .qText{font-family:'Fredoka One';font-size:clamp(18px,3.4vw,28px);color:var(--text-dark)}
+#questionBanner .qHint{font-size:14px;font-weight:800;color:var(--teal);margin-top:4px}
+@keyframes slideDown{from{transform:translateX(-50%) translateY(-40px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+
+/* ---------- Feedback-Toast ---------- */
+#toast{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka One';font-size:clamp(26px,5vw,44px);padding:16px 32px;border-radius:24px;color:#fff;display:none;text-align:center;box-shadow:var(--shadow-card)}
+#toast.ok{background:var(--success)} #toast.bad{background:var(--error)}
+#toast.show{display:block;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+#toast small{display:block;font-family:'Nunito';font-weight:900;font-size:16px}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.4)}60%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+/* ---------- Quiz-Overlay (Satzbau) ---------- */
+.modal{position:fixed;inset:0;background:rgba(30,27,75,.72);z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.card{background:var(--bg-card);border-radius:24px;box-shadow:var(--shadow-card);padding:24px;max-width:640px;width:100%;text-align:center;border:4px solid var(--purple)}
+.card h2{color:var(--purple);font-size:clamp(22px,4vw,30px);margin-bottom:8px}
+.card .task{font-weight:800;font-size:17px;margin-bottom:16px}
+#answerZone{min-height:64px;background:var(--bg-main);border:3px dashed var(--blue);border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-bottom:16px}
+:root[data-theme="psychedelic"] #answerZone{background:#0D001A}
+#wordPool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:56px}
+#mcQuestion{font-family:'Fredoka One';font-size:clamp(20px,3.6vw,28px);color:var(--text-dark);margin-bottom:16px;line-height:1.4}
+:root[data-theme="psychedelic"] #mcQuestion{color:var(--text-light)}
+#mcAnswers{display:flex;flex-direction:column;gap:8px;align-items:stretch;margin-bottom:8px}
+.mcBtn{font-family:'Nunito';font-weight:900;font-size:20px;padding:12px 16px;border-radius:16px;border:3px solid var(--text-dark);background:var(--chip-bg);color:var(--text-dark);box-shadow:var(--shadow-btn);transition:transform .15s}
+:root[data-theme="psychedelic"] .mcBtn{border-color:var(--teal);color:var(--text-light)}
+.mcBtn:hover{transform:scale(1.03)}
+.mcBtn.right{background:var(--success);border-color:var(--success);color:#fff}
+.mcBtn.wrong{background:var(--error);border-color:var(--error);color:#fff}
+.mcBtn:disabled{cursor:default}
+.chip{font-family:'Nunito';font-weight:900;font-size:18px;padding:10px 16px;min-height:48px;border-radius:16px;border:3px solid var(--text-dark);background:var(--chip-bg);color:var(--text-dark);box-shadow:var(--shadow-btn);transition:transform .15s}
+:root[data-theme="psychedelic"] .chip{border-color:var(--teal);color:var(--text-light)}
+.chip:hover{transform:scale(1.05)}
+.chip.inAnswer{background:var(--blue);color:#fff;border-color:var(--blue)}
+#checkBtn{background:var(--green);color:#fff;font-size:22px;padding:12px 40px;border-radius:16px;box-shadow:var(--shadow-btn)}
+#checkBtn:disabled{opacity:.5;cursor:not-allowed}
+.card .solution{margin-top:12px;font-weight:900;font-size:17px;color:var(--error);display:none}
+.card.shake{animation:shake .2s 3}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+
+/* ---------- Game Over ---------- */
+#overCard h2{color:var(--red);font-size:40px}
+#overCard .finalScore{font-family:'Fredoka One';font-size:56px;color:var(--blue);margin:8px 0}
+#overCard .stats{font-weight:800;font-size:17px;line-height:1.8;margin-bottom:16px}
+#overCard .newBest{color:var(--orange);font-family:'Fredoka One';font-size:22px;display:none}
+.btnRow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{color:#fff;font-size:20px;padding:12px 32px;border-radius:16px;box-shadow:var(--shadow-btn);transition:transform .15s}
+.btn:hover{transform:scale(1.05)}
+.btn.blue{background:var(--blue)} .btn.gray{background:var(--text-dark)}
+:root[data-theme="psychedelic"] .btn.gray{background:#333}
+
+/* ---------- Canvas & Effekte ---------- */
+#gl{position:fixed;inset:0;z-index:1}
+#confettiCanvas{position:fixed;inset:0;z-index:50;pointer-events:none}
+#flash{position:fixed;inset:0;z-index:30;background:var(--error);opacity:0;pointer-events:none;transition:opacity .1s}
+body.hitShake #gl{animation:shake .2s 3}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="splash"><div class="logo">School Games 🎓</div><div class="tag">Lernen macht Spaß!</div></div>
+
+<div id="menu">
+  <h1>🛹 City Surfer 3D</h1>
+  <div class="sub">Surf durch die Stadt — und zeig, dass du Present Simple drauf hast!</div>
+  <div class="topic">📚 <b>Present Simple:</b> Fragen mit <b>do / does</b> &amp; Verneinungen mit <b>don't / doesn't</b>.<br>An jedem Checkpoint stoppt der Run für eine Frage — danach wird's schneller! Jeder 3. Checkpoint: Satz bauen! 🧱<br><small style="font-weight:800">Für die 5. Schulstufe (Mittelschule &amp; AHS)</small></div>
+  <div class="diffRow">
+    <button class="diffBtn" id="dLeicht">😎 Leicht<small>do oder does?</small></button>
+    <button class="diffBtn" id="dMittel">🔥 Mittel<small>ganze Formen &amp; Kurzantworten</small></button>
+    <button class="diffBtn" id="dSchwer">💀 Schwer<small>fiese Fallen (have, Fragewörter)</small></button>
+  </div>
+  <div class="controls">
+    <kbd>←</kbd> <kbd>→</kbd> Spur wechseln &nbsp;·&nbsp; <kbd>↑</kbd> Springen &nbsp;·&nbsp; <kbd>↓</kbd> Ducken<br>
+    Am Tablet: Wischen! 👆 &nbsp;·&nbsp; 3 Leben ❤️ — Crash oder falsche Antwort = 1 Leben weg
+  </div>
+  <div class="best" id="bestLine"></div>
+</div>
+
+<div id="gl"></div>
+
+<div id="hud">
+  <header>
+    <button id="backBtn" aria-label="Zurück zum Menü">←</button>
+    <div id="gameTitle">City Surfer 3D<span id="levelLabel">Level 1 · Leicht</span></div>
+    <div class="hudRight">
+      <div id="lives">❤️❤️❤️</div>
+      <div id="score">0</div>
+      <button id="psyBtn" aria-label="Psychedelic Mode umschalten">🌈</button>
+    </div>
+  </header>
+  <div id="toast"></div>
+  <footer>
+    <div id="progressWrap"><div id="progressBar"></div></div>
+    <div id="progressLabel">Nächster Checkpoint</div>
+  </footer>
+</div>
+
+<div class="modal" id="quizModal">
+  <div class="card" id="quizCard">
+    <h2 id="quizTitle">❓ Checkpoint-Frage!</h2>
+    <div class="task" id="quizTask"></div>
+    <div id="mcQuestion"></div>
+    <div id="mcAnswers"></div>
+    <div id="answerZone"></div>
+    <div id="wordPool"></div>
+    <button id="checkBtn" disabled>Prüfen ✓</button>
+    <div class="solution" id="solutionLine"></div>
+  </div>
+</div>
+
+<div class="modal" id="overModal">
+  <div class="card" id="overCard">
+    <h2>💥 Game Over!</h2>
+    <div class="finalScore" id="finalScore">0</div>
+    <div class="newBest" id="newBest">🏆 NEUER REKORD!</div>
+    <div class="stats" id="overStats"></div>
+    <div class="btnRow">
+      <button class="btn blue" id="retryBtn">Nochmal! 🔁</button>
+      <button class="btn gray" id="menuBtn">Menü</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+<div id="flash"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   City Surfer 3D — Present Simple (Frage & Verneinung)
+   School Games OG · Einzeldatei · Three.js via CDN
+   ========================================================= */
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------------- Fragen-Pools ----------------
+   Zielgruppe: 5. Schulstufe (MS / AHS), A1–A1+
+   Jede Aufgabe ist eindeutig: genau EINE Antwort ist richtig,
+   (Frage) / (Verneinung) sagt klar, was gesucht ist. */
+const MC_QUESTIONS = {
+  leicht: [
+    {q:"___ you like pizza? (Frage)", a:["Do","Does","Don't"]},
+    {q:"___ she play tennis? (Frage)", a:["Does","Do","Doesn't"]},
+    {q:"___ they live in Vienna? (Frage)", a:["Do","Does","Doesn't"]},
+    {q:"___ he like dogs? (Frage)", a:["Does","Do","Don't"]},
+    {q:"I ___ like spiders. (Verneinung)", a:["don't","doesn't","do"]},
+    {q:"He ___ like homework. (Verneinung)", a:["doesn't","don't","does"]},
+    {q:"We ___ go to school on Sunday. (Verneinung)", a:["don't","doesn't","do"]},
+    {q:"She ___ eat meat. (Verneinung)", a:["doesn't","don't","does"]},
+    {q:"___ your friends play football? (Frage)", a:["Do","Does","Doesn't"]},
+    {q:"___ your mum drink coffee? (Frage)", a:["Does","Do","Don't"]},
+    {q:"My cat ___ like water. (Verneinung)", a:["doesn't","don't","does"]},
+    {q:"You ___ need an umbrella today. (Verneinung)", a:["don't","doesn't","do"]}
+  ],
+  mittel: [
+    {q:"She ___ TV in the morning. (Verneinung)", a:["doesn't watch","don't watch","doesn't watches"]},
+    {q:"They ___ football on Mondays. (Verneinung)", a:["don't play","doesn't play","don't plays"]},
+    {q:"Does Tom play the piano? — Yes, he ___.", a:["does","do","plays"]},
+    {q:"Do you like maths? — No, I ___.", a:["don't","doesn't","do"]},
+    {q:"He ___ to music in the evening. (Verneinung)", a:["doesn't listen","don't listen","doesn't listens"]},
+    {q:"My parents ___ in a big house. (Verneinung)", a:["don't live","doesn't live","don't lives"]},
+    {q:"Does Anna like ice cream? — Yes, she ___.", a:["does","do","likes"]},
+    {q:"Do your friends play games? — No, they ___.", a:["don't","doesn't","do"]},
+    {q:"The dog ___ on the sofa. (Verneinung)", a:["doesn't sleep","don't sleep","doesn't sleeps"]},
+    {q:"I ___ my room on Fridays. (Verneinung)", a:["don't clean","doesn't clean","don't cleans"]},
+    {q:"We ___ TV at school. (Verneinung)", a:["don't watch","doesn't watch","don't watches"]},
+    {q:"She ___ up at six o'clock. (Verneinung)", a:["doesn't get","don't get","doesn't gets"]}
+  ],
+  schwer: [
+    {q:"Where ___ you live? (Frage)", a:["do","does","don't"]},
+    {q:"Where ___ your grandma live? (Frage)", a:["does","do","doesn't"]},
+    {q:"What time ___ you get up? (Frage)", a:["do","does","doesn't"]},
+    {q:"When ___ the film start? (Frage)", a:["does","do","don't"]},
+    {q:"What ___ your dad cook on Sundays? (Frage)", a:["does","do","doesn't"]},
+    {q:"Why ___ you like winter? (Frage)", a:["do","does","don't"]},
+    {q:"Our teacher ___ us much homework. (Verneinung)", a:["doesn't give","don't give","doesn't gives"]},
+    {q:"How many pets ___ your friend have? (Frage)", a:["does","do","doesn't"]},
+    {q:"The bus ___ on Sundays. (Verneinung)", a:["doesn't come","don't come","doesn't comes"]},
+    {q:"Where ___ your cousins live? (Frage)", a:["do","does","doesn't"]},
+    {q:"I ___ TV before school. (Verneinung)", a:["don't watch","doesn't watch","don't watches"]},
+    {q:"What ___ 'homework' mean? (Frage)", a:["does","do","doesn't"]}
+  ]
+};
+/* Satzbau-Aufgaben fürs Overlay (jeder 3. Checkpoint) */
+const BUILD_QUESTIONS = {
+  leicht: [
+    ["Does","she","play","tennis","?"],
+    ["I","don't","like","spiders","."],
+    ["Do","you","speak","English","?"],
+    ["He","doesn't","eat","meat","."],
+    ["Does","your","dog","like","water","?"],
+    ["We","don't","go","to","school","on","Sunday","."]
+  ],
+  mittel: [
+    ["Where","do","you","live","?"],
+    ["She","doesn't","watch","TV","in","the","morning","."],
+    ["What","time","do","you","get","up","?"],
+    ["They","don't","play","football","on","Mondays","."],
+    ["Does","your","dad","cook","on","Sundays","?"],
+    ["He","doesn't","listen","to","music","."]
+  ],
+  schwer: [
+    ["When","does","the","film","start","?"],
+    ["My","parents","don't","live","in","Vienna","."],
+    ["How","many","pets","does","your","friend","have","?"],
+    ["Our","teacher","doesn't","give","much","homework","."],
+    ["What","does","this","word","mean","?"],
+    ["The","bus","doesn't","come","on","Sundays","."]
+  ]
+};
+
+const DIFFS = {
+  leicht:{label:'Leicht', baseSpeed:11, speedInc:0.8, spawnGap:16, checkpointDist:170},
+  mittel:{label:'Mittel', baseSpeed:13, speedInc:1.0, spawnGap:14, checkpointDist:190},
+  schwer:{label:'Schwer', baseSpeed:15, speedInc:1.2, spawnGap:12, checkpointDist:210}
+};
+
+/* ---------------- Sound (WebAudio, alles < 500ms) ---------------- */
+let audioCtx=null;
+function ac(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function tone(freq, dur, type, vol, when=0){
+  try{
+    const c=ac(), o=c.createOscillator(), g=c.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol, c.currentTime+when);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+when+dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(c.currentTime+when); o.stop(c.currentTime+when+dur+0.02);
+  }catch(e){}
+}
+function wave(){ return psychedelic ? 'sawtooth' : 'triangle'; }
+const SND = {
+  click(){ tone(660,0.08,wave(),0.15); },
+  coin(){ tone(1320,0.09,psychedelic?'square':'sine',0.12); tone(1760,0.1,psychedelic?'square':'sine',0.1,0.06); },
+  correct(){ [523,659,784].forEach((f,i)=>tone(f,0.14,wave(),0.18,i*0.09)); },
+  wrong(){ tone(160,0.25,psychedelic?'sawtooth':'square',0.2); tone(110,0.22,psychedelic?'sawtooth':'square',0.16,0.1); },
+  levelUp(){ [523,587,659,784,1046].forEach((f,i)=>tone(f,0.1,wave(),0.16,i*0.08)); },
+  crash(){ tone(90,0.3,'sawtooth',0.25); }
+};
+
+/* ---------------- DOM ---------------- */
+const $=id=>document.getElementById(id);
+const menuEl=$('menu'), hudEl=$('hud'), scoreEl=$('score'), livesEl=$('lives'),
+  levelLabel=$('levelLabel'), progressBar=$('progressBar'), progressLabel=$('progressLabel'),
+  toast=$('toast'),
+  quizModal=$('quizModal'), quizCard=$('quizCard'), answerZone=$('answerZone'),
+  wordPool=$('wordPool'), checkBtn=$('checkBtn'), solutionLine=$('solutionLine'),
+  overModal=$('overModal'), flashEl=$('flash');
+
+/* ---------------- Three.js Grundgerüst ---------------- */
+const LANES=[-2.4,0,2.4];
+const THEME3D = {
+  standard:{
+    sky:0x87CEEB, fog:0xBFE3F5, road:0x4B5563, side:0x9CA3AF, stripe:0xFACC15,
+    buildings:[0x2563EB,0xF97316,0x16A34A,0xEC4899,0x9333EA,0x0D9488,0xFACC15,0xDC2626],
+    emissive:0x000000, emissiveIntensity:0, hemi:0.9, dir:1.0,
+    coin:0xFACC15, gateOk:0x22C55E, gateFrame:0x2563EB
+  },
+  psychedelic:{
+    sky:0x000000, fog:0x0D001A, road:0x0A0014, side:0x14002A, stripe:0x00FFFF,
+    buildings:[0xFF00FF,0x00FF41,0xFFFF00,0x00FFFF,0xFF6600,0xBF00FF,0xFF0033,0x00FFAA],
+    emissive:0x220033, emissiveIntensity:0.7, hemi:0.35, dir:0.4,
+    coin:0x00FFFF, gateOk:0x00FF41, gateFrame:0xFF00FF
+  }
+};
+let psychedelic=false;
+
+let renderer, scene, camera, hemiLight, dirLight;
+let player, playerParts={};
+const buildingMats=[], buildings=[], stripes=[];
+let roadMat, sideMatL, sideMatR;
+
+function initThree(){
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth,innerHeight);
+  $('gl').appendChild(renderer.domElement);
+  scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0xBFE3F5,60,150);
+  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,0.1,300);
+  camera.position.set(0,4.4,7.5); camera.lookAt(0,1.4,-12);
+
+  hemiLight=new THREE.HemisphereLight(0xffffff,0x666688,0.9); scene.add(hemiLight);
+  dirLight=new THREE.DirectionalLight(0xffffff,1.0); dirLight.position.set(5,12,6); scene.add(dirLight);
+
+  // Straße
+  roadMat=new THREE.MeshLambertMaterial({color:0x4B5563});
+  const road=new THREE.Mesh(new THREE.BoxGeometry(9,0.5,320),roadMat);
+  road.position.set(0,-0.25,-120); scene.add(road);
+  // Gehsteige
+  sideMatL=new THREE.MeshLambertMaterial({color:0x9CA3AF});
+  sideMatR=new THREE.MeshLambertMaterial({color:0x9CA3AF});
+  const sideL=new THREE.Mesh(new THREE.BoxGeometry(4,0.7,320),sideMatL);
+  sideL.position.set(-6.5,-0.15,-120); scene.add(sideL);
+  const sideR=new THREE.Mesh(new THREE.BoxGeometry(4,0.7,320),sideMatR);
+  sideR.position.set(6.5,-0.15,-120); scene.add(sideR);
+  // Fahrbahn-Streifen
+  for(let i=0;i<30;i++){
+    const s=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.02,2.2),new THREE.MeshBasicMaterial({color:0xFACC15}));
+    const lane=(i%2===0)?-1.2:1.2;
+    s.position.set(lane,0.01,-i*10);
+    stripes.push(s); scene.add(s);
+  }
+  // Gebäude beidseitig
+  for(let side=-1;side<=1;side+=2){
+    for(let i=0;i<22;i++){
+      const h=4+Math.random()*14, w=3+Math.random()*2.5, d=4+Math.random()*3;
+      const m=new THREE.MeshLambertMaterial({color:0xffffff});
+      buildingMats.push(m);
+      const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+      b.position.set(side*(10.5+Math.random()*3), h/2-0.3, -i*13-Math.random()*5);
+      b.userData.recycle=true;
+      buildings.push(b); scene.add(b);
+    }
+  }
+  buildPlayer();
+  applyTheme3D();
+  window.addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+}
+
+function buildPlayer(){
+  player=new THREE.Group();
+  const skin=0xF5C99B;
+  const mat=c=>new THREE.MeshLambertMaterial({color:c});
+  // Skateboard
+  const deck=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.08,1.7),mat(0xF97316));
+  deck.position.y=0.18; player.add(deck);
+  [[-0.3,0.6],[0.3,0.6],[-0.3,-0.6],[0.3,-0.6]].forEach(([x,z])=>{
+    const w=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.1,10),mat(0x1F2937));
+    w.rotation.z=Math.PI/2; w.position.set(x,0.09,z); player.add(w);
+  });
+  // Beine
+  const legs=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.55,0.3),mat(0x2563EB));
+  legs.position.y=0.5; player.add(legs); playerParts.legs=legs;
+  // Körper (Hoodie)
+  const body=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.62,0.38),mat(0xEC4899));
+  body.position.y=1.08; player.add(body); playerParts.body=body;
+  // Arme
+  const armL=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.5,0.15),mat(0xEC4899));
+  armL.position.set(-0.38,1.05,0); armL.rotation.z=0.35; player.add(armL); playerParts.armL=armL;
+  const armR=armL.clone(); armR.position.x=0.38; armR.rotation.z=-0.35; player.add(armR); playerParts.armR=armR;
+  // Kopf
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.4,0.38),mat(skin));
+  head.position.y=1.62; player.add(head); playerParts.head=head;
+  // Cap
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.12,0.42),mat(0x16A34A));
+  cap.position.y=1.86; player.add(cap);
+  const brim=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.05,0.25),mat(0x16A34A));
+  brim.position.set(0,1.82,-0.3); player.add(brim);
+  player.position.set(0,0,0);
+  scene.add(player);
+}
+
+function applyTheme3D(){
+  const t=THEME3D[psychedelic?'psychedelic':'standard'];
+  scene.background=new THREE.Color(t.sky);
+  scene.fog.color.set(t.fog);
+  roadMat.color.set(t.road);
+  sideMatL.color.set(t.side); sideMatR.color.set(t.side);
+  stripes.forEach(s=>s.material.color.set(t.stripe));
+  buildingMats.forEach(m=>{
+    m.color.set(t.buildings[Math.floor(Math.random()*t.buildings.length)]);
+    m.emissive.set(psychedelic ? m.color.getHex() : 0x000000);
+    m.emissiveIntensity=t.emissiveIntensity;
+  });
+  hemiLight.intensity=t.hemi; dirLight.intensity=t.dir;
+  obstacles.forEach(o=>tintObstacle(o));
+  coins.forEach(c=>c.material.color.set(t.coin));
+}
+
+/* ---------------- Hindernisse & Münzen ---------------- */
+const obstacles=[]; const coins=[];
+const coinGeo=new THREE.CylinderGeometry(0.32,0.32,0.1,14);
+
+function tintObstacle(o){
+  const t=THEME3D[psychedelic?'psychedelic':'standard'];
+  const colors={low:0xDC2626, high:0xF59E0B, block:0x9333EA};
+  const neon={low:0xFF0033, high:0xFFFF00, block:0xBF00FF};
+  o.traverse(n=>{ if(n.isMesh){
+    n.material.color.set(psychedelic?neon[o.userData.type]:colors[o.userData.type]);
+    n.material.emissive && n.material.emissive.set(psychedelic?neon[o.userData.type]:0x000000);
+    if(n.material.emissive) n.material.emissiveIntensity=psychedelic?0.6:0;
+  }});
+}
+function makeObstacle(type,lane,z){
+  const g=new THREE.Group(); g.userData={type,lane,kind:'obstacle'};
+  const mat=()=>new THREE.MeshLambertMaterial({color:0xffffff});
+  if(type==='low'){ // Barriere: drüberspringen
+    const bar=new THREE.Mesh(new THREE.BoxGeometry(2,0.55,0.35),mat());
+    bar.position.y=0.45; g.add(bar);
+    [[-0.8],[0.8]].forEach(([x])=>{
+      const leg=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.45,0.12),mat());
+      leg.position.set(x,0.2,0); g.add(leg);
+    });
+  } else if(type==='high'){ // Schild oben: ducken
+    const bar=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.7,0.3),mat());
+    bar.position.y=1.7; g.add(bar);
+    [[-1],[1]].forEach(([x])=>{
+      const pole=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.7,0.12),mat());
+      pole.position.set(x,0.85,0); g.add(pole);
+    });
+  } else { // block: Spur wechseln (Container)
+    const box=new THREE.Mesh(new THREE.BoxGeometry(2,2.1,1.4),mat());
+    box.position.y=1.05; g.add(box);
+  }
+  g.position.set(LANES[lane],0,z);
+  tintObstacle(g);
+  obstacles.push(g); scene.add(g);
+}
+function makeCoin(lane,z,y=0.7){
+  const t=THEME3D[psychedelic?'psychedelic':'standard'];
+  const c=new THREE.Mesh(coinGeo,new THREE.MeshLambertMaterial({color:t.coin,emissive:psychedelic?t.coin:0x000000,emissiveIntensity:psychedelic?0.8:0}));
+  c.rotation.x=Math.PI/2; c.position.set(LANES[lane],y,z);
+  c.userData={lane};
+  coins.push(c); scene.add(c);
+}
+
+/* ---------------- Spielzustand ---------------- */
+let state='splash'; // splash|menu|running|quiz|gameover
+let diffKey='leicht', diff=DIFFS.leicht;
+let speed=0, targetSlow=1, slow=1;
+let score=0, lives=3, level=1, checkpointCount=0, correctCount=0, wrongCount=0;
+let distance=0, distSinceCheckpoint=0, distSinceSpawn=0;
+let laneIndex=1, laneX=0;
+let playerY=0, vy=0, jumping=false, ducking=0, invincible=0;
+let gatePool=[], buildPool=[], gatePoolIdx=0, buildPoolIdx=0;
+let running=false;
+
+function shuffled(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function nextMcQ(){ if(gatePoolIdx>=gatePool.length){ gatePool=shuffled(MC_QUESTIONS[diffKey]); gatePoolIdx=0; } return gatePool[gatePoolIdx++]; }
+function nextBuildQ(){ if(buildPoolIdx>=buildPool.length){ buildPool=shuffled(BUILD_QUESTIONS[diffKey]); buildPoolIdx=0; } return buildPool[buildPoolIdx++]; }
+
+function bestKey(){ return 'citysurfer3d_present_best_'+diffKey; }
+
+function startGame(key){
+  diffKey=key; diff=DIFFS[key];
+  score=0; lives=3; level=1; checkpointCount=0; correctCount=0; wrongCount=0;
+  distance=0; distSinceCheckpoint=0; distSinceSpawn=0;
+  laneIndex=1; laneX=0; playerY=0; vy=0; jumping=false; ducking=0; invincible=0;
+  speed=diff.baseSpeed; targetSlow=1; slow=1;
+  gatePool=shuffled(MC_QUESTIONS[key]); gatePoolIdx=0;
+  buildPool=shuffled(BUILD_QUESTIONS[key]); buildPoolIdx=0;
+  obstacles.forEach(o=>scene.remove(o)); obstacles.length=0;
+  coins.forEach(c=>scene.remove(c)); coins.length=0;
+  menuEl.classList.remove('show'); overModal.classList.remove('show');
+  hudEl.classList.add('show');
+  updateHUD();
+  state='running'; running=true;
+  SND.click();
+}
+
+function updateHUD(){
+  scoreEl.textContent=Math.floor(score);
+  livesEl.textContent='❤️'.repeat(Math.max(0,lives))+'🖤'.repeat(Math.max(0,3-lives));
+  levelLabel.textContent=`Level ${level} · ${diff.label}`;
+  const p=Math.min(100,(distSinceCheckpoint/diff.checkpointDist)*100);
+  progressBar.style.width=p+'%';
+  progressLabel.textContent=`Nächster Frage-Checkpoint ❓ · Tempo ${speed.toFixed(0)}`;
+}
+
+/* ---------------- Toast / Konfetti / Effekte ---------------- */
+let toastTimer=null;
+function showToast(ok,main,sub){
+  toast.className=ok?'ok show':'bad show';
+  toast.innerHTML=main+(sub?`<small>${sub}</small>`:'');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);
+}
+const cCanvas=$('confettiCanvas'), cCtx=cCanvas.getContext('2d');
+let confetti=[];
+function resizeConfetti(){ cCanvas.width=innerWidth; cCanvas.height=innerHeight; }
+resizeConfetti(); window.addEventListener('resize',resizeConfetti);
+const CONF_STD=['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const CONF_NEON=['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+function burstConfetti(n=40){
+  if(REDUCED) return;
+  const cols=psychedelic?CONF_NEON:CONF_STD;
+  for(let i=0;i<n;i++){
+    confetti.push({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight*0.35,
+      vx:(Math.random()-0.5)*12,vy:-Math.random()*10-4,g:0.35,
+      s:6+Math.random()*8,c:cols[Math.floor(Math.random()*cols.length)],r:Math.random()*Math.PI,vr:(Math.random()-0.5)*0.3,life:90});
+  }
+}
+function stepConfetti(){
+  cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+  confetti=confetti.filter(p=>p.life>0);
+  confetti.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.r+=p.vr; p.life--;
+    cCtx.save(); cCtx.translate(p.x,p.y); cCtx.rotate(p.r);
+    cCtx.fillStyle=p.c; cCtx.globalAlpha=Math.min(1,p.life/30);
+    cCtx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); cCtx.restore();
+  });
+}
+function hitFlash(){
+  if(REDUCED) return;
+  flashEl.style.opacity=0.35;
+  setTimeout(()=>flashEl.style.opacity=0,120);
+  document.body.classList.add('hitShake');
+  setTimeout(()=>document.body.classList.remove('hitShake'),650);
+}
+
+/* ---------------- Leben & Game Over ---------------- */
+function loseLife(reason){
+  lives--; updateHUD();
+  SND.crash(); hitFlash();
+  if(lives<=0){ gameOver(); }
+}
+function gameOver(){
+  running=false; state='gameover';
+  quizModal.classList.remove('show');
+  const finalScore=Math.floor(score);
+  const best=parseInt(localStorage.getItem(bestKey())||'0',10);
+  const isBest=finalScore>best;
+  if(isBest) localStorage.setItem(bestKey(),String(finalScore));
+  $('finalScore').textContent=finalScore;
+  $('newBest').style.display=isBest?'block':'none';
+  $('overStats').innerHTML=
+    `📏 Strecke: <b>${Math.round(distance)} m</b> · 🚧 Checkpoints: <b>${checkpointCount}</b><br>`+
+    `✅ Richtig: <b>${correctCount}</b> · ❌ Falsch: <b>${wrongCount}</b><br>`+
+    `🏆 Bestwert (${diff.label}): <b>${Math.max(best,finalScore)}</b>`;
+  overModal.classList.add('show');
+  if(isBest){ burstConfetti(80); SND.levelUp(); }
+}
+
+/* ---------------- Checkpoint-Auflösung ---------------- */
+function checkpointPassed(correct, correctAnswer){
+  checkpointCount++;
+  if(correct){
+    correctCount++;
+    score+=100+level*20;
+    showToast(true,'AWESOME! ✅','+'+(100+level*20)+' Punkte');
+    burstConfetti(40); SND.correct();
+  } else {
+    wrongCount++;
+    showToast(false,'Ups! ❌','Richtig wäre: „'+correctAnswer+'“');
+    SND.wrong();
+    loseLife('question');
+    if(!running) return;
+  }
+  // Geschwindigkeit linear erhöhen — nach JEDEM Checkpoint
+  level++;
+  speed=diff.baseSpeed+ (level-1)*diff.speedInc;
+  distSinceCheckpoint=0;
+  if(correct){ SND.levelUp(); }
+  updateHUD();
+}
+
+/* ---------------- Frage-Checkpoint (Overlay) ---------------- */
+const quizTitle=$('quizTitle'), quizTask=$('quizTask'), mcQuestion=$('mcQuestion'), mcAnswers=$('mcAnswers');
+let quizWords=[], quizAnswer=[], quizSolution='', quizMode='mc', mcDone=false;
+function openQuiz(mode){
+  state='quiz'; targetSlow=0; quizMode=mode; quizFailed=false; mcDone=false;
+  solutionLine.style.display='none';
+  if(mode==='mc'){
+    quizTitle.textContent='❓ Checkpoint-Frage!';
+    quizTask.textContent='Wähle die richtige Antwort:';
+    answerZone.style.display='none'; wordPool.style.display='none'; checkBtn.style.display='none';
+    mcQuestion.style.display='block'; mcAnswers.style.display='flex';
+    const item=nextMcQ();
+    quizSolution=item.a[0];
+    mcQuestion.textContent=item.q;
+    mcAnswers.innerHTML='';
+    shuffled(item.a).forEach(ans=>{
+      const b=document.createElement('button'); b.className='mcBtn'; b.textContent=ans;
+      b.onclick=()=>mcPick(b,ans);
+      mcAnswers.appendChild(b);
+    });
+  } else {
+    quizTitle.textContent='🧱 Satz-Baustelle!';
+    quizTask.textContent='Baue die richtige Frage oder Verneinung — tippe die Wörter in der richtigen Reihenfolge:';
+    answerZone.style.display='flex'; wordPool.style.display='flex'; checkBtn.style.display='inline-block';
+    mcQuestion.style.display='none'; mcAnswers.style.display='none';
+    const words=nextBuildQ();
+    quizSolution=words.join(' ').replace(/ ([?.!])$/,'$1');
+    quizAnswer=[];
+    quizWords=shuffled(words.map((w,i)=>({w,i})));
+    // Nicht zufällig schon richtig sortiert lassen
+    if(quizWords.map(o=>o.i).join()===words.map((_,i)=>i).join()) quizWords.reverse();
+    renderQuiz();
+    checkBtn.disabled=true;
+    checkBtn.textContent='Prüfen ✓';
+  }
+  quizModal.classList.add('show');
+}
+function mcPick(btn,ans){
+  if(mcDone) return;
+  mcDone=true;
+  const ok=(ans===quizSolution);
+  [...mcAnswers.children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===quizSolution) b.classList.add('right');
+  });
+  if(ok){
+    SND.correct();
+    setTimeout(()=>{ checkpointPassed(true); closeQuiz(); },650);
+  } else {
+    btn.classList.add('wrong');
+    quizCard.classList.remove('shake'); void quizCard.offsetWidth; quizCard.classList.add('shake');
+    SND.wrong();
+    solutionLine.style.display='block';
+    solutionLine.textContent='Richtig wäre: „'+quizSolution+'“';
+    setTimeout(()=>{ checkpointPassed(false,quizSolution); closeQuiz(); },1800);
+  }
+}
+function renderQuiz(){
+  wordPool.innerHTML=''; answerZone.innerHTML='';
+  quizWords.forEach((o,idx)=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=o.w;
+    b.onclick=()=>{ SND.click(); quizAnswer.push(o); quizWords.splice(idx,1); renderQuiz(); };
+    wordPool.appendChild(b);
+  });
+  quizAnswer.forEach((o,idx)=>{
+    const b=document.createElement('button'); b.className='chip inAnswer'; b.textContent=o.w;
+    b.onclick=()=>{ SND.click(); quizWords.push(o); quizAnswer.splice(idx,1); renderQuiz(); };
+    answerZone.appendChild(b);
+  });
+  if(quizAnswer.length===0){
+    const hint=document.createElement('span'); hint.style.cssText='font-weight:800;opacity:.5;font-size:15px';
+    hint.textContent='Tippe die Wörter hier hinein…';
+    answerZone.appendChild(hint);
+  }
+  checkBtn.disabled=quizWords.length!==0;
+}
+let quizFailed=false;
+checkBtn.addEventListener('click',()=>{
+  if(quizFailed){ // zweiter Klick nach Fehler: auflösen & weiter
+    checkpointPassed(false,quizSolution);
+    closeQuiz();
+    return;
+  }
+  const built=quizAnswer.map(o=>o.w).join(' ').replace(/ ([?.!])$/,'$1');
+  if(built===quizSolution){
+    checkpointPassed(true);
+    closeQuiz();
+  } else {
+    quizFailed=true;
+    quizCard.classList.remove('shake'); void quizCard.offsetWidth; quizCard.classList.add('shake');
+    SND.wrong();
+    solutionLine.style.display='block';
+    solutionLine.textContent='Richtig wäre: „'+quizSolution+'“';
+    checkBtn.textContent='Weiter →';
+  }
+});
+function closeQuiz(){
+  quizModal.classList.remove('show');
+  quizFailed=false;
+  if(running){ state='running'; targetSlow=1; }
+}
+
+/* ---------------- Spawning ---------------- */
+const PATTERNS=[
+  [['low',0]],[['low',1]],[['low',2]],
+  [['high',0]],[['high',1]],[['high',2]],
+  [['block',0]],[['block',1]],[['block',2]],
+  [['block',0],['low',2]],[['block',2],['high',0]],
+  [['low',0],['low',1]],[['high',1],['high',2]],
+  [['block',0],['block',1]],[['block',1],['block',2]]
+];
+function spawnRow(){
+  // Keine Hindernisse kurz vor/nach dem Tor
+  const distToCheckpoint=diff.checkpointDist-distSinceCheckpoint;
+  if(distToCheckpoint<40) { maybeCoins(); return; }
+  const pat=PATTERNS[Math.floor(Math.random()*PATTERNS.length)];
+  const usedLanes=new Set(pat.map(p=>p[1]));
+  pat.forEach(([type,lane])=>makeObstacle(type,lane,-150));
+  // Münzreihe in einer freien Lane
+  const free=[0,1,2].filter(l=>!usedLanes.has(l));
+  if(free.length && Math.random()<0.75){
+    const l=free[Math.floor(Math.random()*free.length)];
+    for(let k=0;k<4;k++) makeCoin(l,-150-k*2.2);
+  }
+}
+function maybeCoins(){
+  if(Math.random()<0.5){
+    const l=Math.floor(Math.random()*3);
+    for(let k=0;k<3;k++) makeCoin(l,-150-k*2.2);
+  }
+}
+
+/* ---------------- Steuerung ---------------- */
+function moveLane(dir){
+  if(state!=='running') return;
+  const ni=Math.min(2,Math.max(0,laneIndex+dir));
+  if(ni!==laneIndex){ laneIndex=ni; SND.click(); }
+}
+function jump(){
+  if(state!=='running'||jumping||ducking>0) return;
+  jumping=true; vy=9.2; SND.click();
+}
+function duck(){
+  if(state!=='running'||jumping) return;
+  ducking=0.7; SND.click();
+}
+window.addEventListener('keydown',e=>{
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+  if(e.key==='ArrowLeft'||e.key==='a') moveLane(-1);
+  if(e.key==='ArrowRight'||e.key==='d') moveLane(1);
+  if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') jump();
+  if(e.key==='ArrowDown'||e.key==='s') duck();
+});
+// Touch / Swipe
+let tX=0,tY=0,tT=0;
+window.addEventListener('touchstart',e=>{ const t=e.touches[0]; tX=t.clientX; tY=t.clientY; tT=Date.now(); },{passive:true});
+window.addEventListener('touchend',e=>{
+  if(Date.now()-tT>600) return;
+  const t=e.changedTouches[0], dx=t.clientX-tX, dy=t.clientY-tY;
+  if(Math.abs(dx)<24&&Math.abs(dy)<24) return;
+  if(Math.abs(dx)>Math.abs(dy)) moveLane(dx>0?1:-1);
+  else dy<0?jump():duck();
+},{passive:true});
+
+/* ---------------- UI-Buttons ---------------- */
+$('dLeicht').onclick=()=>startGame('leicht');
+$('dMittel').onclick=()=>startGame('mittel');
+$('dSchwer').onclick=()=>startGame('schwer');
+$('retryBtn').onclick=()=>{ overModal.classList.remove('show'); startGame(diffKey); };
+$('menuBtn').onclick=()=>{ overModal.classList.remove('show'); toMenu(); };
+$('backBtn').onclick=()=>{ SND.click(); toMenu(); };
+$('psyBtn').onclick=()=>{
+  psychedelic=!psychedelic;
+  document.documentElement.setAttribute('data-theme',psychedelic?'psychedelic':'standard');
+  applyTheme3D();
+  SND.levelUp();
+  if(!REDUCED&&psychedelic) burstConfetti(30);
+};
+function toMenu(){
+  running=false; state='menu';
+  hudEl.classList.remove('show'); quizModal.classList.remove('show'); overModal.classList.remove('show');
+  const bests=Object.keys(DIFFS).map(k=>{
+    const b=localStorage.getItem('citysurfer3d_present_best_'+k);
+    return b?`${DIFFS[k].label}: ${b}`:null;
+  }).filter(Boolean);
+  $('bestLine').textContent=bests.length?('🏆 Bestwerte — '+bests.join(' · ')):'';
+  menuEl.classList.add('show');
+}
+
+/* ---------------- Game Loop ---------------- */
+const clock=new THREE.Clock();
+let bobT=0;
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(clock.getDelta(),0.05);
+  stepConfetti();
+  if(renderer){
+    if(running||state==='quiz'||state==='gameover') step(dt);
+    renderer.render(scene,camera);
+  }
+}
+function step(dt){
+  // Sanftes Abbremsen/Beschleunigen (Tor-Lesezeit / Quiz-Pause)
+  slow+=(targetSlow-slow)*Math.min(1,dt*3);
+  const v=speed*slow*(running?1:0);
+  const dz=v*dt;
+  distance+=dz; distSinceCheckpoint+=dz; distSinceSpawn+=dz;
+
+  // Score über Strecke
+  if(running && state==='running'){ score+=dz; }
+
+  // Welt bewegen
+  for(let i=obstacles.length-1;i>=0;i--){
+    const o=obstacles[i]; o.position.z+=dz;
+    if(o.position.z>10){ scene.remove(o); obstacles.splice(i,1); }
+  }
+  for(let i=coins.length-1;i>=0;i--){
+    const c=coins[i]; c.position.z+=dz; c.rotation.z+=dt*4;
+    if(c.position.z>10){ scene.remove(c); coins.splice(i,1); }
+  }
+  stripes.forEach(s=>{ s.position.z+=dz; if(s.position.z>10) s.position.z-=300; });
+  buildings.forEach(b=>{ b.position.z+=dz; if(b.position.z>15) b.position.z-=286; });
+
+  // Spawning
+  if(running && distSinceSpawn>=diff.spawnGap){ distSinceSpawn=0; spawnRow(); }
+
+  // Checkpoint fällig? → Frage-Overlay (jeder 3. = Satzbau)
+  if(running && state==='running' && distSinceCheckpoint>=diff.checkpointDist){
+    const isBuild=((checkpointCount+1)%3===0);
+    openQuiz(isBuild?'build':'mc');
+  }
+
+  // Spieler-Physik
+  laneX+=(LANES[laneIndex]-laneX)*Math.min(1,dt*12);
+  if(jumping){
+    playerY+=vy*dt; vy-=24*dt;
+    if(playerY<=0){ playerY=0; vy=0; jumping=false; }
+  }
+  if(ducking>0){ ducking-=dt; }
+  const duckS=ducking>0?0.45:1;
+  playerParts.body.scale.y+= (duckS-playerParts.body.scale.y)*Math.min(1,dt*14);
+  playerParts.body.position.y=1.08-(1-playerParts.body.scale.y)*0.31;
+  playerParts.head.position.y=ducking>0?1.15:1.62;
+  player.position.x=laneX; player.position.y=playerY;
+  // Lauf-Wackeln
+  if(!REDUCED){
+    bobT+=dt*(6+speed*0.3);
+    player.rotation.z=Math.sin(bobT)*0.05;
+    playerParts.armL.rotation.x=Math.sin(bobT*2)*0.4;
+    playerParts.armR.rotation.x=-Math.sin(bobT*2)*0.4;
+    camera.position.y=4.4+Math.sin(bobT*0.5)*0.06;
+  }
+  camera.position.x+=(laneX*0.35-camera.position.x)*Math.min(1,dt*5);
+
+  // Unverwundbarkeit / Blinken
+  if(invincible>0){
+    invincible-=dt;
+    player.visible=REDUCED?true:(Math.floor(invincible*10)%2===0);
+    if(invincible<=0) player.visible=true;
+  }
+
+  // Kollisionen
+  if(running && state==='running' && invincible<=0){
+    for(let i=obstacles.length-1;i>=0;i--){
+      const o=obstacles[i];
+      if(Math.abs(o.position.z)<0.7 && o.userData.lane===laneIndex){
+        let hit=false;
+        if(o.userData.type==='low') hit=playerY<0.7;
+        else if(o.userData.type==='high') hit=!(ducking>0);
+        else hit=playerY<1.6;
+        if(hit){
+          scene.remove(o); obstacles.splice(i,1);
+          invincible=1.6;
+          showToast(false,'CRASH! 💥','Pass auf die Hindernisse auf!');
+          loseLife('crash');
+          break;
+        }
+      }
+    }
+    for(let i=coins.length-1;i>=0;i--){
+      const c=coins[i];
+      if(Math.abs(c.position.z)<0.8 && c.userData.lane===laneIndex && playerY<1.4){
+        scene.remove(c); coins.splice(i,1);
+        score+=10; SND.coin();
+      }
+    }
+  }
+  updateHUD();
+}
+
+/* ---------------- Start ---------------- */
+initThree();
+animate();
+setTimeout(()=>{ $('splash').style.display='none'; toMenu(); },1000);
+</script>
+</body>
+</html>
