@@ -171,6 +171,61 @@ body {
   font-weight: 600;
 }
 
+/* ---------- Top-Spiele (Rangliste) ---------- */
+.top-games {
+  max-width: 1080px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+}
+.top-games h3 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-dark);
+  margin: 0 0 8px;
+}
+.top-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.top-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--forest);
+  color: var(--cream);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.top-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--brass);
+}
+.top-card .medal { font-size: 1.5rem; }
+.top-card .top-titel {
+  font-family: "Anton", sans-serif;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  flex: 1;
+}
+.top-card .top-klicks {
+  font-family: "Caveat", cursive;
+  font-size: 1.1rem;
+  color: var(--brass);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge.hot { background: rgba(201, 90, 58, 0.14); color: #a04a26; }
+
 /* ---------- Grid ---------- */
 .count {
   max-width: 1080px;

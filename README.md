@@ -58,3 +58,27 @@ spiele/         ← deine Lernspiele (eine .html pro Spiel)
   _vorlage.html ← Kopiervorlage (wird ignoriert)
 assets/         ← style.css + Fonts
 ```
+
+## Statistiken & Rangliste 📊
+
+Die Galerie zählt via [GoatCounter](https://www.goatcounter.com) (kostenlos, ohne
+Cookies, DSGVO-freundlich — kein Cookie-Banner nötig), welche Spiele wie oft
+geöffnet und wie lange gespielt werden.
+
+**Wie es funktioniert:**
+- `node build.js` injiziert automatisch ein kleines Statistik-Snippet in jede
+  Spieldatei (zwischen `<!-- lernspiele:stats-start/end -->` — nicht von Hand
+  bearbeiten, wird bei jedem Build aktualisiert).
+- Jeder Spielaufruf zählt als Klick. Spielzeit wird über Meilenstein-Events
+  gemeldet (`zeit/<spiel>/<n>min` bei 1/3/5/10/15/20 Min. sichtbarer Spielzeit).
+- Die Galerie zeigt daraus eine 🏆-Top-3-Leiste, 🔥-Badges (ab 10 Aufrufen) und
+  die Sortierung „Beliebteste zuerst".
+- Lokal (`file://`, `localhost`) wird nichts gezählt — Testen verfälscht nichts.
+
+**Einrichtung (einmalig):**
+1. Account auf https://www.goatcounter.com anlegen, Code `lernspiele` wählen
+   (bei anderem Code: `GOATCOUNTER_CODE` in `build.js` anpassen + neu builden).
+2. In den GoatCounter-Einstellungen **„Allow adding visitor counts on your
+   website"** aktivieren (sonst bleibt die Top-Leiste leer).
+3. Dashboard mit allen Details: https://lernspiele.goatcounter.com
+   — Klick-Ranking unter `/spiele/…`, Spielzeit unter `zeit/…`.

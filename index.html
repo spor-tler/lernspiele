@@ -53,6 +53,18 @@
         <button class="chip" data-group="stufe" data-value="8. Schulstufe">8. Schulstufe</button>
       </div>
     </div>
+    <div class="filter-group" id="sort-group" hidden>
+      <h3>Sortierung</h3>
+      <div class="chips" id="filter-sort">
+        <button class="chip active" data-group="sort" data-value="">A–Z</button>
+        <button class="chip" data-group="sort" data-value="beliebt">🔥 Beliebteste zuerst</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="top-games" id="top-games" hidden>
+    <h3>🏆 Top-Spiele</h3>
+    <div class="top-list" id="top-list"></div>
   </section>
 
   <p class="count" id="count"></p>
@@ -65,7 +77,8 @@
 
   <script>
     const SPIELE = [{"datei":"spiele/active-passive-hero.html","titel":"Active/Passive Super Hero","thema":"Aktiv / Passiv","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Verwandle Sätze zwischen Aktiv und Passiv und rette den Tag."},{"datei":"spiele/austria-free-kick-passive.html","titel":"Austria Free Kick: Passive","thema":"Aktiv / Passiv","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Schieß den Freistoß und beherrsche den Wechsel zwischen Aktiv und Passiv."},{"datei":"spiele/city-surfer-3d-present-simple.html","titel":"City Surfer 3D: Present Simple","thema":"Present Simple","stufe":"5. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"3D-Runner durch die Stadt: An jedem Checkpoint warten Fragen und Verneinungen mit do/does — danach wird's schneller!"},{"datei":"spiele/city-surfer-conditionals.html","titel":"City Surfer: Conditionals","thema":"Conditionals (If-Sätze)","stufe":"8. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Surf durch die Stadt und vervollständige die richtigen If-Sätze."},{"datei":"spiele/city-surfer-irregular-verbs.html","titel":"City Surfer: Irregular Verbs","thema":"Irregular Verbs","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Surf durch die Stadt und meistere die unregelmäßigen Verben."},{"datei":"spiele/comparative-hero.html","titel":"Comparative Hero","thema":"Comparison of Adjectives","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Steigerungs-Runner durch 4 Welten: faster, the best, as…as — mit Feuerball-Skill und Boss alle 10 Level."},{"datei":"spiele/conditional-hero.html","titel":"Conditional Hero","thema":"Conditionals (If-Sätze)","stufe":"8. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Meistere die If-Sätze (Type 1–3) als Conditional Hero."},{"datei":"spiele/elfmeter-possessives.html","titel":"Elfmeter-Quiz: Possessives & Who","thema":"Possessives & Fragen mit who","stufe":"5. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Triff ins Tor, indem du Possessivbegleiter und who-Fragen richtig löst."},{"datei":"spiele/flappy-grammar.html","titel":"Flappy Grammar","thema":"Past vs Present Perfect","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Flieg durch die Lücken mit der richtigen Zeitform: Past oder Present Perfect."},{"datei":"spiele/freikick-hero-ppp.html","titel":"Free Kick Hero: Present Perfect Progressive","thema":"Present Perfect Progressive","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Trainiere have/has been + -ing beim Freistoß."},{"datei":"spiele/freikick-hero.html","titel":"Free Kick Hero","thema":"Present Perfect Progressive","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Freistoß-Variante zum Present Perfect Progressive."},{"datei":"spiele/moorhuhn-blaster-2-present-past.html","titel":"Moorhuhn Blaster 2: Present & Past Simple","thema":"Present Simple vs. Past Simple","stufe":"5. Schulstufe, 6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Schieße Vögel, Flugzeuge und UFOs ab und schalte immer bessere Waffen frei — bis zum Mega-Laser mit Zielfernrohr. Magazin leer? Beantworte eine Frage zu Present oder Past Simple (Zeitform und Schwierigkeit wählbar)."},{"datei":"spiele/moorhuhn-past-tense.html","titel":"Moorhuhn Blaster: Past Tense","thema":"Past Tense (Irregular)","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Schieße die Moorhühner mit der richtigen unregelmäßigen Vergangenheitsform ab."},{"datei":"spiele/past-simple-snake.html","titel":"Past Simple Snake","thema":"Past Simple","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Steuere die Schlange zur richtigen Vergangenheitsform der Verben."},{"datei":"spiele/present-perfect-hero.html","titel":"Present Perfect Hero","thema":"Present Perfect","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Werde zum Helden des Present Perfect — have/has + Partizip."},{"datei":"spiele/present-perfect-vs-past-hero.html","titel":"Present Perfect vs Past Hero","thema":"Present Perfect vs Past Simple","stufe":"7. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Entscheide blitzschnell zwischen Present Perfect und Past Simple."},{"datei":"spiele/some-any-baseball.html","titel":"Some/Any Baseball","thema":"Some / Any","stufe":"5. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Schlage den Ball mit der richtigen Wahl zwischen some und any."},{"datei":"spiele/tennis-past-tense.html","titel":"Tennis Past Tense","thema":"Past Tense","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Returniere den Ball mit der richtigen Vergangenheitsform."},{"datei":"spiele/verb-dash.html","titel":"Verb Dash","thema":"Regular & Irregular Verbs","stufe":"6. Schulstufe","fach":"Englisch (Grammatik)","beschreibung":"Renn los und unterscheide regelmäßige von unregelmäßigen Verben."}];
-    const state = { thema: "", stufe: "", q: "" };
+    const GOATCOUNTER_CODE = "lernspiele";
+    const state = { thema: "", stufe: "", q: "", sort: "" };
     const grid = document.getElementById("grid");
     const empty = document.getElementById("empty");
     const count = document.getElementById("count");
@@ -75,6 +88,7 @@
       if (s.thema) badges.push('<span class="badge thema">' + esc(s.thema) + '</span>');
       if (s.stufe) s.stufe.split(",").forEach(st => badges.push('<span class="badge stufe">' + esc(st.trim()) + '</span>'));
       if (s.fach)  badges.push('<span class="badge fach">' + esc(s.fach) + '</span>');
+      if (s.klicks >= 10) badges.push('<span class="badge hot">🔥 ' + s.klicks.toLocaleString("de-AT") + '× gespielt</span>');
       return '<a class="card" href="' + esc(s.datei) + '" target="_blank" rel="noopener">' +
         '<div class="badges">' + badges.join("") + '</div>' +
         '<h2>' + esc(s.titel) + '</h2>' +
@@ -91,6 +105,7 @@
         (!state.stufe || (s.stufe || "").split(",").map(x => x.trim()).includes(state.stufe)) &&
         (!q || (s.titel + " " + s.thema + " " + s.fach + " " + s.beschreibung).toLowerCase().includes(q))
       );
+      if (state.sort === "beliebt") list.sort((a, b) => (b.klicks || 0) - (a.klicks || 0));
       grid.innerHTML = list.map(card).join("");
       empty.hidden = list.length > 0;
       count.textContent = list.length + (list.length === 1 ? " Spiel" : " Spiele");
@@ -108,6 +123,33 @@
       state.q = e.target.value; render();
     });
     render();
+
+    // ---- Rangliste: Klickzahlen von GoatCounter laden --------------------
+    async function ladeStatistiken() {
+      const medaillen = ["🥇", "🥈", "🥉"];
+      const ergebnisse = await Promise.all(SPIELE.map(async s => {
+        try {
+          const pfad = new URL(s.datei, location.href).pathname;
+          const res = await fetch("https://" + GOATCOUNTER_CODE + ".goatcounter.com/counter/" + pfad + ".json");
+          if (!res.ok) return 0;
+          const j = await res.json();
+          return parseInt(String(j.count).replace(/[^0-9]/g, ""), 10) || 0;
+        } catch (e) { return 0; }
+      }));
+      ergebnisse.forEach((n, i) => { SPIELE[i].klicks = n; });
+      const top = SPIELE.filter(s => s.klicks > 0).sort((a, b) => b.klicks - a.klicks).slice(0, 3);
+      if (!top.length) return; // GoatCounter nicht erreichbar / noch keine Daten
+      document.getElementById("top-list").innerHTML = top.map((s, i) =>
+        '<a class="top-card" href="' + esc(s.datei) + '" target="_blank" rel="noopener">' +
+        '<span class="medal">' + medaillen[i] + '</span>' +
+        '<span class="top-titel">' + esc(s.titel) + '</span>' +
+        '<span class="top-klicks">' + s.klicks.toLocaleString("de-AT") + '× gespielt</span></a>'
+      ).join("");
+      document.getElementById("top-games").hidden = false;
+      document.getElementById("sort-group").hidden = false;
+      render(); // Badges auf den Karten aktualisieren
+    }
+    ladeStatistiken();
   </script>
 </body>
 </html>

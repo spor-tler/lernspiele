@@ -1030,5 +1030,37 @@ const G={
 
 G.init();
 </script>
+<!-- lernspiele:stats-start -->
+<script>
+(function () {
+  var h = location.hostname;
+  if (location.protocol === "file:" || h === "localhost" || h === "127.0.0.1") return;
+  var CODE = "lernspiele";
+  var GAME = "moorhuhn-past-tense";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://" + CODE + ".goatcounter.com/count");
+  document.head.appendChild(s);
+  // Spielzeit: sichtbare Sekunden zählen, bei Meilensteinen je 1 Event senden.
+  var MEILENSTEINE = [1, 3, 5, 10, 15, 20]; // Minuten
+  var sichtbar = 0, gesendet = 0;
+  setInterval(function () {
+    if (document.visibilityState !== "visible") return;
+    sichtbar += 10;
+    while (gesendet < MEILENSTEINE.length && sichtbar >= MEILENSTEINE[gesendet] * 60) {
+      var min = MEILENSTEINE[gesendet++];
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({
+          path: "zeit/" + GAME + "/" + min + "min",
+          title: "Spielzeit " + GAME + ": " + min + " min",
+          event: true
+        });
+      }
+    }
+  }, 10000);
+})();
+</script>
+<!-- lernspiele:stats-end -->
 </body>
 </html>
