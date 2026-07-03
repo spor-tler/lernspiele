@@ -76,9 +76,9 @@ geöffnet und wie lange gespielt werden.
 - Lokal (`file://`, `localhost`) wird nichts gezählt — Testen verfälscht nichts.
 
 **Einrichtung (einmalig):**
-1. Account auf https://www.goatcounter.com anlegen, Code `lernspiele` wählen
+1. Account auf https://www.goatcounter.com anlegen, Code (`GOATCOUNTER_CODE` in `build.js`, aktuell `spor-tler`) wählen
    (bei anderem Code: `GOATCOUNTER_CODE` in `build.js` anpassen + neu builden).
 2. In den GoatCounter-Einstellungen **„Allow adding visitor counts on your
    website"** aktivieren (sonst bleibt die Top-Leiste leer).
-3. Dashboard mit allen Details: https://lernspiele.goatcounter.com
+3. Dashboard mit allen Details: https://spor-tler.goatcounter.com
    — Klick-Ranking unter `/spiele/…`, Spielzeit unter `zeit/…`.

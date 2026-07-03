@@ -17,7 +17,7 @@ const SPIELE_DIR = path.join(ROOT, "spiele");
 // GoatCounter-Code (Subdomain): Dashboard = https://<CODE>.goatcounter.com
 // Account anlegen auf https://www.goatcounter.com — dort unter Einstellungen
 // "Allow adding visitor counts on your website" aktivieren (für die Rangliste).
-const GOATCOUNTER_CODE = "lernspiele";
+const GOATCOUNTER_CODE = "spor-tler";
 
 const FELDER = ["titel", "thema", "stufe", "fach", "beschreibung"];
 
