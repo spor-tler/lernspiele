@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Bubble Verb Crush 🫧 — Irregular Verbs | School Games</title>
+<meta name="lernspiel:titel"        content="Bubble Verb Crush">
+<meta name="lernspiel:thema"        content="Irregular Verbs">
+<meta name="lernspiel:stufe"        content="5. Schulstufe, 6. Schulstufe">
+<meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+<meta name="lernspiel:beschreibung" content="Bubble-Shooter: Ziele, schieß und lass 3 gleiche Farben platzen. Magazin leer? Beantworte eine Verb-Frage für Nachschub. 3 Schwierigkeiten wählbar — von regular verbs bis zu harten irregular verbs, mit Multiple Choice, Eintippen und 3-Formen-Aufgaben.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============ THEME-VARIABLEN ============ */
+:root[data-theme="standard"] {
+  --bg-main: #FFF9F0;
+  --bg-card: #FFFFFF;
+  --bg-dark: #1E1B4B;
+  --primary-blue: #2563EB;
+  --primary-yellow: #FACC15;
+  --primary-green: #16A34A;
+  --primary-red: #DC2626;
+  --primary-purple: #9333EA;
+  --accent-orange: #F97316;
+  --accent-pink: #EC4899;
+  --accent-teal: #0D9488;
+  --success: #22C55E;
+  --error: #EF4444;
+  --text-dark: #1F2937;
+  --text-light: #F9FAFB;
+  --border-col: #E5E7EB;
+  --shadow-card: 4px 4px 0px #1F2937;
+  --shadow-button: 3px 3px 0px rgba(0,0,0,0.3);
+  --header-bg: #FFFFFF;
+  --quiz-input-bg: #FFF9F0;
+}
+:root[data-theme="psychedelic"] {
+  --bg-main: #000000;
+  --bg-card: #0D001A;
+  --bg-dark: #000000;
+  --primary-blue: #00FFFF;
+  --primary-yellow: #FFFF00;
+  --primary-green: #00FF41;
+  --primary-red: #FF0033;
+  --primary-purple: #BF00FF;
+  --accent-orange: #FF6600;
+  --accent-pink: #FF00FF;
+  --accent-teal: #00FFFF;
+  --success: #00FF41;
+  --error: #FF0033;
+  --text-dark: #F9FAFB;
+  --text-light: #F9FAFB;
+  --border-col: #BF00FF;
+  --shadow-card: 0 0 20px #FF00FF, 0 0 40px #BF00FF;
+  --shadow-button: 0 0 12px #00FFFF, 0 0 24px #00FFFF;
+  --header-bg: #0D001A;
+  --quiz-input-bg: #1a0033;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-main);
+  font-family: "Nunito", "Quicksand", sans-serif;
+  color: var(--text-dark);
+  touch-action: none;
+  transition: background 0.6s;
+}
+button { font-family: "Fredoka One", "Nunito", "Comic Sans MS", sans-serif; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent-orange); outline-offset: 2px; }
+
+/* ============ SPLASH ============ */
+#splash {
+  position: fixed; inset: 0; z-index: 100;
+  background: #1E1B4B;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px;
+}
+#splash .logo { font-family: "Fredoka One", sans-serif; font-size: 36px; color: #9333EA; animation: splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+#splash .star { font-size: 64px; animation: splashSpin 1s ease; }
+@keyframes splashPop { from { transform: scale(0);} to { transform: scale(1);} }
+@keyframes splashSpin { from { transform: rotate(-180deg) scale(0);} to { transform: rotate(0) scale(1);} }
+
+/* ============ LAYOUT ============ */
+#app { height: 100%; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; padding: 8px; gap: 8px; }
+
+header {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--header-bg);
+  border: 4px solid var(--text-dark);
+  border-radius: 16px;
+  padding: 8px 16px;
+  box-shadow: var(--shadow-card);
+  min-height: 64px; flex-shrink: 0;
+}
+:root[data-theme="psychedelic"] header { border-color: var(--primary-purple); }
+
+#backBtn {
+  width: 48px; height: 48px; border-radius: 16px; border: none;
+  background: var(--primary-red); color: #fff; font-size: 24px;
+  box-shadow: 3px 3px 0px #7F1D1D; transition: transform 0.15s;
+}
+#backBtn:hover { transform: scale(1.05); }
+#backBtn:active { transform: translate(2px,2px); box-shadow: none; }
+
+#titleBox { flex: 1; text-align: center; min-width: 0; }
+#titleBox h1 { font-family: "Fredoka One", sans-serif; font-size: 20px; color: var(--primary-blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#levelLabel { font-weight: 800; font-size: 13px; color: var(--accent-orange); letter-spacing: 0.03em; }
+
+#scoreChip {
+  background: var(--primary-yellow); color: #1F2937; font-family: "Fredoka One", sans-serif; font-size: 18px;
+  border-radius: 999px; padding: 8px 16px; border: 2px solid var(--text-dark); min-width: 80px; text-align: center;
+}
+:root[data-theme="psychedelic"] #scoreChip { box-shadow: 0 0 12px var(--primary-yellow); border-color: var(--primary-yellow); }
+
+.iconBtn { width: 48px; height: 48px; border-radius: 999px; border: 2px solid var(--text-dark); background: var(--bg-card); font-size: 22px; transition: transform 0.15s; }
+.iconBtn:hover { transform: scale(1.05); }
+:root[data-theme="psychedelic"] .iconBtn { border-color: var(--accent-pink); box-shadow: 0 0 8px var(--accent-pink); }
+
+/* ============ SPIELBEREICH ============ */
+#gameWrap {
+  position: relative; flex: 1; min-height: 0;
+  background: var(--bg-card);
+  border: 4px solid var(--text-dark); border-radius: 24px;
+  box-shadow: var(--shadow-card); overflow: hidden;
+}
+:root[data-theme="psychedelic"] #gameWrap { border-color: var(--primary-purple); }
+canvas { display: block; width: 100%; height: 100%; }
+
+#gameWrap.shake { animation: shakeAnim 0.2s 3; }
+@keyframes shakeAnim { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+
+/* ============ FOOTER ============ */
+footer {
+  flex-shrink: 0; background: var(--header-bg);
+  border: 4px solid var(--text-dark); border-radius: 16px;
+  padding: 8px 16px; box-shadow: var(--shadow-card);
+  display: flex; align-items: center; gap: 16px;
+}
+:root[data-theme="psychedelic"] footer { border-color: var(--primary-purple); }
+#hearts { font-size: 22px; letter-spacing: 2px; white-space: nowrap; }
+#progressOuter { flex: 1; height: 24px; background: var(--border-col); border-radius: 999px; border: 2px solid var(--text-dark); overflow: hidden; }
+#progressInner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-green), var(--primary-yellow)); border-radius: 999px; transition: width 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+:root[data-theme="psychedelic"] #progressInner { background: linear-gradient(90deg, #FF00FF, #00FFFF); box-shadow: 0 0 12px #FF00FF; }
+#progressLabel { font-weight: 800; font-size: 13px; white-space: nowrap; }
+
+/* ============ OVERLAYS ============ */
+.overlay { position: absolute; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(30,27,75,0.78); padding: 16px; }
+.overlay.hidden { display: none; }
+.card {
+  background: var(--bg-card); border: 4px solid var(--text-dark); border-radius: 24px;
+  box-shadow: var(--shadow-card); padding: 24px; max-width: 460px; width: 100%; text-align: center;
+  animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1); max-height: 92%; overflow-y: auto;
+}
+:root[data-theme="psychedelic"] .card { border-color: var(--accent-pink); }
+@keyframes cardIn { from { transform: scale(0.5) translateY(40px); opacity: 0;} to { transform: scale(1) translateY(0); opacity: 1;} }
+.card h2 { font-family: "Fredoka One", sans-serif; font-size: 26px; color: var(--primary-purple); margin-bottom: 8px; }
+.card p { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+
+.bigBtn {
+  display: inline-block; min-height: 56px; padding: 8px 32px; font-size: 22px; color: #fff;
+  background: var(--primary-blue); border: none; border-radius: 16px; box-shadow: 4px 4px 0px #1E3A8A;
+  transition: transform 0.15s; margin-top: 16px;
+}
+.bigBtn:hover { transform: scale(1.05); }
+.bigBtn:active { transform: translate(2px,2px); box-shadow: none; }
+.bigBtn.green { background: var(--primary-green); box-shadow: 4px 4px 0px #14532D; }
+:root[data-theme="psychedelic"] .bigBtn { box-shadow: var(--shadow-button); }
+
+/* Schwierigkeits-Auswahl */
+.diffGrid { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.diffBtn {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  min-height: 64px; padding: 12px 16px; border-radius: 16px; border: 3px solid var(--text-dark);
+  background: var(--bg-card); color: var(--text-dark); box-shadow: 3px 3px 0 rgba(0,0,0,0.25);
+  transition: transform 0.15s; font-family: "Nunito", sans-serif;
+}
+.diffBtn:hover { transform: scale(1.03); }
+.diffBtn:active { transform: translate(2px,2px); box-shadow: none; }
+.diffBtn .dEmoji { font-size: 30px; flex-shrink: 0; }
+.diffBtn .dTitle { font-family: "Fredoka One", sans-serif; font-size: 20px; display: block; }
+.diffBtn .dDesc { font-size: 13px; font-weight: 700; opacity: 0.85; }
+.diffBtn.easy   { border-color: var(--primary-green); }
+.diffBtn.medium { border-color: var(--accent-orange); }
+.diffBtn.hard   { border-color: var(--primary-red); }
+:root[data-theme="psychedelic"] .diffBtn { box-shadow: 0 0 10px var(--accent-pink); }
+
+/* Quiz */
+#quizTypeBadge {
+  display: inline-block; font-family: "Fredoka One", sans-serif; font-size: 13px; letter-spacing: 0.04em;
+  color: #fff; background: var(--accent-teal); padding: 4px 14px; border-radius: 999px; margin-bottom: 8px;
+}
+#quizVerb { font-family: "Fredoka One", sans-serif; font-size: 38px; color: var(--accent-orange); margin: 4px 0 0; }
+#quizDe { font-size: 15px; font-weight: 700; color: var(--accent-teal); margin-bottom: 8px; }
+#quizPrompt { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+#quizOptions { display: flex; flex-direction: column; gap: 8px; }
+.optBtn {
+  min-height: 52px; padding: 8px 16px; font-size: 20px; font-weight: 800;
+  border: 3px solid var(--border-col); border-radius: 16px; background: var(--quiz-input-bg); color: var(--text-dark);
+  font-family: "Nunito", sans-serif; transition: transform 0.1s;
+}
+.optBtn:hover:not(:disabled) { transform: scale(1.02); border-color: var(--primary-blue); }
+.optBtn:disabled { cursor: default; }
+.optBtn.ok  { border-color: var(--success); background: rgba(34,197,94,0.18); color: var(--text-dark); }
+.optBtn.bad { border-color: var(--error); background: rgba(239,68,68,0.18); }
+#quizInput {
+  width: 100%; height: 56px; font-family: "Nunito", sans-serif; font-size: 24px; font-weight: 800; text-align: center;
+  border: 3px solid var(--border-col); border-radius: 16px; background: var(--quiz-input-bg); color: var(--text-dark);
+}
+#quizInput.ok { border-color: var(--success); background: rgba(34,197,94,0.15); }
+#quizInput.bad { border-color: var(--error); background: rgba(239,68,68,0.15); animation: shakeAnim 0.2s 3; }
+#quizFeedback { min-height: 24px; font-weight: 900; font-size: 17px; margin-top: 10px; }
+#quizFeedback.good { color: var(--success); }
+#quizFeedback.badTxt { color: var(--error); }
+
+#levelUpBanner {
+  position: absolute; top: 24px; left: 50%; z-index: 9; transform: translateX(-50%);
+  font-family: "Fredoka One", sans-serif; font-size: 30px; color: var(--primary-yellow);
+  text-shadow: 3px 3px 0 #1F2937, 0 0 24px rgba(250,204,21,0.8); pointer-events: none; opacity: 0;
+}
+#levelUpBanner.show { animation: levelUp 1.6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes levelUp {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.3);} 20% { opacity: 1; transform: translateX(-50%) scale(1.3);}
+  40% { transform: translateX(-50%) scale(1);} 80% { opacity: 1;} 100% { opacity: 0; transform: translateX(-50%) scale(1) translateY(-24px);}
+}
+.kbd { display: inline-block; background: var(--border-col); color: #1F2937; border-radius: 8px; padding: 2px 8px; font-weight: 900; font-size: 14px; border: 2px solid #9CA3AF; }
+.hintTable { margin: 8px auto 0; font-size: 15px; font-weight: 700; text-align: left; border-spacing: 0 4px; }
+.hintTable td { padding: 0 8px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 520px) { #titleBox h1 { font-size: 15px; } #quizVerb { font-size: 32px; } }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="star">🫧</div>
+  <div class="logo">School Games 🎓</div>
+</div>
+
+<div id="app">
+  <header>
+    <button id="backBtn" aria-label="Zurück" onclick="history.back()">←</button>
+    <div id="titleBox">
+      <h1>Bubble Verb Crush 🫧</h1>
+      <div id="levelLabel">Level 1</div>
+    </div>
+    <div id="scoreChip">0</div>
+    <button class="iconBtn" id="soundBtn" aria-label="Sound an/aus">🔊</button>
+    <button class="iconBtn" id="psyBtn" aria-label="Psychedelic Mode">🌈</button>
+  </header>
+
+  <div id="gameWrap">
+    <canvas id="gameCanvas"></canvas>
+    <div id="levelUpBanner">LEVEL UP! ⚡</div>
+
+    <!-- START / SCHWIERIGKEIT -->
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <h2>Bubble Verb Crush 🫧</h2>
+        <p>Ziele und <b>schieß</b> die Bubbles ab! 3+ gleiche Farben platzen. Du hast <b>3 Schüsse</b> — dann kommt eine <b>Verb-Frage</b> für Nachschub.</p>
+        <table class="hintTable">
+          <tr><td>🖱️ / 👆</td><td>Zielen &amp; tippen zum Schießen</td></tr>
+          <tr><td>🎯</td><td>3 Farben in einer Gruppe = platzen 💥</td></tr>
+          <tr><td>❓</td><td>Richtig = weiter · Falsch = ❤️ weg &amp; Reihe rückt nach</td></tr>
+        </table>
+        <p style="margin-top:16px; color: var(--primary-purple);"><b>Wähle deine Schwierigkeit:</b></p>
+        <div class="diffGrid">
+          <button class="diffBtn easy"   data-diff="easy"><span class="dEmoji">🟢</span><span><span class="dTitle">Einfach</span><span class="dDesc">Nur <b>regular verbs</b> (played, worked …) · 5.–6. Klasse</span></span></button>
+          <button class="diffBtn medium" data-diff="medium"><span class="dEmoji">🟠</span><span><span class="dTitle">Mittel</span><span class="dDesc">Mix: regular + <b>leichte irregular</b> (go, make, see …)</span></span></button>
+          <button class="diffBtn hard"   data-diff="hard"><span class="dEmoji">🔴</span><span><span class="dTitle">Schwer</span><span class="dDesc">Harte <b>irregular verbs</b> (arise, bite, tear …)</span></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="overlay hidden" id="quizOverlay">
+      <div class="card" id="quizCard">
+        <span id="quizTypeBadge">❓ VERB-FRAGE</span>
+        <div id="quizVerb">go</div>
+        <div id="quizDe">(gehen)</div>
+        <div id="quizPrompt">Wähle die richtige Form:</div>
+        <div id="quizOptions"></div>
+        <input id="quizInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="display:none">
+        <div id="quizFeedback"></div>
+        <button class="bigBtn green" id="quizActionBtn" style="display:none">CHECK ✅</button>
+      </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div class="overlay hidden" id="gameOverOverlay">
+      <div class="card">
+        <h2 id="goTitle">💥 GAME OVER</h2>
+        <p style="font-size:22px">Score: <b id="goScore">0</b></p>
+        <p>🏆 Highscore: <b id="goHigh">0</b></p>
+        <p id="goInfo"></p>
+        <button class="bigBtn green" id="restartBtn">NOCHMAL! 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div id="hearts">❤️❤️❤️</div>
+    <div id="progressOuter"><div id="progressInner"></div></div>
+    <div id="progressLabel">Schüsse: ● ● ●</div>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   BUBBLE VERB CRUSH — Bubble-Shooter + Irregular Verbs
+   School Games OG — Single-File-HTML, kein Build, kein Server.
+   Mechanik: 3 Schüsse -> Verb-Frage -> Nachschub.
+   Richtig = weiter | Falsch = Herz verlieren + Reihe rückt nach.
+   ===================================================================== */
+
+/* =====================================================================
+   1) VERB-DATEN  ->  [base, deutsch, [past-Formen], [participle-Formen]]
+   ===================================================================== */
+
+/* --- EINFACH: regular verbs (past = participle = base+ed) --- */
+const REGULAR = [
+  ["play","spielen",["played"],["played"]],
+  ["work","arbeiten",["worked"],["worked"]],
+  ["walk","gehen / zu Fuß gehen",["walked"],["walked"]],
+  ["talk","reden",["talked"],["talked"]],
+  ["watch","anschauen",["watched"],["watched"]],
+  ["help","helfen",["helped"],["helped"]],
+  ["look","schauen",["looked"],["looked"]],
+  ["listen","zuhören",["listened"],["listened"]],
+  ["open","öffnen",["opened"],["opened"]],
+  ["close","schließen",["closed"],["closed"]],
+  ["clean","putzen",["cleaned"],["cleaned"]],
+  ["cook","kochen",["cooked"],["cooked"]],
+  ["call","anrufen",["called"],["called"]],
+  ["start","starten",["started"],["started"]],
+  ["finish","beenden",["finished"],["finished"]],
+  ["answer","antworten",["answered"],["answered"]],
+  ["ask","fragen",["asked"],["asked"]],
+  ["learn","lernen",["learned","learnt"],["learned","learnt"]],
+  ["live","wohnen / leben",["lived"],["lived"]],
+  ["love","lieben",["loved"],["loved"]],
+  ["like","mögen",["liked"],["liked"]],
+  ["use","benutzen",["used"],["used"]],
+  ["want","wollen",["wanted"],["wanted"]],
+  ["need","brauchen",["needed"],["needed"]],
+  ["jump","springen",["jumped"],["jumped"]],
+  ["dance","tanzen",["danced"],["danced"]],
+  ["paint","malen",["painted"],["painted"]],
+  ["wash","waschen",["washed"],["washed"]],
+  ["visit","besuchen",["visited"],["visited"]],
+  ["enjoy","genießen",["enjoyed"],["enjoyed"]],
+  ["stay","bleiben",["stayed"],["stayed"]],
+  ["try","versuchen",["tried"],["tried"]],
+  ["study","lernen / studieren",["studied"],["studied"]],
+  ["carry","tragen",["carried"],["carried"]],
+];
+
+/* --- LEICHTE irregular verbs (für Mittel) --- */
+const IRREGULAR_EASY = [
+  ["go","gehen",["went"],["gone"]],
+  ["make","machen",["made"],["made"]],
+  ["have","haben",["had"],["had"]],
+  ["see","sehen",["saw"],["seen"]],
+  ["come","kommen",["came"],["come"]],
+  ["get","bekommen",["got"],["got","gotten"]],
+  ["take","nehmen",["took"],["taken"]],
+  ["give","geben",["gave"],["given"]],
+  ["find","finden",["found"],["found"]],
+  ["know","wissen / kennen",["knew"],["known"]],
+  ["think","denken",["thought"],["thought"]],
+  ["say","sagen",["said"],["said"]],
+  ["tell","erzählen",["told"],["told"]],
+  ["put","legen / stellen",["put"],["put"]],
+  ["buy","kaufen",["bought"],["bought"]],
+  ["bring","bringen",["brought"],["brought"]],
+  ["run","laufen / rennen",["ran"],["run"]],
+  ["sit","sitzen",["sat"],["sat"]],
+  ["stand","stehen",["stood"],["stood"]],
+  ["eat","essen",["ate"],["eaten"]],
+  ["drink","trinken",["drank"],["drunk"]],
+  ["write","schreiben",["wrote"],["written"]],
+  ["read","lesen",["read"],["read"]],
+  ["sleep","schlafen",["slept"],["slept"]],
+  ["meet","treffen",["met"],["met"]],
+  ["leave","verlassen",["left"],["left"]],
+  ["feel","fühlen",["felt"],["felt"]],
+  ["keep","behalten",["kept"],["kept"]],
+  ["win","gewinnen",["won"],["won"]],
+  ["lose","verlieren",["lost"],["lost"]],
+  ["send","schicken",["sent"],["sent"]],
+  ["spend","ausgeben",["spent"],["spent"]],
+  ["sing","singen",["sang"],["sung"]],
+  ["swim","schwimmen",["swam"],["swum"]],
+  ["drive","fahren",["drove"],["driven"]],
+  ["speak","sprechen",["spoke"],["spoken"]],
+  ["break","brechen",["broke"],["broken"]],
+  ["fly","fliegen",["flew"],["flown"]],
+  ["grow","wachsen",["grew"],["grown"]],
+  ["throw","werfen",["threw"],["thrown"]],
+  ["wear","tragen (Kleidung)",["wore"],["worn"]],
+];
+
+/* --- SCHWERE irregular verbs (für Schwer) --- */
+const IRREGULAR_HARD = [
+  ["arise","entstehen",["arose"],["arisen"]],
+  ["awake","erwachen",["awoke"],["awoken"]],
+  ["bear","(er)tragen",["bore"],["borne"]],
+  ["beat","schlagen",["beat"],["beaten"]],
+  ["bind","binden",["bound"],["bound"]],
+  ["bite","beißen",["bit"],["bitten"]],
+  ["bleed","bluten",["bled"],["bled"]],
+  ["blow","blasen / wehen",["blew"],["blown"]],
+  ["breed","züchten",["bred"],["bred"]],
+  ["cast","werfen (Angel)",["cast"],["cast"]],
+  ["cling","sich klammern",["clung"],["clung"]],
+  ["creep","kriechen",["crept"],["crept"]],
+  ["deal","handeln / austeilen",["dealt"],["dealt"]],
+  ["dig","graben",["dug"],["dug"]],
+  ["draw","zeichnen",["drew"],["drawn"]],
+  ["feed","füttern",["fed"],["fed"]],
+  ["flee","fliehen",["fled"],["fled"]],
+  ["fling","schleudern",["flung"],["flung"]],
+  ["forbid","verbieten",["forbade"],["forbidden"]],
+  ["forgive","vergeben",["forgave"],["forgiven"]],
+  ["freeze","gefrieren",["froze"],["frozen"]],
+  ["grind","mahlen",["ground"],["ground"]],
+  ["hang","hängen",["hung"],["hung"]],
+  ["hide","verstecken",["hid"],["hidden"]],
+  ["kneel","knien",["knelt","kneeled"],["knelt","kneeled"]],
+  ["lay","legen",["laid"],["laid"]],
+  ["lead","führen",["led"],["led"]],
+  ["leap","springen",["leapt","leaped"],["leapt","leaped"]],
+  ["lend","verleihen",["lent"],["lent"]],
+  ["lie","liegen",["lay"],["lain"]],
+  ["light","anzünden",["lit","lighted"],["lit","lighted"]],
+  ["mean","bedeuten",["meant"],["meant"]],
+  ["overcome","überwinden",["overcame"],["overcome"]],
+  ["quit","aufhören",["quit"],["quit"]],
+  ["rise","aufsteigen",["rose"],["risen"]],
+  ["seek","suchen",["sought"],["sought"]],
+  ["sew","nähen",["sewed"],["sewn","sewed"]],
+  ["shake","schütteln",["shook"],["shaken"]],
+  ["shine","scheinen",["shone"],["shone"]],
+  ["shoot","schießen",["shot"],["shot"]],
+  ["shrink","schrumpfen",["shrank","shrunk"],["shrunk","shrunken"]],
+  ["sink","sinken",["sank","sunk"],["sunk"]],
+  ["slide","rutschen",["slid"],["slid"]],
+  ["sow","säen",["sowed"],["sown","sowed"]],
+  ["spin","(sich) drehen",["spun"],["spun"]],
+  ["spit","spucken",["spat","spit"],["spat","spit"]],
+  ["split","spalten",["split"],["split"]],
+  ["spread","verbreiten",["spread"],["spread"]],
+  ["spring","springen",["sprang","sprung"],["sprung"]],
+  ["steal","stehlen",["stole"],["stolen"]],
+  ["stick","kleben / stecken",["stuck"],["stuck"]],
+  ["sting","stechen",["stung"],["stung"]],
+  ["stink","stinken",["stank","stunk"],["stunk"]],
+  ["stride","schreiten",["strode"],["stridden"]],
+  ["strike","schlagen / treffen",["struck"],["struck"]],
+  ["swear","schwören / fluchen",["swore"],["sworn"]],
+  ["sweep","fegen",["swept"],["swept"]],
+  ["swell","anschwellen",["swelled"],["swollen","swelled"]],
+  ["swing","schwingen",["swung"],["swung"]],
+  ["tear","zerreißen",["tore"],["torn"]],
+  ["tread","treten",["trod"],["trodden","trod"]],
+  ["weave","weben",["wove"],["woven"]],
+  ["weep","weinen",["wept"],["wept"]],
+  ["wind","(auf)wickeln",["wound"],["wound"]],
+  ["wring","auswringen",["wrung"],["wrung"]],
+];
+
+/* Als Objekt aufbereiten */
+function toVerb(a) { return { base: a[0], de: a[1], past: a[2], part: a[3] }; }
+const POOLS = {
+  easy:   REGULAR.map(toVerb),
+  medium: [...REGULAR, ...IRREGULAR_EASY].map(toVerb),
+  hard:   IRREGULAR_HARD.map(toVerb),
+};
+/* Distraktoren-Fundus (viele fertige Formen zum Verwirren) */
+const ALL_FORMS = [...REGULAR, ...IRREGULAR_EASY, ...IRREGULAR_HARD]
+  .flatMap(a => [...a[2], ...a[3]]);
+
+/* =====================================================================
+   2) FARBEN & THEME
+   ===================================================================== */
+const PALETTE = {
+  standard: ["#EF4444","#3B82F6","#22C55E","#FACC15","#9333EA","#F97316"],
+  psychedelic: ["#FF0033","#00FFFF","#00FF41","#FFFF00","#BF00FF","#FF6600"],
+};
+const THEME_BG = {
+  standard: { top:"#FEF3C7", bottom:"#FFF9F0", line:"rgba(31,41,55,0.12)", death:"#DC2626", aim:"rgba(31,41,55,0.35)" },
+  psychedelic: { top:"#0D001A", bottom:"#000000", line:"rgba(191,0,255,0.25)", death:"#FF00FF", aim:"rgba(0,255,255,0.5)" },
+};
+function isPsy() { return document.documentElement.getAttribute("data-theme") === "psychedelic"; }
+function palette() { return PALETTE[isPsy() ? "psychedelic" : "standard"]; }
+
+/* =====================================================================
+   3) SOUND (WebAudio, alle Töne < 500 ms)
+   ===================================================================== */
+let audioCtx = null, soundOn = true;
+function ac() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function tone(freq, dur, type, vol, when=0) {
+  if (!soundOn) return;
+  try {
+    const a = ac(); const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, a.currentTime + when);
+    g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + when + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(a.currentTime + when); o.stop(a.currentTime + when + dur);
+  } catch (e) {}
+}
+function wave() { return isPsy() ? "sawtooth" : "triangle"; }
+const SND = {
+  correct(){ tone(523,0.12,wave(),0.25); tone(659,0.12,wave(),0.25,0.1); tone(784,0.2,wave(),0.25,0.2); },
+  wrong(){ tone(160,0.25,isPsy()?"square":"sawtooth",0.2); tone(110,0.25,isPsy()?"square":"sawtooth",0.2,0.1); },
+  levelUp(){ [523,587,659,784,1047].forEach((f,i)=>tone(f,0.1,wave(),0.22,i*0.08)); },
+  button(){ tone(880,0.06,"sine",0.15); },
+  shoot(){ tone(440,0.08,wave(),0.14); tone(660,0.06,wave(),0.1,0.05); },
+  pop(){ tone(880,0.07,"sine",0.18); tone(1170,0.08,"sine",0.14,0.05); },
+  stick(){ tone(300,0.06,"sine",0.1); },
+  drop(){ tone(220,0.18,wave(),0.15); },
+};
+
+/* =====================================================================
+   4) SETUP / CANVAS
+   ===================================================================== */
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+
+const COLS = 9;               // Spalten in geraden Reihen
+let W = 0, H = 0, DPR = 1;
+let R = 20;                   // Bubble-Radius (aus Breite berechnet)
+let rowH = 34;                // vertikaler Reihenabstand
+let gridX = 0, baseTop = 0;   // linker Rand / oberer Rand des Feldes
+let shooterY = 0;
+
+function computeLayout() {
+  R = Math.max(12, Math.min((Math.min(W, 620) * 0.92) / (COLS * 2), (H * 0.62) / 12));
+  rowH = R * Math.sqrt(3);
+  gridX = (W - COLS * 2 * R) / 2;
+  baseTop = R * 0.6;
+  shooterY = H - R * 2.4;
+}
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = r.width; H = r.height;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  computeLayout();
+}
+window.addEventListener("resize", resize);
+
+/* =====================================================================
+   5) HEX-GRID (odd-r offset, wächst bei Bedarf nach oben)
+   ===================================================================== */
+let grid = new Map();         // key "r,c" -> colorIndex
+let descend = 0;              // wie oft eine Reihe oben angesetzt wurde
+function key(r, c) { return r + "," + c; }
+function parity(r) { return ((r % 2) + 2) % 2; }
+function colsInRow(r) { return parity(r) === 0 ? COLS : COLS - 1; }
+function cellX(r, c) { return gridX + R + c * 2 * R + parity(r) * R; }
+function cellY(r) { return baseTop + R + (r + descend) * rowH; }
+
+function neighbors(r, c) {
+  const par = parity(r);
+  const list = [[r, c - 1], [r, c + 1]];
+  if (par === 0) { list.push([r-1,c-1],[r-1,c],[r+1,c-1],[r+1,c]); }
+  else           { list.push([r-1,c],[r-1,c+1],[r+1,c],[r+1,c+1]); }
+  return list.filter(([rr, cc]) => cc >= 0 && cc < colsInRow(rr));
+}
+
+function topRowIndex() { return -descend; }          // aktuell oberste Reihe
+
+/* Neue Reihe oben ansetzen (drückt alles nach unten) */
+function addTopRow(colorCount) {
+  descend++;
+  const r = -descend;
+  const pal = colorCount;
+  for (let c = 0; c < colsInRow(r); c++) grid.set(key(r, c), Math.floor(Math.random() * pal));
+}
+
+/* Startfeld erzeugen */
+function buildBoard(rows, colorCount) {
+  grid.clear(); descend = 0;
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < colsInRow(r); c++)
+      grid.set(key(r, c), Math.floor(Math.random() * colorCount));
+}
+
+/* =====================================================================
+   6) SPIELZUSTAND
+   ===================================================================== */
+const S = {
+  running: false, phase: "start",   // start | aiming | flying | quiz | over
+  diff: "easy",
+  colorCount: 4,
+  score: 0, hearts: 3, level: 1,
+  shotsLeft: 3,
+  verbsSolved: 0, wrongCount: 0,
+  aimX: 0, aimY: 0,                  // Zielpunkt
+};
+let ball = null;                     // fliegende Bubble {x,y,vx,vy,color}
+let magazine = [];                   // kommende Farben (Index) [current, next, ...]
+let particles = [];
+let deck = [];                       // gemischte Verben
+let lastType = "";                   // letzter Fragetyp (kein 2× in Folge)
+let lastVerbBase = "";               // letztes Verb (kein 2× in Folge)
+let highscore = +(localStorage.getItem("bubbleVerbHigh") || 0);
+
+const SHOOT_SPEED = 15;              // Einheiten pro Frame-Schritt (skaliert mit R)
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function rnd(a,b){ return a + Math.random()*(b-a); }
+
+/* Farbe für neue Bubble: bevorzugt Farben, die noch auf dem Feld sind */
+function pickBallColor() {
+  const present = new Set(grid.values());
+  const pool = present.size ? [...present] : Array.from({length:S.colorCount},(_,i)=>i);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function refillMagazine() {
+  magazine = [pickBallColor(), pickBallColor(), pickBallColor()];
+}
+
+/* =====================================================================
+   7) SCHIESSEN & KOLLISION
+   ===================================================================== */
+function shooterX() { return W / 2; }
+
+function shoot() {
+  if (S.phase !== "aiming" || ball || S.shotsLeft <= 0) return;
+  const sx = shooterX(), sy = shooterY;
+  let dx = S.aimX - sx, dy = S.aimY - sy;
+  if (dy > -R) dy = -R;                          // immer nach oben
+  const len = Math.hypot(dx, dy) || 1;
+  const color = magazine.shift();
+  ball = { x: sx, y: sy, vx: dx/len * SHOOT_SPEED, vy: dy/len * SHOOT_SPEED, color };
+  S.phase = "flying";
+  S.shotsLeft--;
+  SND.shoot();
+  updateHUD();
+}
+
+function updateBall() {
+  if (!ball) return;
+  const steps = 6;                               // Substeps gegen Tunneling
+  for (let s = 0; s < steps; s++) {
+    ball.x += ball.vx / steps;
+    ball.y += ball.vy / steps;
+    // Wände
+    const left = gridX + R, right = gridX + COLS*2*R - R;
+    if (ball.x < left)  { ball.x = left;  ball.vx = Math.abs(ball.vx); }
+    if (ball.x > right) { ball.x = right; ball.vx = -Math.abs(ball.vx); }
+    // Decke
+    if (ball.y <= cellY(topRowIndex()) ) { settleBall(); return; }
+    // Bubble-Kollision
+    for (const [k, col] of grid) {
+      const [r, c] = k.split(",").map(Number);
+      const bx = cellX(r, c), by = cellY(r);
+      const dxx = ball.x - bx, dyy = ball.y - by;
+      if (dxx*dxx + dyy*dyy <= (R*1.9)*(R*1.9)) { settleBall(); return; }
+    }
+  }
+}
+
+/* Fliegende Bubble in nächstliegende freie Zelle einrasten */
+function settleBall() {
+  if (!ball) return;
+  let row = Math.round((ball.y - baseTop - R) / rowH - descend);
+  if (row < topRowIndex()) row = topRowIndex();
+  const par = parity(row);
+  let col = Math.round((ball.x - gridX - R - par*R) / (2*R));
+  col = Math.max(0, Math.min(colsInRow(row) - 1, col));
+
+  let target = null;
+  if (!grid.has(key(row, col))) target = [row, col];
+  else {
+    // nächste freie Nachbarzelle suchen
+    let best = null, bestD = Infinity;
+    const cand = [[row,col], ...neighbors(row,col)];
+    for (const [rr, cc] of cand) {
+      if (grid.has(key(rr, cc))) continue;
+      const d = (ball.x-cellX(rr,cc))**2 + (ball.y-cellY(rr,cc))**2;
+      if (d < bestD) { bestD = d; best = [rr, cc]; }
+    }
+    if (!best) { // Ring erweitern
+      outer:
+      for (const [rr, cc] of neighbors(row, col))
+        for (const [r2, c2] of neighbors(rr, cc))
+          if (!grid.has(key(r2, c2))) { best = [r2, c2]; break outer; }
+    }
+    target = best || [row, col];
+  }
+
+  const [tr, tc] = target;
+  grid.set(key(tr, tc), ball.color);
+  SND.stick();
+  const placed = [tr, tc, ball.color];
+  ball = null;
+  resolvePlacement(placed);
+}
+
+/* Gleiche Farbe floodfillen -> ab 3 platzen; danach freischwebende droppen */
+function resolvePlacement([r, c, color]) {
+  // 1) gleiche Farbe verbunden
+  const same = [];
+  const seen = new Set(); const stack = [[r, c]];
+  while (stack.length) {
+    const [cr, cc] = stack.pop(); const kk = key(cr, cc);
+    if (seen.has(kk)) continue;
+    if (grid.get(kk) !== color) continue;
+    seen.add(kk); same.push([cr, cc]);
+    for (const [nr, nc] of neighbors(cr, cc)) if (grid.has(key(nr, nc)) && !seen.has(key(nr, nc))) stack.push([nr, nc]);
+  }
+  let popped = 0;
+  if (same.length >= 3) {
+    for (const [pr, pc] of same) { spawnPop(cellX(pr,pc), cellY(pr), palette()[grid.get(key(pr,pc))]); grid.delete(key(pr,pc)); popped++; }
+    SND.pop();
+  }
+  // 2) freischwebende Gruppen droppen
+  let dropped = 0;
+  if (popped) dropped = dropFloating();
+
+  if (popped) {
+    S.score += popped * 10 + dropped * 25;
+    if (dropped && !reduceMotion) bump();
+  }
+  updateHUD();
+
+  // Feld leer? -> Level geschafft
+  if (grid.size === 0) { levelClear(); return; }
+
+  // Zu tief? -> Game Over
+  if (boardTooLow()) { gameOver(false); return; }
+
+  // Weiter: entweder Frage (Magazin leer) oder wieder zielen
+  if (S.shotsLeft <= 0) openQuiz();
+  else S.phase = "aiming";
+}
+
+/* Bubbles, die nicht mehr mit der Decke verbunden sind, fallen */
+function dropFloating() {
+  const anchored = new Set();
+  const stack = [];
+  const tr = topRowIndex();
+  for (let c = 0; c < colsInRow(tr); c++) if (grid.has(key(tr, c))) stack.push([tr, c]);
+  while (stack.length) {
+    const [r, c] = stack.pop(); const kk = key(r, c);
+    if (anchored.has(kk) || !grid.has(kk)) continue;
+    anchored.add(kk);
+    for (const [nr, nc] of neighbors(r, c)) if (grid.has(key(nr, nc)) && !anchored.has(key(nr, nc))) stack.push([nr, nc]);
+  }
+  let dropped = 0;
+  for (const [k, col] of [...grid]) {
+    if (!anchored.has(k)) {
+      const [r, c] = k.split(",").map(Number);
+      spawnPop(cellX(r, c), cellY(r), palette()[col], true);
+      grid.delete(k); dropped++;
+    }
+  }
+  if (dropped) SND.drop();
+  return dropped;
+}
+
+function boardTooLow() {
+  const limit = shooterY - R * 2.2;
+  for (const k of grid.keys()) { const r = +k.split(",")[0]; if (cellY(r) + R >= limit) return true; }
+  return false;
+}
+
+/* =====================================================================
+   8) PARTIKEL
+   ===================================================================== */
+function spawnPop(x, y, color, fall) {
+  if (reduceMotion) return;
+  const n = fall ? 4 : 7;
+  for (let i = 0; i < n; i++)
+    particles.push({ x, y, vx: rnd(-140,140), vy: fall ? rnd(40,120) : rnd(-200,-20), life: rnd(0.4,0.9), col: color, s: rnd(3, R*0.45), rot: rnd(0,6.3), vr: rnd(-8,8) });
+}
+function confettiBurst() {
+  if (reduceMotion) return;
+  const cols = palette();
+  for (let i = 0; i < 28; i++)
+    particles.push({ x: W/2, y: H*0.4, vx: rnd(-220,220), vy: rnd(-320,-40), life: rnd(0.6,1.2), col: cols[i%cols.length], s: rnd(4,9), rot: rnd(0,6.3), vr: rnd(-9,9) });
+}
+
+/* =====================================================================
+   9) QUIZ — 3 Fragetypen (mc / fill / triple), gemischt
+   ===================================================================== */
+function drawVerb() {
+  if (!deck.length) deck = shuffle([...POOLS[S.diff]]);
+  let v = deck.pop();
+  if (v.base === lastVerbBase && deck.length) { const alt = deck.pop(); deck.unshift(v); v = alt; }
+  lastVerbBase = v.base;
+  return v;
+}
+function norm(s) { return (s||"").trim().toLowerCase().replace(/\s+/g," "); }
+function matchesAny(input, list) { const v = norm(input); return list.some(a => norm(a) === v); }
+
+/* N eindeutige Distraktor-Formen zu einer korrekten Form */
+function distractorForms(correctList, base, n) {
+  const bad = new Set();
+  const correctNorm = new Set(correctList.map(norm));
+  const cands = [base+"ed", base+"d", base+"t", base+"en", base, base.replace(/e$/,"")+"ed"];
+  for (let i = 0; i < 40 && bad.size < n + 4; i++) cands.push(ALL_FORMS[Math.floor(Math.random()*ALL_FORMS.length)]);
+  shuffle(cands);
+  for (const w of cands) { if (!w) continue; if (correctNorm.has(norm(w))) continue; if (norm(w).length < 2) continue; bad.add(w); if (bad.size >= n) break; }
+  // Auffüllen falls nötig
+  let i = 0; while (bad.size < n) { const w = ALL_FORMS[i++ % ALL_FORMS.length]; if (!correctNorm.has(norm(w))) bad.add(w); if (i > 200) break; }
+  return [...bad].slice(0, n);
+}
+
+let quiz = null;   // {answered, correct, checkFn}
+
+function buildQuestion() {
+  const v = drawVerb();
+  const types = ["mc", "fill", "triple"];
+  let type = types[Math.floor(Math.random()*types.length)];
+  if (type === lastType) type = types[(types.indexOf(type)+1) % 3];
+  lastType = type;
+
+  const useParticiple = Math.random() < 0.5;
+  const formList = useParticiple ? v.part : v.past;
+  const formLabel = useParticiple ? "Past Participle" : "Past Simple";
+  return { v, type, formList, formLabel, useParticiple };
+}
+
+function openQuiz() {
+  S.phase = "quiz";
+  quiz = buildQuestion();
+  $("quizOverlay").classList.remove("hidden");
+  const { v, type, formList, formLabel } = quiz;
+
+  $("quizVerb").textContent = v.base;
+  $("quizDe").textContent = "(" + v.de + ")";
+  const opts = $("quizOptions"), inp = $("quizInput"), act = $("quizActionBtn"), fb = $("quizFeedback");
+  opts.innerHTML = ""; opts.style.display = "none";
+  inp.style.display = "none"; inp.value = ""; inp.className = "";
+  act.style.display = "none";
+  fb.textContent = ""; fb.className = "";
+  quiz.answered = false;
+
+  if (type === "mc") {
+    $("quizTypeBadge").textContent = "🎯 MULTIPLE CHOICE";
+    $("quizPrompt").innerHTML = `Wähle die richtige <b>${formLabel}</b>-Form:`;
+    const correct = formList[0];
+    const options = shuffle([correct, ...distractorForms(formList, v.base, 3)]);
+    opts.style.display = "flex";
+    options.forEach(o => {
+      const b = document.createElement("button");
+      b.className = "optBtn"; b.textContent = o;
+      b.onclick = () => { if (quiz.answered) return; evaluate(matchesAny(o, formList), b, options, formList); };
+      opts.appendChild(b);
+    });
+  }
+  else if (type === "triple") {
+    $("quizTypeBadge").textContent = "🔗 3 FORMEN";
+    $("quizPrompt").innerHTML = `Welche Reihe ist <b>komplett richtig</b>? (base – past – participle)`;
+    const correct = `${v.base} – ${v.past[0]} – ${v.part[0]}`;
+    const wrongs = [
+      `${v.base} – ${distractorForms(v.past, v.base, 1)[0]} – ${v.part[0]}`,
+      `${v.base} – ${v.past[0]} – ${distractorForms(v.part, v.base, 1)[0]}`,
+      `${v.base} – ${distractorForms(v.past, v.base, 1)[0]} – ${distractorForms(v.part, v.base, 1)[0]}`,
+    ];
+    const uniq = []; const seen = new Set([norm(correct)]);
+    for (const w of wrongs) { if (!seen.has(norm(w))) { seen.add(norm(w)); uniq.push(w); } }
+    while (uniq.length < 3) { const w = `${v.base} – ${distractorForms(v.past,v.base,1)[0]} – ${distractorForms(v.part,v.base,1)[0]}`; if(!seen.has(norm(w))){seen.add(norm(w));uniq.push(w);} else break; }
+    const options = shuffle([correct, ...uniq.slice(0,3)]);
+    opts.style.display = "flex";
+    options.forEach(o => {
+      const b = document.createElement("button");
+      b.className = "optBtn"; b.style.fontSize = "17px"; b.textContent = o;
+      b.onclick = () => { if (quiz.answered) return; evaluate(norm(o) === norm(correct), b, options, [correct]); };
+      opts.appendChild(b);
+    });
+  }
+  else { // fill
+    $("quizTypeBadge").textContent = "⌨️ EINTIPPEN";
+    $("quizPrompt").innerHTML = `Tippe die <b>${formLabel}</b>-Form von „${v.base}" ein:`;
+    inp.style.display = "block";
+    act.style.display = "inline-block"; act.textContent = "CHECK ✅";
+    setTimeout(() => inp.focus(), 60);
+    quiz.checkFill = () => {
+      if (quiz.answered) { closeQuiz(); return; }
+      const ok = matchesAny(inp.value, formList);
+      inp.className = ok ? "ok" : "bad";
+      evaluate(ok, null, null, formList);
+    };
+  }
+}
+
+function evaluate(correct, clicked, options, correctList) {
+  quiz.answered = true;
+  const fb = $("quizFeedback");
+  const v = quiz.v;
+  // Optionen sperren + einfärben
+  if (quiz.type === "mc" || quiz.type === "triple") {
+    [...$("quizOptions").children].forEach(b => {
+      b.disabled = true;
+      const isCorrect = quiz.type === "mc" ? matchesAny(b.textContent, correctList) : (norm(b.textContent) === norm(correctList[0]));
+      if (isCorrect) b.classList.add("ok");
+      else if (b === clicked) b.classList.add("bad");
+    });
+  }
+  const act = $("quizActionBtn");
+  act.style.display = "inline-block"; act.textContent = "WEITER 🚀";
+
+  if (correct) {
+    S.score += 150; S.verbsSolved++;
+    fb.textContent = "RICHTIG! +150 🎉"; fb.className = "good";
+    SND.correct(); confettiBurst(); bump();
+  } else {
+    S.hearts--; S.wrongCount++;
+    fb.innerHTML = `❌ Richtig: <b>${v.base} – ${v.past[0]} – ${v.part[0]}</b>`;
+    fb.className = "badTxt";
+    SND.wrong();
+    if (!reduceMotion) shakeWrap();
+  }
+  updateHUD();
+  quiz.wasCorrect = correct;
+}
+
+function closeQuiz() {
+  $("quizOverlay").classList.add("hidden");
+  const wasCorrect = quiz.wasCorrect;
+  quiz = null;
+  refillMagazine();
+  S.shotsLeft = 3;
+
+  if (S.hearts <= 0) { gameOver(false); return; }
+
+  if (!wasCorrect) {
+    // Strafe: neue Reihe rückt nach
+    addTopRow(S.colorCount);
+    if (boardTooLow()) { gameOver(false); return; }
+    if (!reduceMotion) shakeWrap();
+  }
+  updateHUD();
+  S.phase = "aiming";
+}
+
+$("quizActionBtn").addEventListener("click", () => {
+  SND.button();
+  if (!quiz) return;
+  if (quiz.type === "fill" && !quiz.answered) { quiz.checkFill(); return; }
+  closeQuiz();
+});
+$("quizInput").addEventListener("keydown", e => { if (e.key === "Enter" && quiz && quiz.type === "fill") { e.preventDefault(); quiz.checkFill(); } });
+
+/* =====================================================================
+   10) RENDER
+   ===================================================================== */
+function drawBubble(x, y, colorIndex, radius) {
+  const col = palette()[colorIndex];
+  const psy = isPsy();
+  ctx.save();
+  if (psy) { ctx.shadowColor = col; ctx.shadowBlur = 14; }
+  ctx.beginPath(); ctx.arc(x, y, radius, 0, 6.3);
+  ctx.fillStyle = col; ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = 2.5; ctx.strokeStyle = psy ? "rgba(255,255,255,0.6)" : "#1F2937"; ctx.stroke();
+  // Glanzlicht
+  ctx.beginPath(); ctx.arc(x - radius*0.3, y - radius*0.32, radius*0.28, 0, 6.3);
+  ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.fill();
+  ctx.restore();
+}
+
+function render() {
+  const bg = THEME_BG[isPsy() ? "psychedelic" : "standard"];
+  const psy = isPsy();
+  // Hintergrund
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  if (psy && !reduceMotion) {
+    const pulse = 0.5 + 0.5*Math.sin(performance.now()/900);
+    g.addColorStop(0, pulse > 0.5 ? "#0D001A" : "#001A0D"); g.addColorStop(1, "#000000");
+  } else { g.addColorStop(0, bg.top); g.addColorStop(1, bg.bottom); }
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  // Todeslinie
+  const limitY = shooterY - R * 2.2;
+  ctx.strokeStyle = bg.death; ctx.lineWidth = 2; ctx.setLineDash([8, 8]);
+  ctx.beginPath(); ctx.moveTo(0, limitY); ctx.lineTo(W, limitY); ctx.stroke(); ctx.setLineDash([]);
+
+  // Zielhilfe
+  if (S.phase === "aiming" && !ball) drawAim(bg);
+
+  // Grid
+  for (const [k, col] of grid) {
+    const [r, c] = k.split(",").map(Number);
+    drawBubble(cellX(r, c), cellY(r), col, R * 0.94);
+  }
+
+  // Fliegende Bubble
+  if (ball) drawBubble(ball.x, ball.y, ball.color, R * 0.94);
+
+  // Shooter + Magazin
+  drawShooter();
+
+  // Partikel
+  for (const p of particles) {
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+    ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.col;
+    ctx.beginPath(); ctx.arc(0, 0, p.s, 0, 6.3); ctx.fill();
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawAim(bg) {
+  const sx = shooterX(), sy = shooterY;
+  let dx = S.aimX - sx, dy = S.aimY - sy;
+  if (dy > -R) dy = -R;
+  const len = Math.hypot(dx, dy) || 1;
+  let vx = dx/len, vy = dy/len;
+  let x = sx, y = sy;
+  const left = gridX + R, right = gridX + COLS*2*R - R;
+  ctx.setLineDash([6, 10]); ctx.lineWidth = 3; ctx.strokeStyle = bg.aim;
+  ctx.beginPath(); ctx.moveTo(x, y);
+  for (let i = 0; i < 260; i++) {
+    x += vx * R * 0.5; y += vy * R * 0.5;
+    if (x < left) { x = left; vx = Math.abs(vx); }
+    if (x > right) { x = right; vx = -Math.abs(vx); }
+    ctx.lineTo(x, y);
+    if (y <= cellY(topRowIndex())) break;
+    let hit = false;
+    for (const k of grid.keys()) { const [r,c]=k.split(",").map(Number); if ((x-cellX(r,c))**2+(y-cellY(r))**2 <= (R*1.9)**2){hit=true;break;} }
+    if (hit) break;
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+function drawShooter() {
+  const sx = shooterX(), sy = shooterY;
+  const psy = isPsy();
+  // Sockel
+  ctx.beginPath(); ctx.arc(sx, sy, R * 1.25, Math.PI, 0);
+  ctx.fillStyle = psy ? "#1a0033" : "#CBD5E1"; ctx.fill();
+  ctx.lineWidth = 3; ctx.strokeStyle = psy ? "#BF00FF" : "#1F2937"; ctx.stroke();
+  // aktuelle Bubble
+  if (magazine.length && !ball && S.phase !== "quiz") drawBubble(sx, sy, magazine[0], R * 0.94);
+  // Magazin-Vorschau
+  for (let i = 1; i < magazine.length; i++) drawBubble(sx + R*2.1 + (i-1)*R*1.6, sy, magazine[i], R * 0.55);
+}
+
+/* =====================================================================
+   11) LOOP
+   ===================================================================== */
+function loop() {
+  requestAnimationFrame(loop);
+  if (S.running) {
+    if (S.phase === "flying") updateBall();
+    for (const p of particles) { p.x += p.vx*0.016; p.y += p.vy*0.016; p.vy += 9; p.life -= 0.016; p.rot += p.vr*0.016; }
+    particles = particles.filter(p => p.life > 0);
+  }
+  render();
+}
+
+/* =====================================================================
+   12) INPUT
+   ===================================================================== */
+function localPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+canvas.addEventListener("pointermove", e => { const p = localPoint(e); S.aimX = p.x; S.aimY = p.y; });
+canvas.addEventListener("pointerdown", e => {
+  const p = localPoint(e); S.aimX = p.x; S.aimY = p.y;
+  if (S.phase === "aiming") shoot();
+});
+
+/* =====================================================================
+   13) HUD
+   ===================================================================== */
+function updateHUD() {
+  $("scoreChip").textContent = Math.floor(S.score);
+  $("levelLabel").textContent = "Level " + S.level + "  ·  🏆 " + highscore;
+  $("hearts").textContent = "❤️".repeat(Math.max(0,S.hearts)) + "🖤".repeat(Math.max(0,3-S.hearts));
+  const dots = "●".repeat(Math.max(0,S.shotsLeft)) + "○".repeat(Math.max(0,3-S.shotsLeft));
+  $("progressLabel").textContent = "Schüsse: " + dots;
+  $("progressInner").style.width = (S.shotsLeft/3*100) + "%";
+}
+
+/* =====================================================================
+   14) SPIELFLUSS
+   ===================================================================== */
+const DIFF_CFG = {
+  easy:   { colors: 4, rows: 5 },
+  medium: { colors: 5, rows: 6 },
+  hard:   { colors: 6, rows: 7 },
+};
+
+function startGame(diff) {
+  S.diff = diff;
+  const cfg = DIFF_CFG[diff];
+  S.colorCount = cfg.colors;
+  Object.assign(S, { running: true, phase: "aiming", score: 0, hearts: 3, level: 1, shotsLeft: 3, verbsSolved: 0, wrongCount: 0 });
+  deck = shuffle([...POOLS[diff]]);
+  lastType = ""; lastVerbBase = "";
+  particles = []; ball = null;
+  buildBoard(cfg.rows, cfg.colors);
+  refillMagazine();
+  S.aimX = W/2; S.aimY = H*0.3;
+  updateHUD();
+}
+
+function levelClear() {
+  S.score += 500;
+  S.level++;
+  S.hearts = Math.min(3, S.hearts + 1);   // Belohnung: Herz zurück (max 3)
+  SND.levelUp();
+  if (!reduceMotion) { showLevelBanner(); confettiBurst(); }
+  // Etwas mehr Reihen mit steigendem Level (Cap)
+  const rows = Math.min(9, DIFF_CFG[S.diff].rows + Math.floor(S.level/2));
+  buildBoard(rows, S.colorCount);
+  refillMagazine(); S.shotsLeft = 3;
+  updateHUD();
+  S.phase = "aiming";
+}
+
+function gameOver(won) {
+  S.running = false; S.phase = "over";
+  const sc = Math.floor(S.score);
+  if (sc > highscore) { highscore = sc; localStorage.setItem("bubbleVerbHigh", highscore); }
+  $("goTitle").textContent = won ? "🏆 GESCHAFFT!" : "💥 GAME OVER";
+  $("goScore").textContent = sc;
+  $("goHigh").textContent = highscore;
+  $("goInfo").textContent = "✅ " + S.verbsSolved + " Verben richtig · Level " + S.level;
+  $("gameOverOverlay").classList.remove("hidden");
+}
+
+/* Effekte */
+function shakeWrap() { const gw = $("gameWrap"); gw.classList.remove("shake"); void gw.offsetWidth; gw.classList.add("shake"); }
+function bump() { const c = $("quizCard"); if(!c) return; c.style.transition="transform 0.15s cubic-bezier(0.34,1.56,0.64,1)"; c.style.transform="scale(1.05)"; setTimeout(()=>c.style.transform="scale(1)",160); }
+function showLevelBanner() { const b = $("levelUpBanner"); b.textContent = "LEVEL " + S.level + "! ⚡"; b.classList.remove("show"); void b.offsetWidth; b.classList.add("show"); }
+
+/* =====================================================================
+   15) BUTTONS / TOGGLES
+   ===================================================================== */
+document.querySelectorAll(".diffBtn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    SND.button(); ac();
+    $("startOverlay").classList.add("hidden");
+    startGame(btn.dataset.diff);
+  });
+});
+$("restartBtn").addEventListener("click", () => {
+  SND.button();
+  $("gameOverOverlay").classList.add("hidden");
+  $("startOverlay").classList.remove("hidden");   // Schwierigkeit neu wählen
+  S.phase = "start";
+});
+$("psyBtn").addEventListener("click", () => {
+  SND.button();
+  const root = document.documentElement;
+  const toPsy = root.getAttribute("data-theme") !== "psychedelic";
+  root.setAttribute("data-theme", toPsy ? "psychedelic" : "standard");
+  if (!reduceMotion) { const gw = $("gameWrap"); gw.style.transition="transform 0.4s cubic-bezier(0.34,1.56,0.64,1)"; gw.style.transform="rotate(2deg) scale(0.96)"; setTimeout(()=>gw.style.transform="none",400); }
+});
+$("soundBtn").addEventListener("click", () => { soundOn = !soundOn; $("soundBtn").textContent = soundOn ? "🔊" : "🔇"; if (soundOn) SND.button(); });
+
+/* =====================================================================
+   16) BOOT
+   ===================================================================== */
+resize();
+setTimeout(() => { $("splash").style.display = "none"; resize(); }, 1000);
+requestAnimationFrame(loop);
+</script>
+<!-- lernspiele:stats-start -->
+<script>
+(function () {
+  var h = location.hostname;
+  if (location.protocol === "file:" || h === "localhost" || h === "127.0.0.1") return;
+  var CODE = "spor-tler";
+  var GAME = "bubble-verb-crush-irregular-verbs";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://" + CODE + ".goatcounter.com/count");
+  document.head.appendChild(s);
+  // Spielzeit: sichtbare Sekunden zählen, bei Meilensteinen je 1 Event senden.
+  var MEILENSTEINE = [1, 3, 5, 10, 15, 20]; // Minuten
+  var sichtbar = 0, gesendet = 0;
+  setInterval(function () {
+    if (document.visibilityState !== "visible") return;
+    sichtbar += 10;
+    while (gesendet < MEILENSTEINE.length && sichtbar >= MEILENSTEINE[gesendet] * 60) {
+      var min = MEILENSTEINE[gesendet++];
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({
+          path: "zeit/" + GAME + "/" + min + "min",
+          title: "Spielzeit " + GAME + ": " + min + " min",
+          event: true
+        });
+      }
+    }
+  }, 10000);
+})();
+</script>
+<!-- lernspiele:stats-end -->
+</body>
+</html>
