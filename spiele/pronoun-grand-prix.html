@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="lernspiel:titel"        content="Pronoun Grand Prix">
+<meta name="lernspiel:thema"        content="Personal Pronouns">
+<meta name="lernspiel:stufe"        content="5. Schulstufe">
+<meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+<meta name="lernspiel:beschreibung" content="3D-Rennspiel im PolyTrack-Stil: Lenk dein Auto durch die Slalom-Tore — alle 5 Tore wartet eine Frage zu Personal Pronouns!">
+<title>Pronoun Grand Prix | School Games 🎓</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<style>
+:root[data-theme="standard"]{
+  --bg-main:#FFF9F0; --bg-card:#FFFFFF; --bg-dark:#1E1B4B;
+  --blue:#2563EB; --yellow:#FACC15; --green:#16A34A; --red:#DC2626; --purple:#9333EA;
+  --orange:#F97316; --pink:#EC4899; --teal:#0D9488;
+  --success:#22C55E; --error:#EF4444; --warning:#F59E0B;
+  --text-dark:#1F2937; --text-light:#F9FAFB; --border:#E5E7EB;
+  --shadow-card:4px 4px 0px #1F2937; --shadow-btn:3px 3px 0px rgba(0,0,0,.3);
+  --hud-bg:rgba(255,249,240,.92); --chip-bg:#FFFFFF;
+}
+:root[data-theme="psychedelic"]{
+  --bg-main:#000000; --bg-card:#0D001A; --bg-dark:#000000;
+  --blue:#00FFFF; --yellow:#FFFF00; --green:#00FF41; --red:#FF0033; --purple:#BF00FF;
+  --orange:#FF6600; --pink:#FF00FF; --teal:#00FFFF;
+  --success:#00FF41; --error:#FF0033; --warning:#FFFF00;
+  --text-dark:#F9FAFB; --text-light:#F9FAFB; --border:#BF00FF;
+  --shadow-card:0 0 20px #FF00FF,0 0 40px #BF00FF; --shadow-btn:0 0 12px #00FFFF,0 0 24px #00FFFF;
+  --hud-bg:rgba(10,0,20,.88); --chip-bg:#14002A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background:var(--bg-main);color:var(--text-dark)}
+button{font-family:'Fredoka One','Nunito',sans-serif;cursor:pointer;border:none;min-height:48px}
+h1,h2,h3{font-family:'Fredoka One','Nunito',sans-serif;font-weight:400}
+
+/* ---------- Splash ---------- */
+#splash{position:fixed;inset:0;background:#1E1B4B;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:8px}
+#splash .logo{font-family:'Fredoka One';font-size:44px;color:#9333EA;text-shadow:0 0 24px rgba(147,51,234,.6)}
+#splash .tag{color:#F9FAFB;font-size:18px;font-weight:700}
+:root[data-theme="psychedelic"] #splash .logo{color:#FF00FF;text-shadow:0 0 16px #FF00FF,0 0 40px #BF00FF}
+
+/* ---------- Menü ---------- */
+#menu{position:fixed;inset:0;background:var(--bg-main);z-index:90;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;overflow:auto}
+#menu.show{display:flex}
+#menu h1{font-size:clamp(32px,6vw,52px);color:var(--purple);text-align:center}
+#menu .sub{font-size:20px;font-weight:800;color:var(--text-dark);text-align:center}
+#menu .topic{background:var(--bg-card);border:4px solid var(--blue);border-radius:24px;box-shadow:var(--shadow-card);padding:16px 24px;max-width:560px;text-align:center;font-size:16px;font-weight:700}
+#menu .topic b{color:var(--blue)}
+.diffRow{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.diffBtn{padding:16px 32px;border-radius:16px;color:#fff;font-size:24px;box-shadow:var(--shadow-btn);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.diffBtn:hover{transform:scale(1.05)}
+.diffBtn:active{transform:translate(2px,2px)}
+.diffBtn small{display:block;font-family:'Nunito';font-weight:800;font-size:13px;opacity:.95}
+#dLeicht{background:var(--green)} #dMittel{background:var(--orange)} #dSchwer{background:var(--red)}
+#menu .controls{font-size:15px;font-weight:700;text-align:center;line-height:1.7;max-width:560px}
+#menu .best{font-size:15px;font-weight:800;color:var(--teal)}
+kbd{background:var(--bg-card);border:2px solid var(--border);border-radius:8px;padding:2px 8px;font-family:'Nunito';font-weight:900}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;z-index:20;display:none;pointer-events:none}
+#hud.show{display:block}
+header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--hud-bg);pointer-events:auto;gap:8px}
+#backBtn{width:48px;height:48px;border-radius:16px;background:var(--red);color:#fff;font-size:22px;box-shadow:var(--shadow-btn)}
+#gameTitle{text-align:center;font-family:'Fredoka One';font-size:clamp(14px,2.6vw,22px);color:var(--purple);flex:1}
+#gameTitle span{display:block;font-family:'Nunito';font-weight:900;font-size:13px;color:var(--teal)}
+.hudRight{display:flex;align-items:center;gap:8px}
+#timeBox{background:var(--teal);color:#fff;font-family:'Fredoka One';font-size:16px;padding:8px 14px;border-radius:999px;box-shadow:var(--shadow-btn);min-width:76px;text-align:center}
+#score{background:var(--yellow);color:#1F2937;font-family:'Fredoka One';font-size:18px;padding:8px 16px;border-radius:999px;box-shadow:var(--shadow-btn);min-width:96px;text-align:center}
+#psyBtn{width:48px;height:48px;border-radius:999px;background:var(--purple);font-size:22px;box-shadow:var(--shadow-btn)}
+footer{position:absolute;bottom:0;left:0;right:0;padding:8px 16px 12px;background:var(--hud-bg)}
+#progressWrap{height:16px;background:var(--border);border-radius:999px;overflow:hidden;border:2px solid var(--text-dark)}
+:root[data-theme="psychedelic"] #progressWrap{border-color:var(--purple)}
+#progressBar{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:999px;transition:width .2s linear}
+#progressLabel{text-align:center;font-size:12px;font-weight:900;margin-top:4px;color:var(--text-dark)}
+
+/* ---------- Feedback-Toast ---------- */
+#toast{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka One';font-size:clamp(24px,4.6vw,40px);padding:16px 32px;border-radius:24px;color:#fff;display:none;text-align:center;box-shadow:var(--shadow-card)}
+#toast.ok{background:var(--success)} #toast.bad{background:var(--error)}
+#toast.show{display:block;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+#toast small{display:block;font-family:'Nunito';font-weight:900;font-size:16px}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.4)}60%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+/* ---------- Quiz-Overlay ---------- */
+.modal{position:fixed;inset:0;background:rgba(30,27,75,.72);z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.card{background:var(--bg-card);border-radius:24px;box-shadow:var(--shadow-card);padding:24px;max-width:640px;width:100%;text-align:center;border:4px solid var(--purple)}
+.card h2{color:var(--purple);font-size:clamp(22px,4vw,30px);margin-bottom:8px}
+.card .task{font-weight:800;font-size:17px;margin-bottom:16px}
+#answerZone{min-height:64px;background:var(--bg-main);border:3px dashed var(--blue);border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-bottom:16px}
+:root[data-theme="psychedelic"] #answerZone{background:#0D001A}
+#wordPool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:56px}
+#mcQuestion{font-family:'Fredoka One';font-size:clamp(19px,3.4vw,26px);color:var(--text-dark);margin-bottom:16px;line-height:1.4}
+:root[data-theme="psychedelic"] #mcQuestion{color:var(--text-light)}
+#mcAnswers{display:flex;flex-direction:column;gap:8px;align-items:stretch;margin-bottom:8px}
+.mcBtn{font-family:'Nunito';font-weight:900;font-size:19px;padding:12px 16px;border-radius:16px;border:3px solid var(--text-dark);background:var(--chip-bg);color:var(--text-dark);box-shadow:var(--shadow-btn);transition:transform .15s}
+:root[data-theme="psychedelic"] .mcBtn{border-color:var(--teal);color:var(--text-light)}
+.mcBtn:hover{transform:scale(1.03)}
+.mcBtn.right{background:var(--success);border-color:var(--success);color:#fff}
+.mcBtn.wrong{background:var(--error);border-color:var(--error);color:#fff}
+.mcBtn:disabled{cursor:default}
+.chip{font-family:'Nunito';font-weight:900;font-size:18px;padding:10px 16px;min-height:48px;border-radius:16px;border:3px solid var(--text-dark);background:var(--chip-bg);color:var(--text-dark);box-shadow:var(--shadow-btn);transition:transform .15s}
+:root[data-theme="psychedelic"] .chip{border-color:var(--teal);color:var(--text-light)}
+.chip:hover{transform:scale(1.05)}
+.chip.inAnswer{background:var(--blue);color:#fff;border-color:var(--blue)}
+#checkBtn{background:var(--green);color:#fff;font-size:22px;padding:12px 40px;border-radius:16px;box-shadow:var(--shadow-btn)}
+#checkBtn:disabled{opacity:.5;cursor:not-allowed}
+.card .solution{margin-top:12px;font-weight:900;font-size:17px;color:var(--error);display:none}
+.card.shake{animation:shake .2s 3}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+
+/* ---------- Ziel-Screen ---------- */
+#overCard h2{color:var(--blue);font-size:38px}
+#overCard .finalScore{font-family:'Fredoka One';font-size:56px;color:var(--blue);margin:8px 0}
+#overCard .stats{font-weight:800;font-size:17px;line-height:1.8;margin-bottom:16px}
+#overCard .newBest{color:var(--orange);font-family:'Fredoka One';font-size:22px;display:none}
+.btnRow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{color:#fff;font-size:20px;padding:12px 32px;border-radius:16px;box-shadow:var(--shadow-btn);transition:transform .15s}
+.btn:hover{transform:scale(1.05)}
+.btn.blue{background:var(--blue)} .btn.gray{background:var(--text-dark)}
+:root[data-theme="psychedelic"] .btn.gray{background:#333}
+
+/* ---------- Touch-Steuerung ---------- */
+#touchControls{position:fixed;bottom:64px;left:0;right:0;z-index:25;display:none;justify-content:space-between;padding:0 16px;pointer-events:none}
+#touchControls.show{display:flex}
+.tcGroup{display:flex;gap:12px;pointer-events:auto}
+.tcBtn{width:64px;height:64px;border-radius:20px;background:var(--bg-card);border:3px solid var(--text-dark);box-shadow:var(--shadow-btn);font-size:28px;display:flex;align-items:center;justify-content:center;user-select:none}
+:root[data-theme="psychedelic"] .tcBtn{border-color:var(--teal);color:var(--text-light)}
+
+/* ---------- Canvas & Effekte ---------- */
+#gl{position:fixed;inset:0;z-index:1}
+#confettiCanvas{position:fixed;inset:0;z-index:50;pointer-events:none}
+#flash{position:fixed;inset:0;z-index:30;background:var(--error);opacity:0;pointer-events:none;transition:opacity .1s}
+body.hitShake #gl{animation:shake .2s 3}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div id="splash"><div class="logo">School Games 🎓</div><div class="tag">Lernen macht Spaß!</div></div>
+
+<div id="menu">
+  <h1>🏎️ Pronoun Grand Prix</h1>
+  <div class="sub">Lenk dein Auto durch die Slalom-Tore — und zeig, dass du Personal Pronouns drauf hast!</div>
+  <div class="topic">📚 <b>Personal Pronouns:</b> Subjekt (I, you, he, she, it, we, they) &amp; Objekt (me, you, him, her, it, us, them).<br>Alle <b>5 Tore</b> stoppt das Auto für eine Grammatik-Frage — richtig beantwortet gibt's einen Turbo-Boost! 🚀<br><small style="font-weight:800">Für die 5. Schulstufe (Mittelschule)</small></div>
+  <div class="diffRow">
+    <button class="diffBtn" id="dLeicht">😎 Leicht<small>breite Tore, gemütliches Tempo</small></button>
+    <button class="diffBtn" id="dMittel">🔥 Mittel<small>engere Tore, mehr Tempo</small></button>
+    <button class="diffBtn" id="dSchwer">💀 Schwer<small>enger Slalom, volles Tempo!</small></button>
+  </div>
+  <div class="controls">
+    <kbd>↑</kbd>/<kbd>W</kbd> Gas &nbsp;·&nbsp; <kbd>↓</kbd>/<kbd>S</kbd> Bremse &nbsp;·&nbsp; <kbd>←</kbd>/<kbd>A</kbd> <kbd>→</kbd>/<kbd>D</kbd> Lenken<br>
+    Am Tablet: Steuerung unten am Bildschirm! 👆 &nbsp;·&nbsp; 30 Tore bis ins Ziel 🏁
+  </div>
+  <div class="best" id="bestLine"></div>
+</div>
+
+<div id="gl"></div>
+
+<div id="hud">
+  <header>
+    <button id="backBtn" aria-label="Zurück zum Menü">←</button>
+    <div id="gameTitle">Pronoun Grand Prix<span id="levelLabel">Tor 0/30 · Leicht</span></div>
+    <div class="hudRight">
+      <div id="timeBox">0:00</div>
+      <div id="score">0</div>
+      <button id="psyBtn" aria-label="Psychedelic Mode umschalten">🌈</button>
+    </div>
+  </header>
+  <div id="toast"></div>
+  <footer>
+    <div id="progressWrap"><div id="progressBar"></div></div>
+    <div id="progressLabel">Nächstes Tor</div>
+  </footer>
+</div>
+
+<div id="touchControls">
+  <div class="tcGroup">
+    <div class="tcBtn" id="tcLeft">◀</div>
+    <div class="tcBtn" id="tcRight">▶</div>
+  </div>
+  <div class="tcGroup">
+    <div class="tcBtn" id="tcBrake">⬇</div>
+    <div class="tcBtn" id="tcGas">⬆</div>
+  </div>
+</div>
+
+<div class="modal" id="quizModal">
+  <div class="card" id="quizCard">
+    <h2 id="quizTitle">❓ Tor-Frage!</h2>
+    <div class="task" id="quizTask"></div>
+    <div id="mcQuestion"></div>
+    <div id="mcAnswers"></div>
+    <div id="answerZone"></div>
+    <div id="wordPool"></div>
+    <button id="checkBtn" disabled>Prüfen ✓</button>
+    <div class="solution" id="solutionLine"></div>
+  </div>
+</div>
+
+<div class="modal" id="overModal">
+  <div class="card" id="overCard">
+    <h2 id="overTitle">🏁 Ziel erreicht!</h2>
+    <div class="finalScore" id="finalScore">0</div>
+    <div class="newBest" id="newBest">🏆 NEUER REKORD!</div>
+    <div class="stats" id="overStats"></div>
+    <div class="btnRow">
+      <button class="btn blue" id="retryBtn">Nochmal! 🔁</button>
+      <button class="btn gray" id="menuBtn">Menü</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+<div id="flash"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   Pronoun Grand Prix — Personal Pronouns
+   School Games OG · Einzeldatei · Three.js via CDN
+   ========================================================= */
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const IS_TOUCH = 'ontouchstart' in window;
+
+/* ---------------- Fragen-Pools ----------------
+   Zielgruppe: 5. Schulstufe (Mittelschule Standard), A1
+   Subject- & Object-Pronouns. Jede Aufgabe hat genau EINE richtige Antwort;
+   a[0] ist immer die Lösung, wird beim Anzeigen gemischt. */
+const MC_QUESTIONS = {
+  leicht: [
+    {q:"Tom is eleven. ___ is in my class.", a:["He","She","It","They"]},
+    {q:"Anna has a red bag. ___ is happy.", a:["She","He","They","We"]},
+    {q:"The pencil is blue. ___ is on the desk.", a:["It","They","He","We"]},
+    {q:"Lena and Max are friends. ___ play tennis.", a:["They","We","It","She"]},
+    {q:"Ben and I are from Graz. ___ are friends.", a:["We","They","It","She"]},
+    {q:"This is my dog. ___ is funny.", a:["It","He","She","They"]},
+    {q:"My mum is a teacher. ___ likes cats.", a:["She","He","It","They"]},
+    {q:"Look at the birds! ___ can fly.", a:["They","It","We","She"]},
+    {q:"I have a brother. ___ is seven.", a:["He","She","It","We"]},
+    {q:"You and Mia are in my team. ___ are fast.", a:["You","We","They","It"]},
+    {q:"Paul plays football. ___ is very good.", a:["He","She","It","We"]},
+    {q:"The apples are red. ___ are on the table.", a:["They","It","He","We"]}
+  ],
+  mittel: [
+    {q:"Mia is at the door. Please open it for ___.", a:["her","she","he","they"]},
+    {q:"I can see Tom. I can see ___.", a:["him","he","his","they"]},
+    {q:"My brother and I like games. Mum helps ___.", a:["us","we","she","them"]},
+    {q:"These are my friends. I play with ___.", a:["them","they","him","we"]},
+    {q:"Dad calls my sister and me. Dad calls ___.", a:["us","we","them","she"]},
+    {q:"The teacher talks to Leo. The teacher talks to ___.", a:["him","he","she","they"]},
+    {q:"Lisa has my pencil. Please ask ___ for it.", a:["her","she","it","they"]},
+    {q:"Which sentence is correct?", a:["She helps him.","Her helps he.","She helps he.","Him helps she."]},
+    {q:"Which sentence is correct?", a:["He and I are friends.","Him and me are friends.","Me and him are friends.","Him and I is friends."]},
+    {q:"I like your bike. Can I ride ___?", a:["it","he","its","they"]},
+    {q:"The cake is for you and ___.", a:["me","I","my","mine"]},
+    {q:"We saw the dog. We saw ___ in the garden.", a:["it","he","its","they"]}
+  ],
+  schwer: [
+    {q:"Which sentence is correct?", a:["He and I are in class 1A.","Him and I are in class 1A.","Him and me are in class 1A.","Me and him are in class 1A."]},
+    {q:"The monster can see them. What is the object pronoun?", a:["them","they","their","it"]},
+    {q:"Which sentence is correct?", a:["The game is for us.","The game is for we.","The game is for our.","The game is for I."]},
+    {q:"Which pair is correct (subject / object)?", a:["I / me","me / I","she / him","they / he"]},
+    {q:"Can you give it to ___?", a:["her","she","hers","they"]},
+    {q:"We can see ___ and her.", a:["him","he","his","they"]},
+    {q:"Which sentence is correct?", a:["We are ready for the quiz.","Us are ready for the quiz.","We is ready for the quiz.","Us is ready for the quiz."]},
+    {q:"Which sentence is correct?", a:["She is my sister.","Her is my sister.","She are my sister.","Her are my sister."]},
+    {q:"Which sentence is correct?", a:["They are in the park.","Them are in the park.","They is in the park.","Them is in the park."]},
+    {q:"Which sentence is correct?", a:["I am hungry.","Me am hungry.","I are hungry.","Me are hungry."]},
+    {q:"Which sentence is correct?", a:["I sit next to her.","I sit next to she.","I sit next to hers.","I sit next to herself."]},
+    {q:"Emma and Paul need help. Can you help ___?", a:["them","they","their","it"]}
+  ]
+};
+/* Satzbau-Aufgaben fürs Overlay (jedes 2. Tor-Quiz) */
+const BUILD_QUESTIONS = {
+  leicht: [
+    ["She","is","my","friend","."],
+    ["We","are","from","Austria","."],
+    ["He","likes","football","."],
+    ["They","play","in","the","park","."],
+    ["It","is","a","big","dog","."],
+    ["You","are","very","funny","."]
+  ],
+  mittel: [
+    ["They","like","music","."],
+    ["Can","you","help","me","?"],
+    ["She","gives","it","to","me","."],
+    ["He","sits","next","to","her","."],
+    ["We","can","see","them","."],
+    ["Give","the","book","to","him","."]
+  ],
+  schwer: [
+    ["Can","you","give","it","to","her","?"],
+    ["We","can","see","him","and","her","."],
+    ["They","are","behind","us","."],
+    ["He","and","I","are","in","class","1A","."],
+    ["This","point","is","for","us","."],
+    ["My","brother","and","I","are","a","team","."]
+  ]
+};
+
+const TOTAL_GATES=30, QUIZ_EVERY=5, TRACK_HALF=3.8;
+const DIFFS = {
+  leicht:{label:'Leicht', maxSpeed:15, accel:9,  brake:14, gateSpacing:52, gateGap:2.8, amp:1.3},
+  mittel:{label:'Mittel', maxSpeed:19, accel:10, brake:15, gateSpacing:46, gateGap:2.4, amp:2.0},
+  schwer:{label:'Schwer', maxSpeed:23, accel:11, brake:16, gateSpacing:40, gateGap:2.0, amp:2.7}
+};
+function totalDistanceFor(diff){ return TOTAL_GATES*diff.gateSpacing+50; }
+
+/* ---------------- Sound (WebAudio, alles < 500ms) ---------------- */
+let audioCtx=null;
+function ac(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function tone(freq, dur, type, vol, when=0){
+  try{
+    const c=ac(), o=c.createOscillator(), g=c.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(vol, c.currentTime+when);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+when+dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(c.currentTime+when); o.stop(c.currentTime+when+dur+0.02);
+  }catch(e){}
+}
+function wave(){ return psychedelic ? 'sawtooth' : 'triangle'; }
+const SND = {
+  click(){ tone(660,0.08,wave(),0.15); },
+  gate(){ tone(1320,0.09,psychedelic?'square':'sine',0.12); tone(1760,0.1,psychedelic?'square':'sine',0.1,0.06); },
+  correct(){ [523,659,784].forEach((f,i)=>tone(f,0.14,wave(),0.18,i*0.09)); },
+  wrong(){ tone(160,0.25,psychedelic?'sawtooth':'square',0.2); tone(110,0.22,psychedelic?'sawtooth':'square',0.16,0.1); },
+  levelUp(){ [523,587,659,784,1046].forEach((f,i)=>tone(f,0.1,wave(),0.16,i*0.08)); },
+  crash(){ tone(90,0.3,'sawtooth',0.25); }
+};
+
+/* ---------------- DOM ---------------- */
+const $=id=>document.getElementById(id);
+const menuEl=$('menu'), hudEl=$('hud'), scoreEl=$('score'), timeBox=$('timeBox'),
+  levelLabel=$('levelLabel'), progressBar=$('progressBar'), progressLabel=$('progressLabel'),
+  toast=$('toast'),
+  quizModal=$('quizModal'), quizCard=$('quizCard'), answerZone=$('answerZone'),
+  wordPool=$('wordPool'), checkBtn=$('checkBtn'), solutionLine=$('solutionLine'),
+  overModal=$('overModal'), flashEl=$('flash'), touchControls=$('touchControls');
+
+/* ---------------- Three.js Grundgerüst ---------------- */
+const THEME3D = {
+  standard:{
+    sky:0x87CEEB, fog:0xBFE3F5, road:0x4B5563, side:0x6B8E4E, stripe:0xFACC15,
+    trunk:0x8B5E34, foliage:[0x16A34A,0x22C55E,0x0D9488],
+    poleA:0x2563EB, poleB:0xF97316, poleOk:0x22C55E, poleBad:0xDC2626,
+    carBody:0xDC2626, carCabin:0x2563EB, carAccent:0xFACC15
+  },
+  psychedelic:{
+    sky:0x000000, fog:0x0D001A, road:0x0A0014, side:0x14002A, stripe:0x00FFFF,
+    trunk:0x330022, foliage:[0xFF00FF,0x00FF41,0xBF00FF],
+    poleA:0x00FFFF, poleB:0xFF6600, poleOk:0x00FF41, poleBad:0xFF0033,
+    carBody:0xFF00FF, carCabin:0x00FFFF, carAccent:0xFFFF00
+  }
+};
+let psychedelic=false;
+
+let renderer, scene, camera, hemiLight, dirLight;
+let car, carParts={};
+const trunkMats=[], foliageMats=[], trees=[], stripes=[];
+let roadMat, sideMatL, sideMatR;
+const ROAD_LEN=1700;
+
+function initThree(){
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth,innerHeight);
+  $('gl').appendChild(renderer.domElement);
+  scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0xBFE3F5,60,150);
+  camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,0.1,400);
+  camera.position.set(0,4.2,7.4); camera.lookAt(0,1.2,-14);
+
+  hemiLight=new THREE.HemisphereLight(0xffffff,0x666688,0.9); scene.add(hemiLight);
+  dirLight=new THREE.DirectionalLight(0xffffff,1.0); dirLight.position.set(5,12,6); scene.add(dirLight);
+
+  // Straße
+  roadMat=new THREE.MeshLambertMaterial({color:0x4B5563});
+  const road=new THREE.Mesh(new THREE.BoxGeometry(9,0.5,ROAD_LEN),roadMat);
+  road.position.set(0,-0.25,-ROAD_LEN/2+40); scene.add(road);
+  // Bankette
+  sideMatL=new THREE.MeshLambertMaterial({color:0x6B8E4E});
+  sideMatR=new THREE.MeshLambertMaterial({color:0x6B8E4E});
+  const sideL=new THREE.Mesh(new THREE.BoxGeometry(4,0.7,ROAD_LEN),sideMatL);
+  sideL.position.set(-6.5,-0.15,-ROAD_LEN/2+40); scene.add(sideL);
+  const sideR=new THREE.Mesh(new THREE.BoxGeometry(4,0.7,ROAD_LEN),sideMatR);
+  sideR.position.set(6.5,-0.15,-ROAD_LEN/2+40); scene.add(sideR);
+  // Fahrbahn-Streifen (dekorativ, rezykliert)
+  for(let i=0;i<40;i++){
+    const s=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.02,2.2),new THREE.MeshBasicMaterial({color:0xFACC15}));
+    const lane=(i%2===0)?-1.2:1.2;
+    s.position.set(lane,0.01,-i*10);
+    stripes.push(s); scene.add(s);
+  }
+  // Bäume beidseitig (dekorativ, rezykliert)
+  for(let side=-1;side<=1;side+=2){
+    for(let i=0;i<26;i++){
+      const trunkMat=new THREE.MeshLambertMaterial({color:0x8B5E34});
+      const foliageMat=new THREE.MeshLambertMaterial({color:0x16A34A});
+      trunkMats.push(trunkMat); foliageMats.push(foliageMat);
+      const g=new THREE.Group();
+      const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.26,1.2,8),trunkMat);
+      trunk.position.y=0.6; g.add(trunk);
+      const top=new THREE.Mesh(new THREE.ConeGeometry(1.0,1.8,8),foliageMat);
+      top.position.y=1.9; g.add(top);
+      g.position.set(side*(7+Math.random()*4), -0.3, -i*13-Math.random()*6);
+      trees.push(g); scene.add(g);
+    }
+  }
+  buildCar();
+  applyTheme3D();
+  window.addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+}
+
+function buildCar(){
+  car=new THREE.Group();
+  const mat=c=>new THREE.MeshLambertMaterial({color:c});
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.5,3.0),mat(0xDC2626));
+  body.position.y=0.55; car.add(body); carParts.body=body;
+  const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.42,1.3),mat(0x2563EB));
+  cabin.position.set(0,0.98,-0.15); car.add(cabin); carParts.cabin=cabin;
+  const spoiler=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.18,0.2),mat(0xFACC15));
+  spoiler.position.set(0,0.85,1.5); car.add(spoiler); carParts.spoiler=spoiler;
+  const wheelGeo=new THREE.CylinderGeometry(0.32,0.32,0.28,12);
+  const wheelMat=mat(0x1F2937);
+  const wheels=[];
+  [[-0.85,0.32,1.0],[0.85,0.32,1.0],[-0.85,0.32,-1.0],[0.85,0.32,-1.0]].forEach(([x,y,z])=>{
+    const w=new THREE.Mesh(wheelGeo,wheelMat);
+    w.rotation.z=Math.PI/2; w.position.set(x,y,z); car.add(w); wheels.push(w);
+  });
+  carParts.wheels=wheels;
+  car.position.set(0,0,0);
+  scene.add(car);
+}
+
+function applyTheme3D(){
+  const t=THEME3D[psychedelic?'psychedelic':'standard'];
+  scene.background=new THREE.Color(t.sky);
+  scene.fog.color.set(t.fog);
+  roadMat.color.set(t.road);
+  sideMatL.color.set(t.side); sideMatR.color.set(t.side);
+  stripes.forEach(s=>s.material.color.set(t.stripe));
+  trunkMats.forEach(m=>m.color.set(t.trunk));
+  foliageMats.forEach(m=>m.color.set(t.foliage[Math.floor(Math.random()*t.foliage.length)]));
+  hemiLight.intensity=psychedelic?0.4:0.9; dirLight.intensity=psychedelic?0.45:1.0;
+  carParts.body.material.color.set(t.carBody);
+  carParts.cabin.material.color.set(t.carCabin);
+  carParts.spoiler.material.color.set(t.carAccent);
+  gates.forEach(g=>tintGate(g));
+}
+
+/* ---------------- Tore ---------------- */
+const gates=[];
+function tintGate(g){
+  const t=THEME3D[psychedelic?'psychedelic':'standard'];
+  let colA=t.poleA, colB=t.poleB;
+  if(g.userData.resolved==='ok'){ colA=t.poleOk; colB=t.poleOk; }
+  else if(g.userData.resolved==='miss'){ colA=t.poleBad; colB=t.poleBad; }
+  g.userData.poleL.material.color.set(colA);
+  g.userData.poleR.material.color.set(colB);
+  g.userData.beam.material.color.set(colA);
+}
+function makeGate(index, centerX, gapWidth, z){
+  const mat=c=>new THREE.MeshLambertMaterial({color:c});
+  const g=new THREE.Group();
+  const poleGeo=new THREE.CylinderGeometry(0.14,0.14,2.3,8);
+  const poleL=new THREE.Mesh(poleGeo,mat(0x2563EB));
+  poleL.position.set(centerX-gapWidth/2,1.15,0); g.add(poleL);
+  const poleR=new THREE.Mesh(poleGeo,mat(0xF97316));
+  poleR.position.set(centerX+gapWidth/2,1.15,0); g.add(poleR);
+  const beam=new THREE.Mesh(new THREE.BoxGeometry(gapWidth+0.3,0.16,0.16),mat(0x2563EB));
+  beam.position.set(centerX,2.35,0); g.add(beam);
+  g.position.set(0,0,z);
+  g.userData={index, centerX, gapWidth, resolved:null, poleL, poleR, beam};
+  gates.push(g); scene.add(g);
+}
+function buildGates(diff){
+  gates.forEach(g=>scene.remove(g)); gates.length=0;
+  for(let i=0;i<TOTAL_GATES;i++){
+    const raw=diff.amp*Math.sin(i*0.9)+(Math.random()-0.5)*0.6;
+    const maxOff=TRACK_HALF-diff.gateGap/2-0.25;
+    const cx=Math.max(-maxOff,Math.min(maxOff,raw));
+    const z=-(i+1)*diff.gateSpacing;
+    makeGate(i,cx,diff.gateGap,z);
+  }
+  applyTheme3D();
+}
+
+/* ---------------- Spielzustand ---------------- */
+let state='splash'; // splash|menu|running|quiz|finished
+let diffKey='leicht', diff=DIFFS.leicht;
+let carX=0, carVX=0, speed=0, maxSpeedNow=15;
+let inputGas=false, inputBrake=false, inputLeft=false, inputRight=false;
+let score=0, gatesCleared=0, gatesResolved=0, correctCount=0, wrongCount=0, quizCount=0;
+let distance=0, elapsed=0, penaltyTimer=0, boostTimer=0;
+let gatePool=[], buildPool=[], gatePoolIdx=0, buildPoolIdx=0;
+let running=false;
+
+function shuffled(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function nextMcQ(){ if(gatePoolIdx>=gatePool.length){ gatePool=shuffled(MC_QUESTIONS[diffKey]); gatePoolIdx=0; } return gatePool[gatePoolIdx++]; }
+function nextBuildQ(){ if(buildPoolIdx>=buildPool.length){ buildPool=shuffled(BUILD_QUESTIONS[diffKey]); buildPoolIdx=0; } return buildPool[buildPoolIdx++]; }
+
+function bestKey(){ return 'pronoungp_best_'+diffKey; }
+
+function startGame(key){
+  diffKey=key; diff=DIFFS[key];
+  score=0; gatesCleared=0; gatesResolved=0; correctCount=0; wrongCount=0; quizCount=0;
+  distance=0; elapsed=0; penaltyTimer=0; boostTimer=0;
+  carX=0; carVX=0; speed=0; maxSpeedNow=diff.maxSpeed;
+  inputGas=false; inputBrake=false; inputLeft=false; inputRight=false;
+  gatePool=shuffled(MC_QUESTIONS[key]); gatePoolIdx=0;
+  buildPool=shuffled(BUILD_QUESTIONS[key]); buildPoolIdx=0;
+  buildGates(diff);
+  menuEl.classList.remove('show'); overModal.classList.remove('show');
+  hudEl.classList.add('show');
+  if(IS_TOUCH) touchControls.classList.add('show');
+  updateHUD();
+  state='running'; running=true;
+  SND.click();
+}
+
+function fmtTime(s){
+  const m=Math.floor(s/60), sec=Math.floor(s%60);
+  return m+':'+String(sec).padStart(2,'0');
+}
+function updateHUD(){
+  scoreEl.textContent=Math.floor(score);
+  timeBox.textContent=fmtTime(elapsed);
+  levelLabel.textContent=`Tor ${gatesResolved}/${TOTAL_GATES} · ${diff.label}`;
+  const total=totalDistanceFor(diff);
+  const p=Math.min(100,(distance/total)*100);
+  progressBar.style.width=p+'%';
+  progressLabel.textContent=`Streckenfortschritt · Tempo ${Math.round(speed*10)} km/h`;
+}
+
+/* ---------------- Toast / Konfetti / Effekte ---------------- */
+let toastTimer=null;
+function showToast(ok,main,sub){
+  toast.className=ok?'ok show':'bad show';
+  toast.innerHTML=main+(sub?`<small>${sub}</small>`:'');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);
+}
+const cCanvas=$('confettiCanvas'), cCtx=cCanvas.getContext('2d');
+let confetti=[];
+function resizeConfetti(){ cCanvas.width=innerWidth; cCanvas.height=innerHeight; }
+resizeConfetti(); window.addEventListener('resize',resizeConfetti);
+const CONF_STD=['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const CONF_NEON=['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+function burstConfetti(n=40){
+  if(REDUCED) return;
+  const cols=psychedelic?CONF_NEON:CONF_STD;
+  for(let i=0;i<n;i++){
+    confetti.push({x:innerWidth/2+(Math.random()-0.5)*200,y:innerHeight*0.35,
+      vx:(Math.random()-0.5)*12,vy:-Math.random()*10-4,g:0.35,
+      s:6+Math.random()*8,c:cols[Math.floor(Math.random()*cols.length)],r:Math.random()*Math.PI,vr:(Math.random()-0.5)*0.3,life:90});
+  }
+}
+function stepConfetti(){
+  cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+  confetti=confetti.filter(p=>p.life>0);
+  confetti.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.r+=p.vr; p.life--;
+    cCtx.save(); cCtx.translate(p.x,p.y); cCtx.rotate(p.r);
+    cCtx.fillStyle=p.c; cCtx.globalAlpha=Math.min(1,p.life/30);
+    cCtx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); cCtx.restore();
+  });
+}
+function hitFlash(){
+  if(REDUCED) return;
+  flashEl.style.opacity=0.35;
+  setTimeout(()=>flashEl.style.opacity=0,120);
+  document.body.classList.add('hitShake');
+  setTimeout(()=>document.body.classList.remove('hitShake'),650);
+}
+
+/* ---------------- Ziel & Zusammenfassung ---------------- */
+function raceComplete(){
+  running=false; state='finished';
+  quizModal.classList.remove('show');
+  const finalScore=Math.floor(score);
+  const best=parseInt(localStorage.getItem(bestKey())||'0',10);
+  const isBest=finalScore>best;
+  if(isBest) localStorage.setItem(bestKey(),String(finalScore));
+  $('overTitle').textContent='🏁 Ziel erreicht!';
+  $('finalScore').textContent=finalScore;
+  $('newBest').style.display=isBest?'block':'none';
+  $('overStats').innerHTML=
+    `⏱️ Zeit: <b>${fmtTime(elapsed)}</b> · 🚧 Tore: <b>${gatesCleared}/${TOTAL_GATES}</b><br>`+
+    `✅ Richtig: <b>${correctCount}</b> · ❌ Falsch: <b>${wrongCount}</b><br>`+
+    `🏆 Bestwert (${diff.label}): <b>${Math.max(best,finalScore)}</b>`;
+  overModal.classList.add('show');
+  burstConfetti(80); SND.levelUp();
+}
+
+/* ---------------- Tor-Auswertung ---------------- */
+function resolveGate(gate, ok){
+  gatesResolved++;
+  gate.userData.resolved = ok?'ok':'miss';
+  tintGate(gate);
+  if(ok){
+    gatesCleared++;
+    score+=20;
+    SND.gate();
+  } else {
+    penaltyTimer=1.2;
+    hitFlash(); SND.crash();
+    showToast(false,'Tor verpasst! 🚧','Vorsicht beim nächsten Slalom');
+  }
+  updateHUD();
+  if(gatesResolved%QUIZ_EVERY===0){
+    quizCount++;
+    openQuiz(quizCount%2===0?'build':'mc');
+  } else if(gatesResolved>=TOTAL_GATES){
+    setTimeout(raceComplete,400);
+  }
+}
+
+/* ---------------- Quiz-Auflösung ---------------- */
+function quizPassed(correct, correctAnswer){
+  if(correct){
+    correctCount++;
+    score+=100+quizCount*10;
+    showToast(true,'AWESOME! ✅','+'+(100+quizCount*10)+' Punkte · Turbo! 🚀');
+    burstConfetti(40); SND.correct();
+    boostTimer=1.0;
+  } else {
+    wrongCount++;
+    showToast(false,'Ups! ❌','Richtig wäre: „'+correctAnswer+'“');
+    SND.wrong();
+    penaltyTimer=1.8;
+  }
+  updateHUD();
+  if(gatesResolved>=TOTAL_GATES){ setTimeout(raceComplete,500); }
+}
+
+/* ---------------- Frage-Overlay ---------------- */
+const quizTitle=$('quizTitle'), quizTask=$('quizTask'), mcQuestion=$('mcQuestion'), mcAnswers=$('mcAnswers');
+let quizWords=[], quizAnswer=[], quizSolution='', quizMode='mc', mcDone=false, quizFailed=false;
+function openQuiz(mode){
+  state='quiz'; quizMode=mode; quizFailed=false; mcDone=false;
+  solutionLine.style.display='none';
+  if(mode==='mc'){
+    quizTitle.textContent='❓ Tor-Frage!';
+    quizTask.textContent='Wähle die richtige Antwort:';
+    answerZone.style.display='none'; wordPool.style.display='none'; checkBtn.style.display='none';
+    mcQuestion.style.display='block'; mcAnswers.style.display='flex';
+    const item=nextMcQ();
+    quizSolution=item.a[0];
+    mcQuestion.textContent=item.q;
+    mcAnswers.innerHTML='';
+    shuffled(item.a).forEach(ans=>{
+      const b=document.createElement('button'); b.className='mcBtn'; b.textContent=ans;
+      b.onclick=()=>mcPick(b,ans);
+      mcAnswers.appendChild(b);
+    });
+  } else {
+    quizTitle.textContent='🧱 Satz-Baustelle!';
+    quizTask.textContent='Baue den richtigen Satz — tippe die Wörter in der richtigen Reihenfolge:';
+    answerZone.style.display='flex'; wordPool.style.display='flex'; checkBtn.style.display='inline-block';
+    mcQuestion.style.display='none'; mcAnswers.style.display='none';
+    const words=nextBuildQ();
+    quizSolution=words.join(' ').replace(/ ([?.!])$/,'$1');
+    quizAnswer=[];
+    quizWords=shuffled(words.map((w,i)=>({w,i})));
+    if(quizWords.map(o=>o.i).join()===words.map((_,i)=>i).join()) quizWords.reverse();
+    renderQuiz();
+    checkBtn.disabled=true;
+    checkBtn.textContent='Prüfen ✓';
+  }
+  quizModal.classList.add('show');
+}
+function mcPick(btn,ans){
+  if(mcDone) return;
+  mcDone=true;
+  const ok=(ans===quizSolution);
+  [...mcAnswers.children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===quizSolution) b.classList.add('right');
+  });
+  if(ok){
+    SND.correct();
+    setTimeout(()=>{ quizPassed(true); closeQuiz(); },650);
+  } else {
+    btn.classList.add('wrong');
+    quizCard.classList.remove('shake'); void quizCard.offsetWidth; quizCard.classList.add('shake');
+    SND.wrong();
+    solutionLine.style.display='block';
+    solutionLine.textContent='Richtig wäre: „'+quizSolution+'“';
+    setTimeout(()=>{ quizPassed(false,quizSolution); closeQuiz(); },1800);
+  }
+}
+function renderQuiz(){
+  wordPool.innerHTML=''; answerZone.innerHTML='';
+  quizWords.forEach((o,idx)=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=o.w;
+    b.onclick=()=>{ SND.click(); quizAnswer.push(o); quizWords.splice(idx,1); renderQuiz(); };
+    wordPool.appendChild(b);
+  });
+  quizAnswer.forEach((o,idx)=>{
+    const b=document.createElement('button'); b.className='chip inAnswer'; b.textContent=o.w;
+    b.onclick=()=>{ SND.click(); quizWords.push(o); quizAnswer.splice(idx,1); renderQuiz(); };
+    answerZone.appendChild(b);
+  });
+  if(quizAnswer.length===0){
+    const hint=document.createElement('span'); hint.style.cssText='font-weight:800;opacity:.5;font-size:15px';
+    hint.textContent='Tippe die Wörter hier hinein…';
+    answerZone.appendChild(hint);
+  }
+  checkBtn.disabled=quizWords.length!==0;
+}
+checkBtn.addEventListener('click',()=>{
+  if(quizFailed){
+    quizPassed(false,quizSolution);
+    closeQuiz();
+    return;
+  }
+  const built=quizAnswer.map(o=>o.w).join(' ').replace(/ ([?.!])$/,'$1');
+  if(built===quizSolution){
+    quizPassed(true);
+    closeQuiz();
+  } else {
+    quizFailed=true;
+    quizCard.classList.remove('shake'); void quizCard.offsetWidth; quizCard.classList.add('shake');
+    SND.wrong();
+    solutionLine.style.display='block';
+    solutionLine.textContent='Richtig wäre: „'+quizSolution+'“';
+    checkBtn.textContent='Weiter →';
+  }
+});
+function closeQuiz(){
+  quizModal.classList.remove('show');
+  quizFailed=false;
+  if(running && gatesResolved<TOTAL_GATES){ state='running'; }
+}
+
+/* ---------------- Steuerung ---------------- */
+window.addEventListener('keydown',e=>{
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W') inputGas=true;
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S') inputBrake=true;
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A') inputLeft=true;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D') inputRight=true;
+});
+window.addEventListener('keyup',e=>{
+  if(e.key==='ArrowUp'||e.key==='w'||e.key==='W') inputGas=false;
+  if(e.key==='ArrowDown'||e.key==='s'||e.key==='S') inputBrake=false;
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A') inputLeft=false;
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D') inputRight=false;
+});
+function bindTouch(el,onDown,onUp){
+  el.addEventListener('touchstart',e=>{ e.preventDefault(); onDown(); },{passive:false});
+  el.addEventListener('touchend',e=>{ e.preventDefault(); onUp(); },{passive:false});
+  el.addEventListener('touchcancel',()=>onUp());
+}
+bindTouch($('tcGas'),()=>inputGas=true,()=>inputGas=false);
+bindTouch($('tcBrake'),()=>inputBrake=true,()=>inputBrake=false);
+bindTouch($('tcLeft'),()=>inputLeft=true,()=>inputLeft=false);
+bindTouch($('tcRight'),()=>inputRight=true,()=>inputRight=false);
+
+/* ---------------- UI-Buttons ---------------- */
+$('dLeicht').onclick=()=>startGame('leicht');
+$('dMittel').onclick=()=>startGame('mittel');
+$('dSchwer').onclick=()=>startGame('schwer');
+$('retryBtn').onclick=()=>{ overModal.classList.remove('show'); startGame(diffKey); };
+$('menuBtn').onclick=()=>{ overModal.classList.remove('show'); toMenu(); };
+$('backBtn').onclick=()=>{ SND.click(); toMenu(); };
+$('psyBtn').onclick=()=>{
+  psychedelic=!psychedelic;
+  document.documentElement.setAttribute('data-theme',psychedelic?'psychedelic':'standard');
+  applyTheme3D();
+  SND.levelUp();
+  if(!REDUCED&&psychedelic) burstConfetti(30);
+};
+function toMenu(){
+  running=false; state='menu';
+  hudEl.classList.remove('show'); quizModal.classList.remove('show'); overModal.classList.remove('show');
+  touchControls.classList.remove('show');
+  const bests=Object.keys(DIFFS).map(k=>{
+    const b=localStorage.getItem('pronoungp_best_'+k);
+    return b?`${DIFFS[k].label}: ${b}`:null;
+  }).filter(Boolean);
+  $('bestLine').textContent=bests.length?('🏆 Bestwerte — '+bests.join(' · ')):'';
+  menuEl.classList.add('show');
+}
+
+/* ---------------- Game Loop ---------------- */
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(clock.getDelta(),0.05);
+  stepConfetti();
+  if(renderer){
+    if(running) step(dt);
+    renderer.render(scene,camera);
+  }
+}
+function step(dt){
+  if(penaltyTimer>0) penaltyTimer-=dt;
+  if(boostTimer>0) boostTimer-=dt;
+  const isFrozen = (state==='quiz');
+  const capSpeed = penaltyTimer>0 ? Math.min(maxSpeedNow,5) : maxSpeedNow*(boostTimer>0?1.2:1);
+
+  if(!isFrozen){
+    if(inputGas) speed=Math.min(capSpeed, speed+diff.accel*dt);
+    else if(inputBrake) speed=Math.max(0, speed-diff.brake*dt);
+    else speed=Math.max(0, speed-4.5*dt);
+    if(penaltyTimer>0) speed=Math.min(speed,5);
+
+    let steerInput=0;
+    if(inputLeft) steerInput-=1;
+    if(inputRight) steerInput+=1;
+    carVX += steerInput*16*dt;
+    carVX -= carVX*Math.min(1,9*dt);
+    carVX = Math.max(-7,Math.min(7,carVX));
+    carX += carVX*dt;
+    let bumped=false;
+    if(carX>TRACK_HALF){ carX=TRACK_HALF; carVX=0; bumped=true; }
+    if(carX<-TRACK_HALF){ carX=-TRACK_HALF; carVX=0; bumped=true; }
+    if(bumped && speed>2){ speed*=0.85; }
+
+    elapsed+=dt;
+    const dz=speed*dt;
+    distance+=dz;
+    score+=dz*0.5;
+
+    for(const g of gates){
+      g.position.z+=dz;
+      if(g.userData.resolved===null && Math.abs(g.position.z)<0.6){
+        const halfGap=g.userData.gapWidth/2-0.5;
+        const ok=Math.abs(carX-g.userData.centerX)<=halfGap;
+        resolveGate(g,ok);
+      }
+    }
+    stripes.forEach(s=>{ s.position.z+=dz; if(s.position.z>10) s.position.z-=400; });
+    trees.forEach(t=>{ t.position.z+=dz; if(t.position.z>15) t.position.z-=338; });
+  }
+
+  car.position.x=carX;
+  if(!REDUCED){
+    car.rotation.z = -carVX*0.03;
+    car.rotation.y = Math.max(-0.2,Math.min(0.2,carVX*0.03));
+    carParts.wheels.forEach(w=>{ w.rotation.x += speed*dt*1.6; });
+  }
+  camera.position.x += (carX*0.5-camera.position.x)*Math.min(1,dt*5);
+
+  updateHUD();
+}
+
+/* ---------------- Start ---------------- */
+initThree();
+animate();
+setTimeout(()=>{ $('splash').style.display='none'; toMenu(); },1000);
+</script>
+<!-- lernspiele:stats-start -->
+<script>
+(function () {
+  var h = location.hostname;
+  if (location.protocol === "file:" || h === "localhost" || h === "127.0.0.1") return;
+  var CODE = "spor-tler";
+  var GAME = "pronoun-grand-prix";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://" + CODE + ".goatcounter.com/count");
+  document.head.appendChild(s);
+  // Spielzeit: sichtbare Sekunden zählen, bei Meilensteinen je 1 Event senden.
+  var MEILENSTEINE = [1, 3, 5, 10, 15, 20]; // Minuten
+  var sichtbar = 0, gesendet = 0;
+  setInterval(function () {
+    if (document.visibilityState !== "visible") return;
+    sichtbar += 10;
+    while (gesendet < MEILENSTEINE.length && sichtbar >= MEILENSTEINE[gesendet] * 60) {
+      var min = MEILENSTEINE[gesendet++];
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({
+          path: "zeit/" + GAME + "/" + min + "min",
+          title: "Spielzeit " + GAME + ": " + min + " min",
+          event: true
+        });
+      }
+    }
+  }, 10000);
+})();
+</script>
+<!-- lernspiele:stats-end -->
+</body>
+</html>
