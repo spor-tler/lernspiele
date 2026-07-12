@@ -6,10 +6,9 @@
 <title>Bubble Verb Crush 🫧 — Irregular Verbs | School Games</title>
 <meta name="lernspiel:titel"        content="Bubble Verb Crush">
 <meta name="lernspiel:thema"        content="Irregular Verbs">
-<meta name="lernspiel:stufe"        content="5. Schulstufe, 6. Schulstufe">
+<meta name="lernspiel:stufe"        content="5. Schulstufe, 6. Schulstufe, 7. Schulstufe, 8. Schulstufe">
 <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
-<meta name="lernspiel:beschreibung" content="Bubble-Shooter: Ziele, schieß und lass 3 gleiche Farben platzen. Magazin leer? Beantworte eine Verb-Frage für Nachschub. 3 Schwierigkeiten wählbar — von regular verbs bis zu harten irregular verbs, mit Multiple Choice, Eintippen und 3-Formen-Aufgaben.">
-
+<meta name="lernspiel:beschreibung" content="Bubble-Shooter: Ziele, schieß und lass 3 gleiche Farben platzen. Richtige Verb-Antworten bringen Special Bubbles — Bombe, Blitz, Feuer und Regenbogen-Joker! Mit Speicher-Slot, Tausch-Funktion und Combo-Punkten. 3 Schwierigkeiten: regular verbs bis häufige irregular verbs (7.–8. Schulstufe).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -263,17 +262,19 @@ footer {
     <div class="overlay" id="startOverlay">
       <div class="card">
         <h2>Bubble Verb Crush 🫧</h2>
-        <p>Ziele und <b>schieß</b> die Bubbles ab! 3+ gleiche Farben platzen. Du hast <b>3 Schüsse</b> — dann kommt eine <b>Verb-Frage</b> für Nachschub.</p>
+        <p>Ziele und <b>schieß</b> die Bubbles ab! 3+ gleiche Farben platzen. Nach <b>3 Schüssen</b> kommt eine <b>Verb-Frage</b>.</p>
         <table class="hintTable">
-          <tr><td>🖱️ / 👆</td><td>Zielen &amp; tippen zum Schießen</td></tr>
-          <tr><td>🎯</td><td>3 Farben in einer Gruppe = platzen 💥</td></tr>
-          <tr><td>❓</td><td>Richtig = weiter · Falsch = ❤️ weg &amp; Reihe rückt nach</td></tr>
+          <tr><td>🎁</td><td>Richtige Antwort = <b>Special Bubble</b>!</td></tr>
+          <tr><td>💣⚡🔥🌈</td><td>Bombe · Blitz-Reihe · Feuersäule · Joker</td></tr>
+          <tr><td>📥</td><td>Bubble speichern <span class="kbd">C</span> · 🔄 tauschen <span class="kbd">X</span></td></tr>
+          <tr><td>🔥🔥</td><td>Combos hintereinander = Mega-Punkte!</td></tr>
+          <tr><td>❓</td><td>Falsch = ❤️ weg &amp; neue Reihe rückt nach</td></tr>
         </table>
         <p style="margin-top:16px; color: var(--primary-purple);"><b>Wähle deine Schwierigkeit:</b></p>
         <div class="diffGrid">
-          <button class="diffBtn easy"   data-diff="easy"><span class="dEmoji">🟢</span><span><span class="dTitle">Einfach</span><span class="dDesc">Nur <b>regular verbs</b> (played, worked …) · 5.–6. Klasse</span></span></button>
-          <button class="diffBtn medium" data-diff="medium"><span class="dEmoji">🟠</span><span><span class="dTitle">Mittel</span><span class="dDesc">Mix: regular + <b>leichte irregular</b> (go, make, see …)</span></span></button>
-          <button class="diffBtn hard"   data-diff="hard"><span class="dEmoji">🔴</span><span><span class="dTitle">Schwer</span><span class="dDesc">Harte <b>irregular verbs</b> (arise, bite, tear …)</span></span></button>
+          <button class="diffBtn easy"   data-diff="easy"><span class="dEmoji">🟢</span><span><span class="dTitle">Einfach</span><span class="dDesc">Nur <b>regular verbs</b> (played, worked …) · 5.–6. Schulstufe</span></span></button>
+          <button class="diffBtn medium" data-diff="medium"><span class="dEmoji">🟠</span><span><span class="dTitle">Mittel</span><span class="dDesc">Mix: regular + <b>leichte irregular</b> (go, see, eat …) · 6.–7. Schulstufe</span></span></button>
+          <button class="diffBtn hard"   data-diff="hard"><span class="dEmoji">🔴</span><span><span class="dTitle">Schwer</span><span class="dDesc">Häufige <b>irregular verbs</b> (begin, catch, forget …) · 7.–8. Schulstufe</span></span></button>
         </div>
       </div>
     </div>
@@ -317,7 +318,8 @@ footer {
    BUBBLE VERB CRUSH — Bubble-Shooter + Irregular Verbs
    School Games OG — Single-File-HTML, kein Build, kein Server.
    Mechanik: 3 Schüsse -> Verb-Frage -> Nachschub.
-   Richtig = weiter | Falsch = Herz verlieren + Reihe rückt nach.
+   Richtig = Special Bubble 🎁 | Falsch = Herz verlieren + Reihe rückt nach.
+   Extras: Hold-Slot (C), Swap (X), Combos, 4 Special-Bubble-Typen.
    ===================================================================== */
 
 /* =====================================================================
@@ -407,73 +409,43 @@ const IRREGULAR_EASY = [
   ["wear","tragen (Kleidung)",["wore"],["worn"]],
 ];
 
-/* --- SCHWERE irregular verbs (für Schwer) --- */
+/* --- SCHWER: häufige irregular verbs · 7.–8. Schulstufe (MS/AHS) --- */
 const IRREGULAR_HARD = [
-  ["arise","entstehen",["arose"],["arisen"]],
-  ["awake","erwachen",["awoke"],["awoken"]],
-  ["bear","(er)tragen",["bore"],["borne"]],
-  ["beat","schlagen",["beat"],["beaten"]],
-  ["bind","binden",["bound"],["bound"]],
-  ["bite","beißen",["bit"],["bitten"]],
-  ["bleed","bluten",["bled"],["bled"]],
-  ["blow","blasen / wehen",["blew"],["blown"]],
-  ["breed","züchten",["bred"],["bred"]],
-  ["cast","werfen (Angel)",["cast"],["cast"]],
-  ["cling","sich klammern",["clung"],["clung"]],
-  ["creep","kriechen",["crept"],["crept"]],
-  ["deal","handeln / austeilen",["dealt"],["dealt"]],
-  ["dig","graben",["dug"],["dug"]],
+  ["become","werden",["became"],["become"]],
+  ["begin","beginnen",["began"],["begun"]],
+  ["build","bauen",["built"],["built"]],
+  ["catch","fangen",["caught"],["caught"]],
+  ["choose","auswählen",["chose"],["chosen"]],
+  ["cost","kosten",["cost"],["cost"]],
+  ["cut","schneiden",["cut"],["cut"]],
+  ["do","tun / machen",["did"],["done"]],
   ["draw","zeichnen",["drew"],["drawn"]],
+  ["fall","fallen",["fell"],["fallen"]],
   ["feed","füttern",["fed"],["fed"]],
-  ["flee","fliehen",["fled"],["fled"]],
-  ["fling","schleudern",["flung"],["flung"]],
-  ["forbid","verbieten",["forbade"],["forbidden"]],
-  ["forgive","vergeben",["forgave"],["forgiven"]],
-  ["freeze","gefrieren",["froze"],["frozen"]],
-  ["grind","mahlen",["ground"],["ground"]],
+  ["fight","kämpfen",["fought"],["fought"]],
+  ["forget","vergessen",["forgot"],["forgotten"]],
+  ["freeze","frieren",["froze"],["frozen"]],
   ["hang","hängen",["hung"],["hung"]],
+  ["hear","hören",["heard"],["heard"]],
   ["hide","verstecken",["hid"],["hidden"]],
-  ["kneel","knien",["knelt","kneeled"],["knelt","kneeled"]],
-  ["lay","legen",["laid"],["laid"]],
+  ["hit","schlagen / treffen",["hit"],["hit"]],
+  ["hold","halten",["held"],["held"]],
+  ["hurt","verletzen",["hurt"],["hurt"]],
   ["lead","führen",["led"],["led"]],
-  ["leap","springen",["leapt","leaped"],["leapt","leaped"]],
   ["lend","verleihen",["lent"],["lent"]],
-  ["lie","liegen",["lay"],["lain"]],
-  ["light","anzünden",["lit","lighted"],["lit","lighted"]],
+  ["let","lassen",["let"],["let"]],
   ["mean","bedeuten",["meant"],["meant"]],
-  ["overcome","überwinden",["overcame"],["overcome"]],
-  ["quit","aufhören",["quit"],["quit"]],
-  ["rise","aufsteigen",["rose"],["risen"]],
-  ["seek","suchen",["sought"],["sought"]],
-  ["sew","nähen",["sewed"],["sewn","sewed"]],
+  ["pay","bezahlen",["paid"],["paid"]],
+  ["ride","reiten / fahren",["rode"],["ridden"]],
+  ["ring","läuten",["rang"],["rung"]],
+  ["sell","verkaufen",["sold"],["sold"]],
   ["shake","schütteln",["shook"],["shaken"]],
-  ["shine","scheinen",["shone"],["shone"]],
-  ["shoot","schießen",["shot"],["shot"]],
-  ["shrink","schrumpfen",["shrank","shrunk"],["shrunk","shrunken"]],
-  ["sink","sinken",["sank","sunk"],["sunk"]],
-  ["slide","rutschen",["slid"],["slid"]],
-  ["sow","säen",["sowed"],["sown","sowed"]],
-  ["spin","(sich) drehen",["spun"],["spun"]],
-  ["spit","spucken",["spat","spit"],["spat","spit"]],
-  ["split","spalten",["split"],["split"]],
-  ["spread","verbreiten",["spread"],["spread"]],
-  ["spring","springen",["sprang","sprung"],["sprung"]],
+  ["shut","schließen",["shut"],["shut"]],
   ["steal","stehlen",["stole"],["stolen"]],
-  ["stick","kleben / stecken",["stuck"],["stuck"]],
-  ["sting","stechen",["stung"],["stung"]],
-  ["stink","stinken",["stank","stunk"],["stunk"]],
-  ["stride","schreiten",["strode"],["stridden"]],
-  ["strike","schlagen / treffen",["struck"],["struck"]],
-  ["swear","schwören / fluchen",["swore"],["sworn"]],
-  ["sweep","fegen",["swept"],["swept"]],
-  ["swell","anschwellen",["swelled"],["swollen","swelled"]],
-  ["swing","schwingen",["swung"],["swung"]],
-  ["tear","zerreißen",["tore"],["torn"]],
-  ["tread","treten",["trod"],["trodden","trod"]],
-  ["weave","weben",["wove"],["woven"]],
-  ["weep","weinen",["wept"],["wept"]],
-  ["wind","(auf)wickeln",["wound"],["wound"]],
-  ["wring","auswringen",["wrung"],["wrung"]],
+  ["teach","unterrichten",["taught"],["taught"]],
+  ["understand","verstehen",["understood"],["understood"]],
+  ["wake","aufwachen",["woke"],["woken"]],
+  ["blow","blasen / wehen",["blew"],["blown"]],
 ];
 
 /* Als Objekt aufbereiten */
@@ -481,7 +453,7 @@ function toVerb(a) { return { base: a[0], de: a[1], past: a[2], part: a[3] }; }
 const POOLS = {
   easy:   REGULAR.map(toVerb),
   medium: [...REGULAR, ...IRREGULAR_EASY].map(toVerb),
-  hard:   IRREGULAR_HARD.map(toVerb),
+  hard:   [...IRREGULAR_EASY, ...IRREGULAR_HARD].map(toVerb),
 };
 /* Distraktoren-Fundus (viele fertige Formen zum Verwirren) */
 const ALL_FORMS = [...REGULAR, ...IRREGULAR_EASY, ...IRREGULAR_HARD]
@@ -500,6 +472,15 @@ const THEME_BG = {
 };
 function isPsy() { return document.documentElement.getAttribute("data-theme") === "psychedelic"; }
 function palette() { return PALETTE[isPsy() ? "psychedelic" : "standard"]; }
+
+/* Special-Bubble-Typen */
+const SPECIALS = {
+  bomb:    { emoji: "💣", name: "BOMBE",      col: "#374151" },
+  bolt:    { emoji: "⚡", name: "BLITZ",      col: "#FACC15" },
+  fire:    { emoji: "🔥", name: "FEUER",      col: "#F97316" },
+  rainbow: { emoji: "🌈", name: "REGENBOGEN", col: "#EC4899" },
+};
+const SPECIAL_KEYS = Object.keys(SPECIALS);
 
 /* =====================================================================
    3) SOUND (WebAudio, alle Töne < 500 ms)
@@ -527,6 +508,10 @@ const SND = {
   pop(){ tone(880,0.07,"sine",0.18); tone(1170,0.08,"sine",0.14,0.05); },
   stick(){ tone(300,0.06,"sine",0.1); },
   drop(){ tone(220,0.18,wave(),0.15); },
+  boom(){ tone(90,0.3,"sawtooth",0.3); tone(60,0.35,"square",0.22,0.05); tone(1200,0.12,"sine",0.15); },
+  zap(){ tone(1400,0.08,"square",0.16); tone(900,0.08,"square",0.14,0.06); tone(1800,0.1,"square",0.12,0.12); },
+  swap(){ tone(500,0.06,"sine",0.14); tone(700,0.06,"sine",0.14,0.06); },
+  combo(){ tone(660,0.08,wave(),0.2); tone(880,0.08,wave(),0.2,0.07); tone(1100,0.12,wave(),0.2,0.14); },
 };
 
 /* =====================================================================
@@ -537,19 +522,19 @@ const ctx = canvas.getContext("2d");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = id => document.getElementById(id);
 
-const COLS = 9;               // Spalten in geraden Reihen
+const COLS = 11;              // Spalten in geraden Reihen (mehr Spalten = kleinere Bubbles)
 let W = 0, H = 0, DPR = 1;
-let R = 20;                   // Bubble-Radius (aus Breite berechnet)
-let rowH = 34;                // vertikaler Reihenabstand
+let R = 16;                   // Bubble-Radius (aus Breite berechnet, bewusst klein)
+let rowH = 28;                // vertikaler Reihenabstand
 let gridX = 0, baseTop = 0;   // linker Rand / oberer Rand des Feldes
 let shooterY = 0;
 
 function computeLayout() {
-  R = Math.max(12, Math.min((Math.min(W, 620) * 0.92) / (COLS * 2), (H * 0.62) / 12));
+  R = Math.max(10, Math.min((Math.min(W, 640) * 0.92) / (COLS * 2), (H * 0.6) / 14, 17));
   rowH = R * Math.sqrt(3);
   gridX = (W - COLS * 2 * R) / 2;
   baseTop = R * 0.6;
-  shooterY = H - R * 2.4;
+  shooterY = H - R * 2.8;
 }
 function resize() {
   const r = canvas.parentElement.getBoundingClientRect();
@@ -582,20 +567,33 @@ function neighbors(r, c) {
 
 function topRowIndex() { return -descend; }          // aktuell oberste Reihe
 
-/* Neue Reihe oben ansetzen (drückt alles nach unten) */
+/* Neue Reihe oben ansetzen (drückt alles nach unten) —
+   nutzt nur Farben, die schon am Feld sind (fair!) */
 function addTopRow(colorCount) {
   descend++;
   const r = -descend;
-  const pal = colorCount;
-  for (let c = 0; c < colsInRow(r); c++) grid.set(key(r, c), Math.floor(Math.random() * pal));
+  const present = [...new Set(grid.values())].filter(v => typeof v === "number");
+  const pool = present.length ? present : Array.from({length: colorCount}, (_, i) => i);
+  for (let c = 0; c < colsInRow(r); c++) grid.set(key(r, c), pool[Math.floor(Math.random() * pool.length)]);
 }
 
-/* Startfeld erzeugen */
+/* Startfeld erzeugen — geclustert, damit von Anfang an Gruppen existieren */
 function buildBoard(rows, colorCount) {
   grid.clear(); descend = 0;
-  for (let r = 0; r < rows; r++)
-    for (let c = 0; c < colsInRow(r); c++)
-      grid.set(key(r, c), Math.floor(Math.random() * colorCount));
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < colsInRow(r); c++) {
+      let color;
+      // 60 % Chance: Farbe eines schon gesetzten Nachbarn übernehmen -> Cluster
+      const neigh = neighbors(r, c).filter(([rr, cc]) => grid.has(key(rr, cc)));
+      if (neigh.length && Math.random() < 0.6) {
+        const [nr, nc] = neigh[Math.floor(Math.random() * neigh.length)];
+        color = grid.get(key(nr, nc));
+      } else {
+        color = Math.floor(Math.random() * colorCount);
+      }
+      grid.set(key(r, c), color);
+    }
+  }
 }
 
 /* =====================================================================
@@ -604,15 +602,19 @@ function buildBoard(rows, colorCount) {
 const S = {
   running: false, phase: "start",   // start | aiming | flying | quiz | over
   diff: "easy",
-  colorCount: 4,
+  colorCount: 3,
   score: 0, hearts: 3, level: 1,
   shotsLeft: 3,
   verbsSolved: 0, wrongCount: 0,
+  combo: 0, bestCombo: 0,
   aimX: 0, aimY: 0,                  // Zielpunkt
 };
-let ball = null;                     // fliegende Bubble {x,y,vx,vy,color}
-let magazine = [];                   // kommende Farben (Index) [current, next, ...]
+let ball = null;                     // fliegende Bubble {x,y,vx,vy,c,sp}
+let magazine = [];                   // kommende Bubbles [{c, sp}, ...]
+let holdSlot = null;                 // gespeicherte Bubble {c, sp} | null
+let holdUsed = false;                // nur 1× speichern pro Schuss
 let particles = [];
+let floatTexts = [];                 // schwebende Punkte-/Combo-Texte
 let deck = [];                       // gemischte Verben
 let lastType = "";                   // letzter Fragetyp (kein 2× in Folge)
 let lastVerbBase = "";               // letztes Verb (kein 2× in Folge)
@@ -623,18 +625,54 @@ const SHOOT_SPEED = 15;              // Einheiten pro Frame-Schritt (skaliert mi
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function rnd(a,b){ return a + Math.random()*(b-a); }
 
-/* Farbe für neue Bubble: bevorzugt Farben, die noch auf dem Feld sind */
+/* Farbe für neue Bubble: NUR Farben, die noch auf dem Feld sind */
 function pickBallColor() {
-  const present = new Set(grid.values());
-  const pool = present.size ? [...present] : Array.from({length:S.colorCount},(_,i)=>i);
+  const present = [...new Set(grid.values())].filter(v => typeof v === "number");
+  const pool = present.length ? present : Array.from({length:S.colorCount},(_,i)=>i);
   return pool[Math.floor(Math.random()*pool.length)];
 }
-function refillMagazine() {
-  magazine = [pickBallColor(), pickBallColor(), pickBallColor()];
+function newBubble() { return { c: pickBallColor(), sp: null }; }
+function refillMagazine(rewardSpecial) {
+  magazine = [newBubble(), newBubble(), newBubble()];
+  if (rewardSpecial) {
+    magazine[0].sp = SPECIAL_KEYS[Math.floor(Math.random() * SPECIAL_KEYS.length)];
+  }
+}
+/* Fairness-Check: Farbe der Bubbles muss noch am Feld existieren */
+function fixMagazine() {
+  const present = new Set([...grid.values()].filter(v => typeof v === "number"));
+  if (!present.size) return;
+  for (const m of magazine) if (!m.sp && !present.has(m.c)) m.c = pickBallColor();
+  if (holdSlot && !holdSlot.sp && !present.has(holdSlot.c)) holdSlot.c = pickBallColor();
 }
 
 /* =====================================================================
-   7) SCHIESSEN & KOLLISION
+   7) HOLD & SWAP
+   ===================================================================== */
+function doSwap() {
+  if (S.phase !== "aiming" || ball || magazine.length < 2) return;
+  [magazine[0], magazine[1]] = [magazine[1], magazine[0]];
+  SND.swap();
+  spawnText(shooterX(), shooterY - R*2.5, "🔄", "#3B82F6", 15);
+}
+function doHold() {
+  if (S.phase !== "aiming" || ball || holdUsed || !magazine.length) return;
+  if (holdSlot) {
+    const tmp = holdSlot; holdSlot = magazine[0]; magazine[0] = tmp;
+  } else {
+    holdSlot = magazine.shift();
+    magazine.push(newBubble());
+  }
+  holdUsed = true;             // erst nach dem nächsten Schuss wieder erlaubt
+  SND.swap();
+  spawnText(holdBtnX(), shooterY - R*2.5, "📥", "#9333EA", 15);
+}
+function holdBtnX() { return Math.max(gridX + R * 1.6, shooterX() - R * 5.2); }
+function swapBtnX() { return Math.min(gridX + COLS*2*R - R * 1.6, shooterX() + R * 5.2); }
+function ctrlHitRadius() { return Math.max(R * 1.6, 26); }
+
+/* =====================================================================
+   8) SCHIESSEN & KOLLISION
    ===================================================================== */
 function shooterX() { return W / 2; }
 
@@ -644,10 +682,11 @@ function shoot() {
   let dx = S.aimX - sx, dy = S.aimY - sy;
   if (dy > -R) dy = -R;                          // immer nach oben
   const len = Math.hypot(dx, dy) || 1;
-  const color = magazine.shift();
-  ball = { x: sx, y: sy, vx: dx/len * SHOOT_SPEED, vy: dy/len * SHOOT_SPEED, color };
+  const b = magazine.shift();
+  ball = { x: sx, y: sy, vx: dx/len * SHOOT_SPEED, vy: dy/len * SHOOT_SPEED, c: b.c, sp: b.sp };
   S.phase = "flying";
   S.shotsLeft--;
+  holdUsed = false;
   SND.shoot();
   updateHUD();
 }
@@ -674,46 +713,156 @@ function updateBall() {
   }
 }
 
-/* Fliegende Bubble in nächstliegende freie Zelle einrasten */
-function settleBall() {
-  if (!ball) return;
+/* Zielzelle für die fliegende Bubble finden */
+function findTargetCell() {
   let row = Math.round((ball.y - baseTop - R) / rowH - descend);
   if (row < topRowIndex()) row = topRowIndex();
   const par = parity(row);
   let col = Math.round((ball.x - gridX - R - par*R) / (2*R));
   col = Math.max(0, Math.min(colsInRow(row) - 1, col));
 
-  let target = null;
-  if (!grid.has(key(row, col))) target = [row, col];
-  else {
-    // nächste freie Nachbarzelle suchen
-    let best = null, bestD = Infinity;
-    const cand = [[row,col], ...neighbors(row,col)];
-    for (const [rr, cc] of cand) {
-      if (grid.has(key(rr, cc))) continue;
-      const d = (ball.x-cellX(rr,cc))**2 + (ball.y-cellY(rr,cc))**2;
-      if (d < bestD) { bestD = d; best = [rr, cc]; }
+  if (!grid.has(key(row, col))) return [row, col];
+  // nächste freie Nachbarzelle suchen
+  let best = null, bestD = Infinity;
+  const cand = [[row,col], ...neighbors(row,col)];
+  for (const [rr, cc] of cand) {
+    if (grid.has(key(rr, cc))) continue;
+    const d = (ball.x-cellX(rr,cc))**2 + (ball.y-cellY(rr,cc))**2;
+    if (d < bestD) { bestD = d; best = [rr, cc]; }
+  }
+  if (!best) { // Ring erweitern
+    outer:
+    for (const [rr, cc] of neighbors(row, col))
+      for (const [r2, c2] of neighbors(rr, cc))
+        if (!grid.has(key(r2, c2))) { best = [r2, c2]; break outer; }
+  }
+  return best || [row, col];
+}
+
+/* Fliegende Bubble einrasten (oder Special auslösen) */
+function settleBall() {
+  if (!ball) return;
+  const [tr, tc] = findTargetCell();
+  const sp = ball.sp;
+
+  if (sp === "bomb")      { triggerBomb(tr, tc); return; }
+  if (sp === "bolt")      { triggerBolt(tr, tc); return; }
+  if (sp === "fire")      { triggerFire(tr, tc); return; }
+
+  if (sp === "rainbow") {
+    // Joker: nimmt die Farbe der größten angrenzenden Gruppe an
+    let bestColor = null, bestSize = -1;
+    const tried = new Set();
+    for (const [nr, nc] of neighbors(tr, tc)) {
+      const col = grid.get(key(nr, nc));
+      if (typeof col !== "number" || tried.has(col)) continue;
+      tried.add(col);
+      const size = floodSize(nr, nc, col);
+      if (size > bestSize) { bestSize = size; bestColor = col; }
     }
-    if (!best) { // Ring erweitern
-      outer:
-      for (const [rr, cc] of neighbors(row, col))
-        for (const [r2, c2] of neighbors(rr, cc))
-          if (!grid.has(key(r2, c2))) { best = [r2, c2]; break outer; }
-    }
-    target = best || [row, col];
+    ball.c = bestColor !== null ? bestColor : pickBallColor();
+    spawnText(cellX(tr, tc), cellY(tr), "🌈", "#EC4899", 18);
   }
 
-  const [tr, tc] = target;
-  grid.set(key(tr, tc), ball.color);
+  grid.set(key(tr, tc), ball.c);
   SND.stick();
-  const placed = [tr, tc, ball.color];
+  const placed = [tr, tc, ball.c];
   ball = null;
   resolvePlacement(placed);
 }
 
+function floodSize(r, c, color) {
+  const seen = new Set(); const stack = [[r, c]]; let n = 0;
+  while (stack.length) {
+    const [cr, cc] = stack.pop(); const kk = key(cr, cc);
+    if (seen.has(kk) || grid.get(kk) !== color) continue;
+    seen.add(kk); n++;
+    for (const [nr, nc] of neighbors(cr, cc)) if (grid.has(key(nr, nc)) && !seen.has(key(nr, nc))) stack.push([nr, nc]);
+  }
+  return n;
+}
+
+/* ---------------- SPECIALS ---------------- */
+function removeCells(cells, big) {
+  let n = 0;
+  for (const [r, c] of cells) {
+    const kk = key(r, c);
+    if (!grid.has(kk)) continue;
+    spawnPop(cellX(r, c), cellY(r), palette()[grid.get(kk)], false, big);
+    grid.delete(kk); n++;
+  }
+  return n;
+}
+
+function triggerBomb(tr, tc) {
+  const cx = cellX(tr, tc), cy = cellY(tr);
+  const blastR = R * 3.3;
+  const cells = [];
+  for (const kk of grid.keys()) {
+    const [r, c] = kk.split(",").map(Number);
+    if ((cellX(r,c)-cx)**2 + (cellY(r)-cy)**2 <= blastR*blastR) cells.push([r, c]);
+  }
+  ball = null;
+  const n = removeCells(cells, true);
+  SND.boom();
+  spawnText(cx, cy, "BOOM! 💥", "#F97316", 24);
+  if (!reduceMotion) shakeWrap();
+  finishSpecial(n, 15);
+}
+
+function triggerBolt(tr, tc) {
+  const cells = [];
+  for (const kk of grid.keys()) {
+    const [r, c] = kk.split(",").map(Number);
+    if (r === tr) cells.push([r, c]);
+  }
+  // Falls die Reihe leer ist (Bubble unter allem gelandet): oberste belegte Nachbarreihe nehmen
+  if (!cells.length) {
+    for (const kk of grid.keys()) {
+      const [r, c] = kk.split(",").map(Number);
+      if (Math.abs(r - tr) === 1) cells.push([r, c]);
+    }
+  }
+  ball = null;
+  const n = removeCells(cells, true);
+  SND.zap();
+  spawnText(cellX(tr, Math.floor(colsInRow(tr)/2)), cellY(tr), "ZAP! ⚡", "#FACC15", 24);
+  finishSpecial(n, 15);
+}
+
+function triggerFire(tr, tc) {
+  const x0 = cellX(tr, tc);
+  const cells = [];
+  for (let r = tr; r >= topRowIndex(); r--) {
+    for (let c = 0; c < colsInRow(r); c++) {
+      if (grid.has(key(r, c)) && Math.abs(cellX(r, c) - x0) <= R * 1.15) cells.push([r, c]);
+    }
+  }
+  ball = null;
+  const n = removeCells(cells, true);
+  SND.zap(); SND.boom();
+  spawnText(x0, cellY(tr) - rowH, "🔥🔥🔥", "#F97316", 22);
+  finishSpecial(n, 15);
+}
+
+function finishSpecial(removed, ptsEach) {
+  let dropped = 0;
+  if (removed) dropped = dropFloating();
+  if (removed) {
+    S.combo++;
+    S.bestCombo = Math.max(S.bestCombo, S.combo);
+    const gain = (removed * ptsEach + dropped * 25) * S.combo;
+    S.score += gain;
+    spawnText(shooterX(), H * 0.4, "+" + gain, "#22C55E", 20);
+    if (S.combo >= 2) { spawnText(shooterX(), H * 0.32, "COMBO x" + S.combo + " 🔥", "#EC4899", 22); SND.combo(); }
+  } else {
+    S.combo = 0;
+  }
+  afterShot();
+}
+
 /* Gleiche Farbe floodfillen -> ab 3 platzen; danach freischwebende droppen */
 function resolvePlacement([r, c, color]) {
-  // 1) gleiche Farbe verbunden
   const same = [];
   const seen = new Set(); const stack = [[r, c]];
   while (stack.length) {
@@ -728,25 +877,31 @@ function resolvePlacement([r, c, color]) {
     for (const [pr, pc] of same) { spawnPop(cellX(pr,pc), cellY(pr), palette()[grid.get(key(pr,pc))]); grid.delete(key(pr,pc)); popped++; }
     SND.pop();
   }
-  // 2) freischwebende Gruppen droppen
   let dropped = 0;
   if (popped) dropped = dropFloating();
 
   if (popped) {
-    S.score += popped * 10 + dropped * 25;
+    S.combo++;
+    S.bestCombo = Math.max(S.bestCombo, S.combo);
+    const gain = (popped * 10 + dropped * 25) * S.combo;
+    S.score += gain;
+    spawnText(cellX(r, c), cellY(r), "+" + gain, "#22C55E", 18);
+    if (S.combo >= 2) { spawnText(shooterX(), H * 0.32, "COMBO x" + S.combo + " 🔥", "#EC4899", 22); SND.combo(); }
     if (dropped && !reduceMotion) bump();
+  } else {
+    S.combo = 0;
   }
+  afterShot();
+}
+
+/* Gemeinsamer Abschluss nach jedem Schuss (normal oder special) */
+function afterShot() {
   updateHUD();
-
-  // Feld leer? -> Level geschafft
   if (grid.size === 0) { levelClear(); return; }
-
-  // Zu tief? -> Game Over
   if (boardTooLow()) { gameOver(false); return; }
-
-  // Weiter: entweder Frage (Magazin leer) oder wieder zielen
-  if (S.shotsLeft <= 0) openQuiz();
-  else S.phase = "aiming";
+  if (S.shotsLeft <= 0) { openQuiz(); return; }
+  fixMagazine();
+  S.phase = "aiming";
 }
 
 /* Bubbles, die nicht mehr mit der Decke verbunden sind, fallen */
@@ -780,13 +935,13 @@ function boardTooLow() {
 }
 
 /* =====================================================================
-   8) PARTIKEL
+   9) PARTIKEL & SCHWEBETEXTE
    ===================================================================== */
-function spawnPop(x, y, color, fall) {
+function spawnPop(x, y, color, fall, big) {
   if (reduceMotion) return;
-  const n = fall ? 4 : 7;
+  const n = fall ? 4 : (big ? 10 : 7);
   for (let i = 0; i < n; i++)
-    particles.push({ x, y, vx: rnd(-140,140), vy: fall ? rnd(40,120) : rnd(-200,-20), life: rnd(0.4,0.9), col: color, s: rnd(3, R*0.45), rot: rnd(0,6.3), vr: rnd(-8,8) });
+    particles.push({ x, y, vx: rnd(-140,140)*(big?1.6:1), vy: fall ? rnd(40,120) : rnd(-200,-20)*(big?1.4:1), life: rnd(0.4,0.9), col: color, s: rnd(3, R*0.45), rot: rnd(0,6.3), vr: rnd(-8,8) });
 }
 function confettiBurst() {
   if (reduceMotion) return;
@@ -794,9 +949,12 @@ function confettiBurst() {
   for (let i = 0; i < 28; i++)
     particles.push({ x: W/2, y: H*0.4, vx: rnd(-220,220), vy: rnd(-320,-40), life: rnd(0.6,1.2), col: cols[i%cols.length], s: rnd(4,9), rot: rnd(0,6.3), vr: rnd(-9,9) });
 }
+function spawnText(x, y, txt, col, size) {
+  floatTexts.push({ x, y, txt, col, size: size || 16, life: 1.1 });
+}
 
 /* =====================================================================
-   9) QUIZ — 3 Fragetypen (mc / fill / triple), gemischt
+   10) QUIZ — 3 Fragetypen (mc / fill / triple), gemischt
    ===================================================================== */
 function drawVerb() {
   if (!deck.length) deck = shuffle([...POOLS[S.diff]]);
@@ -918,7 +1076,8 @@ function evaluate(correct, clicked, options, correctList) {
 
   if (correct) {
     S.score += 150; S.verbsSolved++;
-    fb.textContent = "RICHTIG! +150 🎉"; fb.className = "good";
+    fb.textContent = "RICHTIG! +150 🎉 Du bekommst eine SPECIAL BUBBLE! 🎁";
+    fb.className = "good";
     SND.correct(); confettiBurst(); bump();
   } else {
     S.hearts--; S.wrongCount++;
@@ -935,8 +1094,9 @@ function closeQuiz() {
   $("quizOverlay").classList.add("hidden");
   const wasCorrect = quiz.wasCorrect;
   quiz = null;
-  refillMagazine();
+  refillMagazine(wasCorrect);          // richtig = Special Bubble als Belohnung
   S.shotsLeft = 3;
+  holdUsed = false;
 
   if (S.hearts <= 0) { gameOver(false); return; }
 
@@ -945,7 +1105,11 @@ function closeQuiz() {
     addTopRow(S.colorCount);
     if (boardTooLow()) { gameOver(false); return; }
     if (!reduceMotion) shakeWrap();
+  } else if (magazine[0].sp) {
+    const spec = SPECIALS[magazine[0].sp];
+    spawnText(shooterX(), shooterY - R*3.5, spec.emoji + " " + spec.name + "!", "#9333EA", 20);
   }
+  fixMagazine();
   updateHUD();
   S.phase = "aiming";
 }
@@ -959,12 +1123,44 @@ $("quizActionBtn").addEventListener("click", () => {
 $("quizInput").addEventListener("keydown", e => { if (e.key === "Enter" && quiz && quiz.type === "fill") { e.preventDefault(); quiz.checkFill(); } });
 
 /* =====================================================================
-   10) RENDER
+   11) RENDER
    ===================================================================== */
-function drawBubble(x, y, colorIndex, radius) {
-  const col = palette()[colorIndex];
+function drawBubble(x, y, colorIndex, radius, special) {
   const psy = isPsy();
   ctx.save();
+  if (special) {
+    const spec = SPECIALS[special];
+    if (special === "rainbow") {
+      // Joker: Kuchenstücke in allen Farben
+      const cols = palette();
+      for (let i = 0; i < cols.length; i++) {
+        ctx.beginPath(); ctx.moveTo(x, y);
+        ctx.arc(x, y, radius, i/cols.length*6.283, (i+1)/cols.length*6.283);
+        ctx.closePath(); ctx.fillStyle = cols[i]; ctx.fill();
+      }
+    } else {
+      if (psy) { ctx.shadowColor = spec.col; ctx.shadowBlur = 16; }
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, 6.3);
+      ctx.fillStyle = spec.col; ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    ctx.lineWidth = 2.5; ctx.strokeStyle = psy ? "rgba(255,255,255,0.7)" : "#1F2937";
+    ctx.beginPath(); ctx.arc(x, y, radius, 0, 6.3); ctx.stroke();
+    // Puls-Ring, damit Specials sofort auffallen
+    if (!reduceMotion) {
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 250);
+      ctx.globalAlpha = 0.35 + pulse * 0.4;
+      ctx.lineWidth = 2; ctx.strokeStyle = psy ? "#FFFFFF" : spec.col;
+      ctx.beginPath(); ctx.arc(x, y, radius + 3 + pulse * 2, 0, 6.3); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    ctx.font = Math.round(radius * 1.15) + "px sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(spec.emoji, x, y + 1);
+    ctx.restore();
+    return;
+  }
+  const col = palette()[colorIndex];
   if (psy) { ctx.shadowColor = col; ctx.shadowBlur = 14; }
   ctx.beginPath(); ctx.arc(x, y, radius, 0, 6.3);
   ctx.fillStyle = col; ctx.fill();
@@ -1002,9 +1198,9 @@ function render() {
   }
 
   // Fliegende Bubble
-  if (ball) drawBubble(ball.x, ball.y, ball.color, R * 0.94);
+  if (ball) drawBubble(ball.x, ball.y, ball.c, R * 0.94, ball.sp);
 
-  // Shooter + Magazin
+  // Shooter + Magazin + Hold/Swap
   drawShooter();
 
   // Partikel
@@ -1012,6 +1208,20 @@ function render() {
     ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
     ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.col;
     ctx.beginPath(); ctx.arc(0, 0, p.s, 0, 6.3); ctx.fill();
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  // Schwebende Texte (+Punkte, COMBO, BOOM …)
+  for (const t of floatTexts) {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, t.life * 1.6);
+    ctx.font = "900 " + t.size + "px 'Fredoka One','Nunito',sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.lineWidth = 4; ctx.strokeStyle = psy ? "#000000" : "#FFFFFF";
+    ctx.strokeText(t.txt, t.x, t.y);
+    ctx.fillStyle = t.col;
+    ctx.fillText(t.txt, t.x, t.y);
     ctx.restore();
   }
   ctx.globalAlpha = 1;
@@ -1027,7 +1237,7 @@ function drawAim(bg) {
   const left = gridX + R, right = gridX + COLS*2*R - R;
   ctx.setLineDash([6, 10]); ctx.lineWidth = 3; ctx.strokeStyle = bg.aim;
   ctx.beginPath(); ctx.moveTo(x, y);
-  for (let i = 0; i < 260; i++) {
+  for (let i = 0; i < 320; i++) {
     x += vx * R * 0.5; y += vy * R * 0.5;
     if (x < left) { x = left; vx = Math.abs(vx); }
     if (x > right) { x = right; vx = -Math.abs(vx); }
@@ -1040,6 +1250,26 @@ function drawAim(bg) {
   ctx.stroke(); ctx.setLineDash([]);
 }
 
+function drawControlCircle(x, y, radius, label, sub) {
+  const psy = isPsy();
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x, y, radius, 0, 6.3);
+  ctx.fillStyle = psy ? "#1a0033" : "#F1F5F9"; ctx.fill();
+  ctx.lineWidth = 2.5; ctx.strokeStyle = psy ? "#BF00FF" : "#1F2937"; ctx.stroke();
+  if (label) {
+    ctx.font = Math.round(radius * 0.9) + "px sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(label, x, y + 1);
+  }
+  if (sub) {
+    ctx.font = "800 10px 'Nunito',sans-serif";
+    ctx.fillStyle = psy ? "#00FFFF" : "#6B7280";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillText(sub, x, y + radius + 4);
+  }
+  ctx.restore();
+}
+
 function drawShooter() {
   const sx = shooterX(), sy = shooterY;
   const psy = isPsy();
@@ -1048,13 +1278,37 @@ function drawShooter() {
   ctx.fillStyle = psy ? "#1a0033" : "#CBD5E1"; ctx.fill();
   ctx.lineWidth = 3; ctx.strokeStyle = psy ? "#BF00FF" : "#1F2937"; ctx.stroke();
   // aktuelle Bubble
-  if (magazine.length && !ball && S.phase !== "quiz") drawBubble(sx, sy, magazine[0], R * 0.94);
-  // Magazin-Vorschau
-  for (let i = 1; i < magazine.length; i++) drawBubble(sx + R*2.1 + (i-1)*R*1.6, sy, magazine[i], R * 0.55);
+  if (magazine.length && !ball && S.phase !== "quiz") drawBubble(sx, sy, magazine[0].c, R * 0.94, magazine[0].sp);
+  // Magazin-Vorschau (rechts neben Swap-Button)
+  for (let i = 1; i < magazine.length; i++)
+    drawBubble(swapBtnX() + ctrlHitRadius() + R*0.9 + (i-1)*R*1.5, sy, magazine[i].c, R * 0.55, magazine[i].sp);
+
+  if (S.phase === "quiz" || S.phase === "start" || S.phase === "over") return;
+
+  // HOLD-Slot (links)
+  const hr = ctrlHitRadius();
+  drawControlCircle(holdBtnX(), sy, hr, null, "SPEICHER (C)");
+  if (holdSlot) drawBubble(holdBtnX(), sy, holdSlot.c, hr * 0.68, holdSlot.sp);
+  else {
+    ctx.save();
+    ctx.font = Math.round(hr * 0.85) + "px sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.globalAlpha = 0.55; ctx.fillText("📥", holdBtnX(), sy + 1);
+    ctx.restore();
+  }
+  if (holdUsed) {
+    ctx.save(); ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.arc(holdBtnX(), sy, hr, 0, 6.3);
+    ctx.fillStyle = isPsy() ? "#000" : "#94A3B8"; ctx.fill();
+    ctx.restore();
+  }
+
+  // SWAP-Button (rechts)
+  drawControlCircle(swapBtnX(), sy, hr, "🔄", "TAUSCH (X)");
 }
 
 /* =====================================================================
-   11) LOOP
+   12) LOOP
    ===================================================================== */
 function loop() {
   requestAnimationFrame(loop);
@@ -1062,12 +1316,14 @@ function loop() {
     if (S.phase === "flying") updateBall();
     for (const p of particles) { p.x += p.vx*0.016; p.y += p.vy*0.016; p.vy += 9; p.life -= 0.016; p.rot += p.vr*0.016; }
     particles = particles.filter(p => p.life > 0);
+    for (const t of floatTexts) { t.y -= 0.7; t.life -= 0.014; }
+    floatTexts = floatTexts.filter(t => t.life > 0);
   }
   render();
 }
 
 /* =====================================================================
-   12) INPUT
+   13) INPUT
    ===================================================================== */
 function localPoint(e) {
   const rect = canvas.getBoundingClientRect();
@@ -1077,15 +1333,25 @@ function localPoint(e) {
 canvas.addEventListener("pointermove", e => { const p = localPoint(e); S.aimX = p.x; S.aimY = p.y; });
 canvas.addEventListener("pointerdown", e => {
   const p = localPoint(e); S.aimX = p.x; S.aimY = p.y;
-  if (S.phase === "aiming") shoot();
+  if (S.phase !== "aiming") return;
+  const hr = ctrlHitRadius() * 1.2;
+  if (Math.hypot(p.x - holdBtnX(), p.y - shooterY) <= hr) { doHold(); return; }
+  if (Math.hypot(p.x - swapBtnX(), p.y - shooterY) <= hr) { doSwap(); return; }
+  shoot();
+});
+window.addEventListener("keydown", e => {
+  if (S.phase !== "aiming") return;
+  const k = e.key.toLowerCase();
+  if (k === "x") { e.preventDefault(); doSwap(); }
+  if (k === "c") { e.preventDefault(); doHold(); }
 });
 
 /* =====================================================================
-   13) HUD
+   14) HUD
    ===================================================================== */
 function updateHUD() {
   $("scoreChip").textContent = Math.floor(S.score);
-  $("levelLabel").textContent = "Level " + S.level + "  ·  🏆 " + highscore;
+  $("levelLabel").textContent = "Level " + S.level + "  ·  🏆 " + highscore + (S.combo >= 2 ? "  ·  🔥x" + S.combo : "");
   $("hearts").textContent = "❤️".repeat(Math.max(0,S.hearts)) + "🖤".repeat(Math.max(0,3-S.hearts));
   const dots = "●".repeat(Math.max(0,S.shotsLeft)) + "○".repeat(Math.max(0,3-S.shotsLeft));
   $("progressLabel").textContent = "Schüsse: " + dots;
@@ -1093,24 +1359,26 @@ function updateHUD() {
 }
 
 /* =====================================================================
-   14) SPIELFLUSS
+   15) SPIELFLUSS
    ===================================================================== */
 const DIFF_CFG = {
-  easy:   { colors: 4, rows: 5 },
-  medium: { colors: 5, rows: 6 },
-  hard:   { colors: 6, rows: 7 },
+  easy:   { colors: 3, rows: 4 },
+  medium: { colors: 4, rows: 5 },
+  hard:   { colors: 5, rows: 6 },
 };
 
 function startGame(diff) {
   S.diff = diff;
   const cfg = DIFF_CFG[diff];
   S.colorCount = cfg.colors;
-  Object.assign(S, { running: true, phase: "aiming", score: 0, hearts: 3, level: 1, shotsLeft: 3, verbsSolved: 0, wrongCount: 0 });
+  Object.assign(S, { running: true, phase: "aiming", score: 0, hearts: 3, level: 1, shotsLeft: 3, verbsSolved: 0, wrongCount: 0, combo: 0, bestCombo: 0 });
   deck = shuffle([...POOLS[diff]]);
   lastType = ""; lastVerbBase = "";
-  particles = []; ball = null;
+  particles = []; floatTexts = []; ball = null;
+  holdSlot = null; holdUsed = false;
   buildBoard(cfg.rows, cfg.colors);
-  refillMagazine();
+  refillMagazine(false);
+  fixMagazine();
   S.aimX = W/2; S.aimY = H*0.3;
   updateHUD();
 }
@@ -1121,10 +1389,13 @@ function levelClear() {
   S.hearts = Math.min(3, S.hearts + 1);   // Belohnung: Herz zurück (max 3)
   SND.levelUp();
   if (!reduceMotion) { showLevelBanner(); confettiBurst(); }
-  // Etwas mehr Reihen mit steigendem Level (Cap)
-  const rows = Math.min(9, DIFF_CFG[S.diff].rows + Math.floor(S.level/2));
-  buildBoard(rows, S.colorCount);
-  refillMagazine(); S.shotsLeft = 3;
+  // Mehr Reihen + ab Level 3 eine Farbe mehr (Cap: Palette)
+  const rows = Math.min(8, DIFF_CFG[S.diff].rows + Math.floor(S.level/2));
+  const colors = Math.min(6, DIFF_CFG[S.diff].colors + Math.floor((S.level-1)/2));
+  S.colorCount = colors;
+  buildBoard(rows, colors);
+  refillMagazine(false); fixMagazine();
+  S.shotsLeft = 3; holdUsed = false; S.combo = 0;
   updateHUD();
   S.phase = "aiming";
 }
@@ -1136,7 +1407,7 @@ function gameOver(won) {
   $("goTitle").textContent = won ? "🏆 GESCHAFFT!" : "💥 GAME OVER";
   $("goScore").textContent = sc;
   $("goHigh").textContent = highscore;
-  $("goInfo").textContent = "✅ " + S.verbsSolved + " Verben richtig · Level " + S.level;
+  $("goInfo").textContent = "✅ " + S.verbsSolved + " Verben richtig · Level " + S.level + " · 🔥 Beste Combo: x" + Math.max(1, S.bestCombo);
   $("gameOverOverlay").classList.remove("hidden");
 }
 
@@ -1146,7 +1417,7 @@ function bump() { const c = $("quizCard"); if(!c) return; c.style.transition="tr
 function showLevelBanner() { const b = $("levelUpBanner"); b.textContent = "LEVEL " + S.level + "! ⚡"; b.classList.remove("show"); void b.offsetWidth; b.classList.add("show"); }
 
 /* =====================================================================
-   15) BUTTONS / TOGGLES
+   16) BUTTONS / TOGGLES
    ===================================================================== */
 document.querySelectorAll(".diffBtn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1171,7 +1442,7 @@ $("psyBtn").addEventListener("click", () => {
 $("soundBtn").addEventListener("click", () => { soundOn = !soundOn; $("soundBtn").textContent = soundOn ? "🔊" : "🔇"; if (soundOn) SND.button(); });
 
 /* =====================================================================
-   16) BOOT
+   17) BOOT
    ===================================================================== */
 resize();
 setTimeout(() => { $("splash").style.display = "none"; resize(); }, 1000);
