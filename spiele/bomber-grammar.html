@@ -8,7 +8,7 @@
 <meta name="lernspiel:stufe"        content="7. Schulstufe">
 <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
 <meta name="lernspiel:beschreibung" content="Bomberman-Klon: Sprenge Kisten und jage Bots — gehen die Bomben aus, gibt's Nachschub nur für richtige Antworten zu Past Simple, Past Progressive & Present Perfect. Bot-Kills schalten Spezialbomben frei!">
-<title>Bomber Grammar 💣 — Past Tenses vs. Present Perfect</title>
+<title>Bomber Grammar 2 💣 — Past Tenses vs. Present Perfect</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root[data-theme="standard"]{
@@ -91,7 +91,12 @@ main{flex:1; display:flex; flex-direction:column; align-items:center; padding:16
 
 /* ---------- Menu ---------- */
 #menu h2{font-size:36px; text-align:center; color:var(--purple); margin-bottom:8px}
-#menu .sub{text-align:center; font-weight:700; margin-bottom:24px; font-size:16px}
+#menu .sub{text-align:center; font-weight:700; margin-bottom:8px; font-size:16px}
+.stufe-badge{
+  text-align:center; margin:0 auto 24px; width:fit-content;
+  background:var(--chip-bg); border:3px solid var(--text); border-radius:999px;
+  padding:6px 20px; font-weight:900; font-size:14px;
+}
 .section-label{font-family:'Fredoka One',cursive; font-size:22px; margin:16px 0 8px; color:var(--blue)}
 .lvl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px}
 .lvl-btn{
@@ -230,7 +235,7 @@ footer{
 <header>
   <button id="backBtn" title="Zurück" aria-label="Zurück">←</button>
   <div class="title-mid">
-    <h1>Bomber Grammar 💣</h1>
+    <h1>Bomber Grammar 2 💣</h1>
     <div class="lvl" id="hdrLevel">Level wählen</div>
   </div>
   <div class="hdr-right">
@@ -242,8 +247,9 @@ footer{
 <main>
   <!-- ============ MENU ============ -->
   <div class="card" id="menu">
-    <h2>Bomber Grammar 💣</h2>
+    <h2>Bomber Grammar 2 💣</h2>
     <p class="sub">Sprenge dich durch die Arena — aber ohne Grammatik gehen dir die Bomben aus!</p>
+    <p class="stufe-badge">🎓 7. Schulstufe · MS &amp; AHS · A2–B1 · <b style="color:var(--purple)">v2.2</b></p>
 
     <div class="section-label">1️⃣ Wähle dein Level</div>
     <div class="lvl-grid" id="lvlGrid"></div>
@@ -303,6 +309,8 @@ let psychedelic = false;
 $('psyBtn').addEventListener('click', ()=>{
   psychedelic = !psychedelic;
   document.documentElement.setAttribute('data-theme', psychedelic?'psychedelic':'standard');
+  staticLayer = null;                       // Boden/Fels im neuen Theme neu aufbauen
+  if(state.screen!=='menu') updateHUD();    // Herzen im Theme umfärben
   sfx.click();
 });
 
@@ -330,6 +338,9 @@ function noise(dur, vol){
     s.connect(f); f.connect(g); g.connect(c.destination); s.start();
   }catch(e){}
 }
+// Autoplay-Policy: AudioContext bei der ersten Interaktion anlegen (skills-test/game-juice)
+addEventListener('pointerdown', ()=>ac(), {once:true});
+addEventListener('keydown', ()=>ac(), {once:true});
 const sfx = {
   wave(){ return psychedelic ? 'sawtooth' : 'triangle'; },
   correct(){ tone(523,.12,this.wave(),.25); tone(659,.12,this.wave(),.25,.09); tone(784,.2,this.wave(),.25,.18); },
@@ -342,9 +353,85 @@ const sfx = {
   crumble(){ noise(.12,.15); }
 };
 
-/* ---------- Confetti ---------- */
+/* ============================================================
+   JUICE-TOOLKIT (skills-test/game-juice)
+   Trauma-Shake (Sinus, nie random/Frame) · gepoolte Partikel ·
+   Hit-Stop · Pop · Floating-Score — alles klingt ab, nichts wackelt ewig.
+   ============================================================ */
 const CONF_STD = ['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
 const CONF_NEO = ['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+const Juice = {
+  trauma:0, shakeT:0, frozen:false,
+  addTrauma(a){ this.trauma = Math.min(this.trauma+a, 1); },
+  updateShake(dt, el){
+    if(REDUCE || this.trauma<=0){ el.style.transform=''; return; }
+    this.trauma = Math.max(this.trauma - 1.5*dt, 0);        // klingt in ~0.5s ab
+    const s = this.trauma*this.trauma;                       // quadratisch: kleine Hits kaum spürbar
+    this.shakeT += dt*30;
+    el.style.transform = `translate(${8*s*Math.sin(this.shakeT*1.7)}px, ${6*s*Math.sin(this.shakeT*2.3)}px)`;
+  },
+  hitStop(ms=70){ this.frozen=true; setTimeout(()=>{ this.frozen=false; }, ms); }, // setTimeout = Echtzeit, friert nie fest
+  pop(el){
+    el.animate([
+      {transform:'scale(1.3,0.7)'},
+      {transform:'scale(0.9,1.1)', offset:0.5},
+      {transform:'scale(1,1)'}
+    ],{duration:180, easing:'cubic-bezier(0.34,1.56,0.64,1)'});
+  },
+  // Gepoolte Canvas-Partikel — max 150, nie `new` im Frame-Loop
+  particles: Array.from({length:150},()=>({alive:false})),
+  burst(x,y,count=14,colors){
+    colors = colors || (psychedelic ? CONF_NEO : CONF_STD);
+    let n=0;
+    for(const p of this.particles){
+      if(n>=count) break;
+      if(p.alive) continue;
+      p.alive=true; p.x=x; p.y=y;
+      const a=Math.random()*Math.PI*2, sp=150+Math.random()*250;
+      p.vx=Math.cos(a)*sp; p.vy=Math.sin(a)*sp-200;
+      p.rot=Math.random()*Math.PI; p.vrot=(Math.random()-0.5)*10;
+      p.life=0.6+Math.random()*0.6;
+      p.color=colors[(Math.random()*colors.length)|0];
+      p.size=4+Math.random()*6;
+      n++;
+    }
+  },
+  updateParticles(dt){
+    for(const p of this.particles){
+      if(!p.alive) continue;
+      p.life-=dt;
+      if(p.life<=0){ p.alive=false; continue; }
+      p.vy+=900*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vrot*dt;
+    }
+  },
+  drawParticles(g){
+    for(const p of this.particles){
+      if(!p.alive) continue;
+      g.save();
+      g.globalAlpha=Math.min(p.life*2,1);
+      g.translate(p.x,p.y); g.rotate(p.rot);
+      g.fillStyle=p.color;
+      g.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      g.restore();
+    }
+  },
+  // Floating-Score: Welt-Koordinaten → Seiten-Koordinaten
+  floatText(text, wx, wy, color='#16A34A'){
+    const r = cv.getBoundingClientRect();
+    const k = r.width / (state.W*TILE || 1);
+    const el = document.createElement('div');
+    el.textContent = text;
+    el.style.cssText = `position:fixed; left:${r.left+wx*k}px; top:${r.top+wy*k}px; pointer-events:none;
+      font-family:'Fredoka One',cursive; font-size:26px; color:${color};
+      -webkit-text-stroke:1px ${psychedelic?'#F9FAFB':'#1F2937'}; z-index:999;`;
+    document.body.appendChild(el);
+    el.animate([
+      {transform:'translateY(0) scale(0.5)', opacity:1},
+      {transform:'translateY(-20px) scale(1.2)', opacity:1, offset:0.3},
+      {transform:'translateY(-60px) scale(1)', opacity:0}
+    ],{duration:600, easing:'ease-out'}).onfinish = ()=>el.remove();
+  }
+};
 function confetti(n=24){
   if(REDUCE) return;
   const colors = psychedelic ? CONF_NEO : CONF_STD;
@@ -460,12 +547,25 @@ function drawQuestion(){
    Bot-Speed in px/s (lineares Tracking, keine Konvergenz)
    ============================================================ */
 const TILE = 48;
+/* KI-Stufen pro Level (skills-test/game-physics: Intelligenz über Entscheidungen, nie über Speed-Cheats):
+   bfs     = echte Wegfindung um Kisten herum statt Manhattan-Greedy
+   predict = zielt 2 Felder VOR den Spieler (Abfangen)
+   anyFuse = meidet jede Bombenlinie, egal wie lang die Zündschnur noch ist
+   escape  = Bomber legt nur, wenn er selbst einen Fluchtweg hat (kein Selbstmord)
+   cd      = Bomber-Cooldown [min,max] s */
 const LEVELS = [
-  {name:'Garten',   w:13, h:11, bots:2, bombers:0, botSpeed:55,  chase:0.25, avoid:false, density:0.42, floor:'#7CB94E', floorAlt:'#8FC95F'},
-  {name:'Schulhof', w:15, h:11, bots:3, bombers:1, botSpeed:70,  chase:0.35, avoid:false, density:0.46, floor:'#C9A36A', floorAlt:'#D6B37D'},
-  {name:'Fabrik',   w:15, h:13, bots:4, bombers:1, botSpeed:85,  chase:0.50, avoid:true,  density:0.48, floor:'#8A94A6', floorAlt:'#98A2B3'},
-  {name:'Burg',     w:17, h:13, bots:5, bombers:2, botSpeed:100, chase:0.65, avoid:true,  density:0.50, floor:'#9B8AA6', floorAlt:'#A898B3'},
-  {name:'Vulkan',   w:17, h:15, bots:6, bombers:3, botSpeed:115, chase:0.80, avoid:true,  density:0.52, floor:'#B96A4E', floorAlt:'#C97B5F'},
+  {name:'Garten',   w:13, h:11, bots:2, bombers:0, botSpeed:55,  chase:0.25, avoid:false, density:0.42, floor:'#7CB94E', floorAlt:'#8FC95F',
+   ai:{bfs:false, predict:false, aggro:0, escape:false, cd:[4.5,7.5]}},
+  {name:'Schulhof', w:15, h:11, bots:3, bombers:1, botSpeed:70,  chase:0.45, avoid:false, density:0.46, floor:'#C9A36A', floorAlt:'#D6B37D',
+   ai:{bfs:false, predict:false, aggro:0, escape:true,  cd:[4.5,7.5]}},
+  {name:'Fabrik',   w:15, h:13, bots:4, bombers:1, botSpeed:85,  chase:0.60, avoid:true,  density:0.48, floor:'#8A94A6', floorAlt:'#98A2B3',
+   ai:{bfs:true,  predict:false, aggro:3, escape:true,  cd:[4,6.5]}},
+  {name:'Burg',     w:17, h:13, bots:5, bombers:2, botSpeed:100, chase:0.75, avoid:true,  density:0.50, floor:'#9B8AA6', floorAlt:'#A898B3',
+   ai:{bfs:true,  predict:true,  aggro:5, escape:true,  cd:[3.5,6]}},
+  {name:'Vulkan',   w:17, h:15, bots:6, bombers:3, botSpeed:115, chase:0.90, avoid:true,  density:0.52, floor:'#B96A4E', floorAlt:'#C97B5F',
+   ai:{bfs:true,  predict:true,  aggro:7, escape:true,  cd:[3.5,5.5]}},
+   // aggro = Manhattan-Radius (Tiles), in dem IMMER gejagt wird (kein Würfeln).
+   // anyFuse getestet und verworfen: Bots wurden übervorsichtig und jagten nicht mehr (Sim 2026-07-12)
 ];
 const BOT_COLORS = ['#DC2626','#9333EA','#F97316','#EC4899','#0D9488','#16A34A'];
 const BOT_COLORS_PSY = ['#FF0033','#BF00FF','#FF6600','#FF00FF','#00FFFF','#00FF41'];
@@ -494,9 +594,19 @@ const state = {
   needRefill:false, killQueue:0,
   invulnT:0, running:false,
 };
-const PLAYER_SPEED = 150; // px/s
-const FUSE = 2.4, BLAST_T = 0.45;
-const HITBOX = 17; // half-size of entity hitbox
+/* CONFIG — alle Tuning-Werte an EINEM Ort (skills-test/game-physics) */
+const CONFIG = {
+  PLAYER_SPEED: 150,   // px/s — immer schneller als der schnellste Bot (115 × 1.15 = 132)
+  FUSE: 2.4,           // s — Zündschnur bis zur Explosion
+  BLAST_T: 0.45,       // s — Dauer der Explosionsflamme
+  HITBOX: 17,          // px — halbe Wand-Kollisionsbox (Tile 48 → 34px Box = ~70% der Gasse)
+  TOUCH_R: 26,         // px — Bot-Berührungsradius (Sprites ≈ 30 → zugunsten des Spielers)
+  INVULN_T: 2,         // s — Unverwundbarkeit nach Respawn
+  BOT_SPREAD: 0.05     // Bots: +5% Speed-Offset pro Index — Verfolger stapeln sich nicht
+};
+const PLAYER_SPEED = CONFIG.PLAYER_SPEED;
+const FUSE = CONFIG.FUSE, BLAST_T = CONFIG.BLAST_T;
+const HITBOX = CONFIG.HITBOX;
 
 const cv = $('cv'), ctx = cv.getContext('2d');
 if(!ctx.roundRect){ // Safari-Fallback
@@ -602,19 +712,26 @@ function startLevel(n, resetScore){
     state.bots.push({
       x:(bx+.5)*TILE, y:(by+.5)*TILE,
       tx:bx, ty:by, dir:null,
-      speed:L.botSpeed, color:i%BOT_COLORS.length, alive:true, wob:Math.random()*10,
+      speed:L.botSpeed*(0.9 + CONFIG.BOT_SPREAD*i),   // Offsets: Verfolger spreizen statt stapeln
+      color:i%BOT_COLORS.length, alive:true, wob:Math.random()*10,
       bomber:isBomber, bombCd:2+Math.random()*3, fleeT:0
     });
   }
 
-  cv.width = L.w*TILE; cv.height = L.h*TILE;
+  // Retina-scharf: interne Auflösung × dpr, gezeichnet wird in CSS-Pixeln (skills-test/game-graphics)
+  state.dpr = Math.min(window.devicePixelRatio||1, 2);
+  cv.width = L.w*TILE*state.dpr; cv.height = L.h*TILE*state.dpr;
+  cv.style.aspectRatio = `${L.w*TILE} / ${L.h*TILE}`;
+  staticLayer = null;
   $('menu').style.display='none'; $('game').style.display='block';
   $('hdrLevel').textContent = `Level ${n+1} — ${L.name}`;
   hideOverlay();
   updateHUD(); setProgress(0, L.bots);
   state.screen='play'; state.running = true;
   lastTs = performance.now();
-  requestAnimationFrame(loop);
+  // Nie einen zweiten Loop starten (Retry/Level-Wechsel: alter läuft noch) —
+  // sonst doppelte Updates pro Frame
+  if(!rafId) rafId = requestAnimationFrame(loop);
 }
 
 /* ============================================================
@@ -645,8 +762,13 @@ function selectType(t){
 /* ============================================================
    HUD & FORTSCHRITT
    ============================================================ */
+function heartSVG(filled){
+  const fill = filled ? (psychedelic?'#FF0033':'#EF4444') : (psychedelic?'#1a0033':'#E5E7EB');
+  const stroke = psychedelic ? '#FF00FF' : '#1F2937';
+  return `<svg width="24" height="22" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.5 C4.5 14.5 1 9.5 3.5 5.5 C5.5 2.4 9.7 2.8 12 6.2 C14.3 2.8 18.5 2.4 20.5 5.5 C23 9.5 19.5 14.5 12 20.5 Z" fill="${fill}" stroke="${stroke}" stroke-width="2"/></svg>`;
+}
 function updateHUD(){
-  $('hudLives').textContent = '❤️'.repeat(state.lives) + '🖤'.repeat(3-state.lives);
+  $('hudLives').innerHTML = [0,1,2].map(i=>heartSVG(i<state.lives)).join('');
   $('scoreBox').textContent = '⭐ ' + state.score;
   const slots = $('hudSlots');
   let html = `<button class="slot ${state.selType==='normal'?'sel':''}" data-t="normal">💣 <span class="cnt">×${state.bombs}</span> <span class="cnt">[1]</span></button>`;
@@ -722,6 +844,7 @@ function explode(bomb){
       cells.push([x,y]);
       if(cell===2){
         state.grid[y][x]=0; state.score+=10; sfx.crumble();
+        Juice.burst((x+.5)*TILE,(y+.5)*TILE, 6, ['#B45309','#D97706','#78350F']); // Holzsplitter
         if(!bomb.pierce) break;                        // normale Bombe stoppt an Kiste
       }
       const other = bombAt(x,y);
@@ -732,6 +855,8 @@ function explode(bomb){
   cells.forEach(([x,y])=>state.blasts.set(x+','+y, now+BLAST_T));
   bomb.exploded = true;
   sfx.boom();
+  Juice.addTrauma(bomb.range>2 ? 0.5 : 0.3);           // Mega wummst spürbar mehr
+  Juice.burst((bomb.cx+.5)*TILE,(bomb.cy+.5)*TILE, bomb.range>2?24:12, ['#F97316','#FACC15','#DC2626']);
 }
 
 /* ============================================================
@@ -785,54 +910,149 @@ function movePlayer(dt){
 }
 
 /* ---------- Bot-KI: Tile-zu-Tile, lineare Geschwindigkeit ---------- */
-function tileDangerous(cx,cy, anyFuse){
+function tileDangerous(cx,cy, anyFuse, horizon){
   if(state.blasts.has(cx+','+cy)) return true;
   for(const b of state.bombsArr){
     if(b.timer===Infinity) continue;
-    if(b.timer>1.2 && !anyFuse) continue;
+    if(b.timer>(horizon||1.2) && !anyFuse) continue;
     if(b.cx===cx && Math.abs(b.cy-cy)<=b.range) return true;
     if(b.cy===cy && Math.abs(b.cx-cx)<=b.range) return true;
   }
   return false;
 }
+const DIRS4 = [[1,0],[-1,0],[0,1],[0,-1]];
+
+/* BFS: erster Schritt auf dem kürzesten Weg zum Ziel (über freie Tiles, max 160 Knoten) */
+function bfsStep(sx,sy,tx,ty, avoidDanger, anyFuse){
+  if(sx===tx && sy===ty) return null;
+  const key=(x,y)=>x+','+y;
+  const from = {}; from[key(sx,sy)] = null;
+  const q = [[sx,sy]];
+  let found = false, cnt = 0;
+  while(q.length && cnt++ < 160){
+    const [x,y] = q.shift();
+    if(x===tx && y===ty){ found = true; break; }
+    for(const [dx,dy] of DIRS4){
+      const nx=x+dx, ny=y+dy, k=key(nx,ny);
+      if(from[k]!==undefined) continue;
+      if(blockedTile(nx,ny,false)) continue;
+      if(avoidDanger && tileDangerous(nx,ny,anyFuse) && !(nx===tx&&ny===ty)) continue;
+      from[k] = key(x,y); q.push([nx,ny]);
+    }
+  }
+  if(!found) return null;
+  let cur = key(tx,ty), prev = from[cur];
+  while(prev !== null && prev !== key(sx,sy)){ cur = prev; prev = from[cur]; }
+  if(prev === null) return null;
+  const [cx,cy] = cur.split(',').map(Number);
+  return [cx-sx, cy-sy];
+}
+
+/* Flucht: BFS zum NÄCHSTEN sicheren Tile, erster Schritt dorthin */
+function fleeStep(bot, anyFuse){
+  const key=(x,y)=>x+','+y;
+  const from = {}; from[key(bot.tx,bot.ty)] = null;
+  const q = [[bot.tx,bot.ty]];
+  let cnt = 0;
+  while(q.length && cnt++ < 120){
+    const [x,y] = q.shift();
+    if(!tileDangerous(x,y,anyFuse)){
+      let cur = key(x,y), prev = from[cur];
+      if(prev === null) return null;               // steht schon sicher
+      while(prev !== null && prev !== key(bot.tx,bot.ty)){ cur = prev; prev = from[cur]; }
+      const [cx,cy] = cur.split(',').map(Number);
+      return [cx-bot.tx, cy-bot.ty];
+    }
+    for(const [dx,dy] of DIRS4){
+      const nx=x+dx, ny=y+dy, k=key(nx,ny);
+      if(from[k]!==undefined || blockedTile(nx,ny,false)) continue;
+      from[k] = key(x,y); q.push([nx,ny]);
+    }
+  }
+  return null;
+}
+
 function chooseBotDir(bot, L){
-  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
-  let valid = dirs.filter(([dx,dy])=>!blockedTile(bot.tx+dx, bot.ty+dy, false));
+  const A = L.ai;
+  const anyFuse = bot.fleeT>0;
+  const hz = A.horizon || 1.2;   // wie früh (s Restzündschnur) eine Bombenlinie gemieden wird
+  // 1) In Gefahr? → gezielt zum nächsten sicheren Tile fliehen (nicht zufällig)
+  if((L.avoid || bot.bomber) && tileDangerous(bot.tx,bot.ty,anyFuse,hz)){
+    const f = fleeStep(bot, anyFuse);
+    if(f) return f;
+  }
+  let valid = DIRS4.filter(([dx,dy])=>!blockedTile(bot.tx+dx, bot.ty+dy, false));
   if(valid.length===0) return null;
   if(L.avoid || bot.bomber){
-    const anyFuse = bot.fleeT>0;   // nach eigener Bombe: ALLEN Bombenlinien ausweichen
-    const safeD = valid.filter(([dx,dy])=>!tileDangerous(bot.tx+dx,bot.ty+dy,anyFuse));
+    const safeD = valid.filter(([dx,dy])=>!tileDangerous(bot.tx+dx,bot.ty+dy,anyFuse,hz));
     if(safeD.length>0) valid = safeD;
   }
-  // Nicht umdrehen, außer Sackgasse
-  if(bot.dir && valid.length>1){
-    const noRev = valid.filter(([dx,dy])=>!(dx===-bot.dir[0]&&dy===-bot.dir[1]));
-    if(noRev.length>0) valid = noRev;
-  }
+  // Anti-Stacking: Tiles anderer Bots meiden, wenn es Alternativen gibt
+  const taken = new Set(state.bots.filter(b=>b.alive && b!==bot).map(b=>b.tx+','+b.ty));
+  const unclaimed = valid.filter(([dx,dy])=>!taken.has((bot.tx+dx)+','+(bot.ty+dy)));
+  if(unclaimed.length>0) valid = unclaimed;
+
   const p = state.player;
   const [pcx,pcy] = tileOf(p.x,p.y);
-  if(Math.random() < L.chase){
-    valid.sort((A,B)=>{
-      const da = Math.abs(bot.tx+A[0]-pcx)+Math.abs(bot.ty+A[1]-pcy);
-      const db = Math.abs(bot.tx+B[0]-pcx)+Math.abs(bot.ty+B[1]-pcy);
+  const mdist = Math.abs(bot.tx-pcx)+Math.abs(bot.ty-pcy);
+  if(mdist <= A.aggro || Math.random() < L.chase){   // im Aggro-Radius wird IMMER gejagt
+    // Abfangen: Ziel 2 Tiles VOR dem Spieler in seiner Laufrichtung
+    let tx = pcx, ty = pcy;
+    if(A.predict){
+      const gx = pcx+p.dir[0]*2, gy = pcy+p.dir[1]*2;
+      if(state.grid[gy]?.[gx]===0){ tx = gx; ty = gy; }
+    }
+    if(A.bfs){
+      let s = bfsStep(bot.tx,bot.ty, tx,ty, (L.avoid||bot.bomber), anyFuse);
+      if(!s && (tx!==pcx || ty!==pcy)) s = bfsStep(bot.tx,bot.ty, pcx,pcy, (L.avoid||bot.bomber), anyFuse); // Fallback: direkt zum Spieler
+      if(s && valid.some(([dx,dy])=>dx===s[0]&&dy===s[1])) return s;
+    }
+    valid.sort((a,b)=>{
+      const da = Math.abs(bot.tx+a[0]-tx)+Math.abs(bot.ty+a[1]-ty);
+      const db = Math.abs(bot.tx+b[0]-tx)+Math.abs(bot.ty+b[1]-ty);
       return da-db;
     });
     return valid[0];
   }
+  // Streifen: nicht umdrehen, außer Sackgasse
+  if(bot.dir && valid.length>1){
+    const noRev = valid.filter(([dx,dy])=>!(dx===-bot.dir[0]&&dy===-bot.dir[1]));
+    if(noRev.length>0) valid = noRev;
+  }
   return valid[Math.floor(Math.random()*valid.length)];
 }
-function botTryBomb(bot){
+/* Fluchtweg-Check: Gäbe es nach einer Bombe auf (cx,cy) binnen 4 Schritten ein sicheres Tile? */
+function bombEscapePossible(cx,cy,range){
+  const key=(x,y)=>x+','+y;
+  const inLine=(x,y)=>(x===cx && Math.abs(y-cy)<=range) || (y===cy && Math.abs(x-cx)<=range);
+  const seen = new Set([key(cx,cy)]);
+  const q = [[cx,cy,0]];
+  while(q.length){
+    const [x,y,d] = q.shift();
+    if(!inLine(x,y) && !tileDangerous(x,y,true)) return true;
+    if(d>=4) continue;
+    for(const [dx,dy] of DIRS4){
+      const nx=x+dx, ny=y+dy, k=key(nx,ny);
+      if(seen.has(k) || blockedTile(nx,ny,false)) continue;
+      seen.add(k); q.push([nx,ny,d+1]);
+    }
+  }
+  return false;
+}
+function botTryBomb(bot, L){
   if(bot.bombCd>0 || bombAt(bot.tx,bot.ty)) return;
+  const A = L.ai;
   const [pcx,pcy] = tileOf(state.player.x,state.player.y);
   const inLine = (bot.tx===pcx && Math.abs(bot.ty-pcy)<=3) || (bot.ty===pcy && Math.abs(bot.tx-pcx)<=3);
-  const crateAdj = [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>state.grid[bot.ty+dy]?.[bot.tx+dx]===2);
-  if((inLine || crateAdj) && Math.random()<0.6){
-    state.bombsArr.push({cx:bot.tx,cy:bot.ty,type:'normal',timer:FUSE,range:2,bot:true,
-      pass: overlapsTile(state.player.x,state.player.y,bot.tx,bot.ty)});
-    bot.bombCd = 4.5+Math.random()*3;
-    bot.fleeT = 1.6;
-    sfx.place();
-  }
+  const crateAdj = DIRS4.some(([dx,dy])=>state.grid[bot.ty+dy]?.[bot.tx+dx]===2);
+  // Taktik: Angriff in der Schusslinie ODER Kisten wegbomben (öffnet die Map — nötig für Druck)
+  if(!(inLine || crateAdj) || Math.random()>=0.6) return;
+  if(A.escape && !bombEscapePossible(bot.tx,bot.ty,2)) return;   // kein Selbstmord
+  state.bombsArr.push({cx:bot.tx,cy:bot.ty,type:'normal',timer:FUSE,range:2,bot:true,
+    pass: overlapsTile(state.player.x,state.player.y,bot.tx,bot.ty)});
+  bot.bombCd = A.cd[0] + Math.random()*(A.cd[1]-A.cd[0]);
+  bot.fleeT = 1.8;
+  sfx.place();
 }
 function moveBots(dt, L){
   for(const bot of state.bots){
@@ -846,7 +1066,7 @@ function moveBots(dt, L){
     const step = bot.speed*dt;
     if(d <= step){
       bot.x = targX; bot.y = targY;
-      if(bot.bomber) botTryBomb(bot);
+      if(bot.bomber) botTryBomb(bot, L);
       const dir = chooseBotDir(bot, L);
       if(dir){
         const [dx,dy] = dir;
@@ -868,6 +1088,8 @@ function inBlast(px,py){
 function playerHit(){
   if(state.invulnT>0) return;
   state.lives--; sfx.hit(); updateHUD();
+  Juice.addTrauma(0.5);
+  Juice.hitStop(70);
   if(state.lives<=0){
     state.running=false; state.screen='paused';
     showEndCard(false);
@@ -875,7 +1097,7 @@ function playerHit(){
   }
   // Respawn oben links, kurz unverwundbar
   state.player.x = 1.5*TILE; state.player.y = 1.5*TILE;
-  state.invulnT = 2;
+  state.invulnT = CONFIG.INVULN_T;
 }
 function checkHits(){
   const p = state.player;
@@ -885,26 +1107,37 @@ function checkHits(){
     if(inBlast(bot.x,bot.y)){
       bot.alive=false; state.killed++; state.score+=200;
       state.killQueue++;
+      Juice.addTrauma(0.35);
+      Juice.hitStop(60);
+      Juice.burst(bot.x, bot.y, 20);
+      Juice.floatText('+200', bot.x, bot.y-26, psychedelic?'#00FF41':'#F97316');
       setProgress(state.killed, state.totalBots); updateHUD();
       continue;
     }
-    if(state.invulnT<=0 && Math.hypot(bot.x-p.x,bot.y-p.y) < TILE*0.62) playerHit();
+    if(state.invulnT<=0 && Math.hypot(bot.x-p.x,bot.y-p.y) < CONFIG.TOUCH_R) playerHit();
   }
 }
 
 /* ============================================================
    GAME LOOP
    ============================================================ */
-let lastTs = 0;
+let lastTs = 0, rafId = 0;
 function loop(ts){
-  if(state.screen==='menu') return;
-  const dt = Math.min((ts-lastTs)/1000, 0.05);
+  if(state.screen==='menu'){ rafId = 0; return; }
+  // dt-Clamp auch nach UNTEN: der erste rAF-Timestamp kann VOR dem
+  // performance.now() aus startLevel liegen → negatives dt → 0/0 = NaN
+  // in moveBots, Bots verschwinden ab Frame 1.
+  const dt = Math.min(Math.max((ts-lastTs)/1000, 0), 0.05);
   lastTs = ts;
-  if(state.screen==='play' && state.running){
+  if(state.screen==='play' && state.running && !Juice.frozen){
     update(dt);
   }
+  Juice.updateParticles(dt);
+  Juice.updateShake(dt, cv);          // nur das Canvas-Element wackelt, nie Entity-Koordinaten
   render(ts/1000);
-  if(state.screen!=='menu') requestAnimationFrame(loop);
+  Juice.drawParticles(ctx);           // Partikel ÜBER dem Spiel
+  if(state.screen!=='menu') rafId = requestAnimationFrame(loop);
+  else rafId = 0;
 }
 function update(dt){
   const L = LEVELS[state.level];
@@ -951,25 +1184,69 @@ function themeColors(){
   return {floor:'#0D001A', floorAlt:'#12002A', solid:'#1a0033', solidHi:'#BF00FF',
           crate:'#001A0D', crateHi:'#00FF41', outline:'#00FFFF'};
 }
-function drawTile(x,y,cell,L,t){
+function drawTile(g,x,y,cell){
   const px = x*TILE, py = y*TILE;
   const psy = themeColors();
   if(cell===1){ // Fels
-    ctx.fillStyle = psy ? psy.solid : '#4B5563';
-    ctx.beginPath(); ctx.roundRect(px+2,py+2,TILE-4,TILE-4,10); ctx.fill();
-    ctx.strokeStyle = psy ? psy.solidHi : '#1F2937'; ctx.lineWidth=3; ctx.stroke();
-    ctx.fillStyle = psy ? 'rgba(191,0,255,.35)' : 'rgba(255,255,255,.22)';
-    ctx.beginPath(); ctx.roundRect(px+8,py+8,TILE-30,10,5); ctx.fill();
+    g.fillStyle = psy ? psy.solid : '#4B5563';
+    g.beginPath(); g.roundRect(px+2,py+2,TILE-4,TILE-4,10); g.fill();
+    g.strokeStyle = psy ? psy.solidHi : '#1F2937'; g.lineWidth=3; g.stroke();
+    g.fillStyle = psy ? 'rgba(191,0,255,.35)' : 'rgba(255,255,255,.22)';
+    g.beginPath(); g.roundRect(px+8,py+8,TILE-30,10,5); g.fill();
   } else if(cell===2){ // Kiste
-    ctx.fillStyle = psy ? psy.crate : '#B45309';
-    ctx.beginPath(); ctx.roundRect(px+3,py+3,TILE-6,TILE-6,8); ctx.fill();
-    ctx.strokeStyle = psy ? psy.crateHi : '#78350F'; ctx.lineWidth=3; ctx.stroke();
-    ctx.strokeStyle = psy ? 'rgba(0,255,65,.5)' : 'rgba(120,53,15,.6)'; ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(px+3,py+TILE/2); ctx.lineTo(px+TILE-3,py+TILE/2);
-    ctx.moveTo(px+TILE/2,py+3); ctx.lineTo(px+TILE/2,py+TILE-3);
-    ctx.stroke();
+    g.fillStyle = psy ? psy.crate : '#B45309';
+    g.beginPath(); g.roundRect(px+3,py+3,TILE-6,TILE-6,8); g.fill();
+    g.strokeStyle = psy ? psy.crateHi : '#78350F'; g.lineWidth=3; g.stroke();
+    g.strokeStyle = psy ? 'rgba(0,255,65,.5)' : 'rgba(120,53,15,.6)'; g.lineWidth=2;
+    g.beginPath();
+    g.moveTo(px+3,py+TILE/2); g.lineTo(px+TILE-3,py+TILE/2);
+    g.moveTo(px+TILE/2,py+3); g.lineTo(px+TILE/2,py+TILE-3);
+    g.stroke();
+    g.fillStyle = psy ? 'rgba(0,255,65,.2)' : 'rgba(255,255,255,.18)';   // Glanz-Streifen
+    g.beginPath(); g.roundRect(px+7,py+7,TILE-14,8,4); g.fill();
   }
+}
+
+/* Statische Ebene: Boden + Vignette + Fels — 1× pro Level/Theme gezeichnet */
+let staticLayer = null;
+function buildStaticLayer(){
+  const L = LEVELS[state.level], psy = themeColors();
+  const w = state.W*TILE, h = state.H*TILE;
+  staticLayer = document.createElement('canvas');
+  staticLayer.width = w; staticLayer.height = h;
+  const c = staticLayer.getContext('2d');
+  for(let y=0;y<state.H;y++) for(let x=0;x<state.W;x++){
+    c.fillStyle = (x+y)%2===0 ? (psy?psy.floor:L.floor) : (psy?psy.floorAlt:L.floorAlt);
+    c.fillRect(x*TILE,y*TILE,TILE,TILE);
+  }
+  // sanfte Vignette — gibt dem Boden Tiefe, kostet nichts pro Frame
+  const vg = c.createRadialGradient(w/2,h/2,Math.min(w,h)*0.35, w/2,h/2,Math.max(w,h)*0.72);
+  vg.addColorStop(0,'rgba(0,0,0,0)');
+  vg.addColorStop(1, psy?'rgba(0,0,0,.5)':'rgba(0,0,0,.2)');
+  c.fillStyle = vg; c.fillRect(0,0,w,h);
+  for(let y=0;y<state.H;y++) for(let x=0;x<state.W;x++){
+    if(state.grid[y][x]===1) drawTile(c,x,y,1);
+  }
+}
+
+/* Psychedelic: 80 fixe Sterne, Funkeln über Alpha */
+const STARS = Array.from({length:80},()=>({x:Math.random(), y:Math.random(), p:Math.random()*Math.PI*2}));
+function drawStars(t){
+  const w = state.W*TILE, h = state.H*TILE;
+  for(const s of STARS){
+    ctx.globalAlpha = REDUCE ? 0.5 : 0.3+0.7*Math.abs(Math.sin(t*1.5+s.p));
+    ctx.fillStyle = '#00FFFF';
+    ctx.fillRect(s.x*w, s.y*h, 2, 2);
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* Glow nur im Psychedelic-Mode, immer mit save/restore (shadowBlur ist teuer) */
+function withGlow(color, blur, fn){
+  if(!psychedelic){ fn(); return; }
+  ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = blur;
+  fn();
+  ctx.restore();
 }
 function drawBomb(b,t){
   const px=(b.cx+.5)*TILE, py=(b.cy+.5)*TILE;
@@ -977,10 +1254,13 @@ function drawBomb(b,t){
   const pulse = urgent ? 1+Math.sin(t*22)*0.12 : 1+Math.sin(t*5)*0.05;
   const r = 16*pulse;
   const col = {normal:'#1F2937', mega:'#DC2626', pierce:'#F59E0B', remote:'#2563EB', multi:'#9333EA'}[b.type];
-  ctx.fillStyle = psychedelic ? '#000' : col;
-  ctx.strokeStyle = psychedelic ? {normal:'#00FFFF',mega:'#FF0033',pierce:'#FFFF00',remote:'#00FFFF',multi:'#FF00FF'}[b.type] : '#111827';
-  ctx.lineWidth=3;
-  ctx.beginPath(); ctx.arc(px,py+2,r,0,7); ctx.fill(); ctx.stroke();
+  const neon = {normal:'#00FFFF',mega:'#FF0033',pierce:'#FFFF00',remote:'#00FFFF',multi:'#FF00FF'}[b.type];
+  withGlow(neon, urgent?24:12, ()=>{
+    ctx.fillStyle = psychedelic ? '#000' : col;
+    ctx.strokeStyle = psychedelic ? neon : '#111827';
+    ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(px,py+2,r,0,7); ctx.fill(); ctx.stroke();
+  });
   // Zündschnur + Funke
   ctx.strokeStyle = psychedelic ? '#FF00FF' : '#78350F'; ctx.lineWidth=4;
   ctx.beginPath(); ctx.moveTo(px,py-r+4); ctx.quadraticCurveTo(px+8,py-r-8,px+13,py-r-4); ctx.stroke();
@@ -1014,12 +1294,19 @@ function drawPlayer(t){
   if(state.invulnT>0 && Math.floor(t*10)%2===0) return; // Blinken
   const bob = REDUCE ? 0 : Math.sin(t*8)*1.5;
   const px=p.x, py=p.y+bob;
-  // Körper (klassischer weißer Bomber)
-  ctx.fillStyle = psychedelic ? '#00FFFF' : '#F9FAFB';
-  ctx.strokeStyle = '#1F2937'; ctx.lineWidth=3;
-  ctx.beginPath(); ctx.arc(px,py+3,15,0,7); ctx.fill(); ctx.stroke();
+  const [dx,dy] = p.dir;
+  // Körper (klassischer weißer Bomber) — mit Glow im Psychedelic-Mode
+  withGlow('#00FFFF', 16, ()=>{
+    ctx.fillStyle = psychedelic ? '#00FFFF' : '#F9FAFB';
+    ctx.strokeStyle = '#1F2937'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(px,py+3,15,0,7); ctx.fill(); ctx.stroke();
+  });
+  // Glanzlicht oben links — macht die Figur "gezeichnet"
+  ctx.fillStyle='rgba(255,255,255,.35)';
+  ctx.beginPath(); ctx.ellipse(px-5,py-2,5,3,-0.6,0,7); ctx.fill();
   // Helm
   ctx.fillStyle = psychedelic ? '#FF00FF' : '#2563EB';
+  ctx.strokeStyle = '#1F2937';
   ctx.beginPath(); ctx.arc(px,py-6,13,Math.PI,0); ctx.fill();
   ctx.beginPath(); ctx.roundRect(px-13,py-8,26,6,3); ctx.fill(); ctx.stroke();
   // Antenne
@@ -1027,13 +1314,16 @@ function drawPlayer(t){
   ctx.beginPath(); ctx.moveTo(px,py-18); ctx.lineTo(px,py-24); ctx.stroke();
   ctx.fillStyle = psychedelic ? '#FFFF00' : '#FACC15';
   ctx.beginPath(); ctx.arc(px,py-26,3.5,0,7); ctx.fill();
-  // Augen
-  ctx.fillStyle='#1F2937';
-  const [dx] = p.dir;
-  ctx.beginPath(); ctx.arc(px-5+dx*2,py,2.8,0,7); ctx.arc(px+5+dx*2,py,2.8,0,7); ctx.fill();
+  // Große Comic-Augen: weiße Ellipse + Pupille in Blickrichtung
+  for(const s of [-1,1]){
+    ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#1F2937'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.ellipse(px+s*5.5,py+0.5,3.6,4.4,0,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#1F2937';
+    ctx.beginPath(); ctx.arc(px+s*5.5+dx*1.8, py+0.8+dy*1.5, 1.9,0,7); ctx.fill();
+  }
   // Lächeln
   ctx.strokeStyle='#1F2937'; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(px,py+5,5,0.2,Math.PI-0.2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(px,py+7,5,0.25,Math.PI-0.25); ctx.stroke();
 }
 /* Bot-Zeichnung: Geist mit Zacken unten */
 function drawBotGhost(bot,t){
@@ -1071,17 +1361,13 @@ function drawBotGhost(bot,t){
   }
 }
 function render(t){
-  const L = LEVELS[state.level];
-  const psy = themeColors();
-  // Boden (Schachbrett)
+  ctx.setTransform(state.dpr||1,0,0,state.dpr||1,0,0);
+  if(!staticLayer) buildStaticLayer();
+  ctx.drawImage(staticLayer,0,0);
+  if(psychedelic) drawStars(t);
+  // Kisten sind dynamisch (werden zerstört) — pro Frame aus dem Grid
   for(let y=0;y<state.H;y++) for(let x=0;x<state.W;x++){
-    ctx.fillStyle = (x+y)%2===0 ? (psy?psy.floor:L.floor) : (psy?psy.floorAlt:L.floorAlt);
-    ctx.fillRect(x*TILE,y*TILE,TILE,TILE);
-  }
-  // Kacheln
-  for(let y=0;y<state.H;y++) for(let x=0;x<state.W;x++){
-    const c = state.grid[y][x];
-    if(c!==0) drawTile(x,y,c,L,t);
+    if(state.grid[y][x]===2) drawTile(ctx,x,y,2);
   }
   drawBlasts(t);
   for(const b of state.bombsArr) drawBomb(b,t);
@@ -1161,19 +1447,25 @@ function openQuestion(mode){
   }
 }
 
+/* Feedback-Stimme: direkt, lustig, aufmunternd — nie nacktes "Richtig/Falsch" */
+const PRAISE = ['Boom! Volltreffer! 💥','Zünder gesetzt — perfekt! 🧨','Grammatik-Detonation! 🔥','Sauber gesprengt! 💪','Kaboom! Genau richtig! 🎯'];
+const OOPS = ['Uff, Blindgänger! 💨','Die Zündschnur war nass …','Knapp daneben ist auch vorbei!','Rohrkrepierer — nächstes Mal knallt\'s!'];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
 function answer(ok, correctStr){
   const q = currentQ, feed = $('qFeed'), exp = $('qExp'), card = $('qcard');
   exp.textContent = q.ex || '';
   if(ok){
     state.score += 50; sfx.correct(); confetti();
+    Juice.pop(card);
     if(qMode==='refill'){
       state.bombs = 4;
-      feed.innerHTML = '✅ <span style="color:var(--success)">Richtig! 4 neue Bomben! 💣💣💣💣</span>';
+      feed.innerHTML = `✅ <span style="color:var(--success)">${pick(PRAISE)} 4 neue Bomben! 💣💣💣💣</span>`;
     } else {
       const type = SPECIAL_KEYS[Math.floor(Math.random()*SPECIAL_KEYS.length)];
       state.specials[type]++;
       const s = SPECIALS[type];
-      feed.innerHTML = `✅ <span style="color:var(--success)">${s.icon} ${s.name} freigeschaltet! (Taste ${s.key})</span><br><small>${s.desc}</small>`;
+      feed.innerHTML = `✅ <span style="color:var(--success)">${pick(PRAISE)} ${s.icon} ${s.name} freigeschaltet! (Taste ${s.key})</span><br><small>${s.desc}</small>`;
       sfx.levelup();
     }
   } else {
@@ -1181,9 +1473,9 @@ function answer(ok, correctStr){
     if(!REDUCE){ card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),700); }
     if(qMode==='refill'){
       state.bombs = 1;
-      feed.innerHTML = `❌ <span style="color:var(--error)">Leider falsch — nur 1 Bombe.</span><br>Richtig wäre: <b>${correctStr}</b>`;
+      feed.innerHTML = `❌ <span style="color:var(--error)">${pick(OOPS)} Nur 1 Bombe.</span><br>Richtig wäre: <b>${correctStr}</b>`;
     } else {
-      feed.innerHTML = `❌ <span style="color:var(--error)">Keine Spezialbombe diesmal.</span><br>Richtig wäre: <b>${correctStr}</b>`;
+      feed.innerHTML = `❌ <span style="color:var(--error)">${pick(OOPS)} Keine Spezialbombe diesmal.</span><br>Richtig wäre: <b>${correctStr}</b>`;
     }
   }
   updateHUD();
