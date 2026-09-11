@@ -64,14 +64,6 @@ button{font-family:'Fredoka One','Nunito',sans-serif;cursor:pointer;border:none;
 #hud-clock.hot{color:var(--error);animation:clockpulse .5s infinite;}
 @keyframes clockpulse{50%{transform:scale(1.18);}}
 
-/* ---------- TIMING METER ---------- */
-#meter{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);width:min(420px,74vw);height:32px;
-  border-radius:999px;border:4px solid #1F2937;overflow:hidden;z-index:15;display:none;
-  background:linear-gradient(90deg,#EF4444 0%,#F59E0B 22%,#22C55E 41%,#22C55E 59%,#F59E0B 78%,#EF4444 100%);}
-#meter-needle{position:absolute;top:-4px;bottom:-4px;width:10px;background:#fff;border:3px solid #1F2937;border-radius:6px;left:50%;}
-#meter-label{position:fixed;left:50%;bottom:126px;transform:translateX(-50%);z-index:15;display:none;
-  font-family:'Fredoka One';color:#fff;font-size:16px;text-shadow:2px 2px 0 #1F2937;}
-
 /* ---------- FLOATING FEEDBACK ---------- */
 #float-msg{position:fixed;left:50%;top:34%;transform:translate(-50%,-50%);z-index:25;pointer-events:none;
   font-family:'Fredoka One';font-size:52px;color:var(--yellow);text-shadow:3px 3px 0 #1F2937;opacity:0;text-align:center;}
@@ -155,18 +147,12 @@ button:active{transform:translateY(2px) scale(.98);}
 #foot-row{max-width:800px;}
 #prog-wrap{height:10px;}
 #hud-clock{font-variant-numeric:tabular-nums;}
-#meter{bottom:92px;width:min(280px,60vw);height:18px;border:2px solid #ffffff65;box-shadow:0 4px 20px #0006;overflow:visible;pointer-events:none;}
-#meter-needle{width:6px;top:-5px;bottom:-5px;border:1px solid #1E1B4B;transform:translateX(-50%);}
-#meter-label{bottom:120px;width:90vw;text-align:center;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;pointer-events:none;}
 #hint-drag{bottom:94px;width:max-content;max-width:90vw;font-size:14px;text-align:center;border:1px solid #ffffff25;padding:12px 20px;pointer-events:none;}
 #hint-drag small{display:block;color:#d4cdeb;font-size:12px;margin-top:4px;}
 @media(min-width:601px){#hint-drag{left:24px;bottom:104px;transform:none;width:280px;max-width:34vw;font-size:13px;text-align:left;border-radius:16px;}#hint-drag small{font-size:12px;}}
 #float-msg{top:24%;font-size:clamp(26px,4vw,48px);line-height:1.15;}
 #shot-status{position:fixed;top:96px;left:24px;z-index:15;color:#fff;font-size:14px;font-weight:900;background:#141126ba;border:1px solid #ffffff20;border-radius:16px;padding:12px 16px;pointer-events:none;}
 #shot-status small{display:block;color:#dacff3;font-size:12px;margin-top:4px;}
-#drag-guide{position:fixed;inset:0;width:100%;height:100%;z-index:16;pointer-events:none;}
-#drag-guide line{stroke:var(--yellow);stroke-width:3;stroke-dasharray:6 7;}
-#drag-guide circle{fill:#1e1b4b66;stroke:var(--yellow);stroke-width:3;}
 .overlay{background:rgba(12,13,32,.62);backdrop-filter:blur(6px);}
 .card{border:2px solid #ffffff30;box-shadow:0 24px 100px #0008;}
 #menu .card{background:linear-gradient(145deg,#272044,#131426);color:#fff;max-width:600px;padding:32px;}
@@ -221,9 +207,6 @@ button:active{transform:translateY(2px) scale(.98);}
 
 <div id="hint-drag" class="hidden">Nach unten ziehen. Zielen. Loslassen.<small>Überall im Spielfeld · Leertaste + Pfeiltasten gehen auch</small></div>
 <div id="shot-status" class="hidden">DEIN COURT.<small>Zielhilfe aktiv · Level 1 / 5</small></div>
-<svg id="drag-guide" class="hidden" aria-hidden="true"><line id="drag-line"/><circle id="drag-origin" r="9"/><circle id="drag-end" r="16"/></svg>
-<div id="meter-label">WURFSTÄRKE</div>
-<div id="meter"><div id="meter-needle"></div></div>
 <div id="float-msg" role="status" aria-live="polite"></div>
 
 <!-- MENU -->
@@ -696,8 +679,6 @@ for(let i=0;i<40;i++){
   d.visible=false; scene.add(d); previewDots.push(d);
 }
 
-const aimTarget=new THREE.Mesh(new THREE.TorusGeometry(.12,.015,8,32),new THREE.MeshBasicMaterial({color:0x86efac,depthTest:false,transparent:true,opacity:.95}));
-aimTarget.rotation.x=Math.PI/2;aimTarget.visible=false;aimTarget.renderOrder=5;scene.add(aimTarget);
 const trail=[];
 const trailGeometry=new THREE.SphereGeometry(.035,6,6);
 for(let index=0;index<14;index++){
@@ -747,7 +728,7 @@ function setupLevel(){
     defender.position.set(dp.x,0,dp.z);
     defender.lookAt(playerPos.x,0,playerPos.z);
   }
-  idealSpeed=calcIdealSpeed();paintMeter();
+  idealSpeed=calcIdealSpeed();
   resetBall();
 }
 /* Ideale Power für die aktuelle Distanz (ballistisch rückwärts gerechnet) */
@@ -756,10 +737,6 @@ function calcIdealSpeed(){
   const dist=Math.hypot(HOOP.x-spawnPos.x,HOOP.z-spawnPos.z);
   const pitch=THREE.MathUtils.degToRad(SHOT_TUNING.pitch),height=HOOP.y-spawnPos.y;
   return Math.sqrt(-GRAV*dist*dist/(2*Math.cos(pitch)**2*(dist*Math.tan(pitch)-height)));
-}
-function paintMeter(){
-  const center=perfectPower*100,width=SHOT_TUNING.powerAssist[G.level]*100;
-  meter.style.background=`linear-gradient(90deg,var(--orange) 0%,var(--orange) ${center-width}%,var(--success) ${center-width}%,var(--success) ${center+width}%,var(--orange) ${center+width}%,var(--red) 100%)`;
 }
 function resetBall(){
   clearAimInput();
@@ -791,18 +768,7 @@ function showPreview(){
   hidePreview();
   if(aimPower<.04)return;
   previewPosition.copy(spawnPos);previewVelocity.copy(launchVelocity(aimPower,aimYaw));
-  const discriminant=previewVelocity.y**2+2*GRAV*(HOOP.y-spawnPos.y);
-  let aligned=false;
-  if(discriminant>=0){
-    const time=(-previewVelocity.y-Math.sqrt(discriminant))/GRAV;
-    const targetX=spawnPos.x+previewVelocity.x*time,targetZ=spawnPos.z+previewVelocity.z*time;
-    aligned=Math.hypot(targetX-HOOP.x,targetZ-HOOP.z)<HOOP.r-BALL_R-.022;
-    if(Math.abs(targetX)<5&&Math.abs(targetZ)<8){
-      aimTarget.position.set(targetX,HOOP.y+.015,targetZ);aimTarget.visible=true;
-      aimTarget.material.color.set(aligned?(isPsy()?0x00ff41:0x86efac):(isPsy()?0xffff00:0xfdb927));
-    }
-  }
-  dotMat.color.set(aligned?(isPsy()?0x00ff41:0xb4ffd1):(isPsy()?0xffff00:0xffd887));
+  dotMat.color.set(isPsy()?0xffff00:0xffd887);
   let count=0;
   for(let step=1;step<=480&&count<previewDots.length;step++){
     advanceBallistic(previewPosition,previewVelocity,SHOT_TUNING.step);
@@ -812,9 +778,8 @@ function showPreview(){
       (previewPosition.z<HOOP.boardZ+BALL_R&&Math.abs(previewPosition.x)<.95&&previewPosition.y>2.9&&previewPosition.y<4.05))break;
     if(step%12===0){previewDots[count].position.copy(previewPosition);previewDots[count].visible=true;count++;}
   }
-  meterLabel.textContent=aligned?(keyboardAim?'SITZT! Leertaste zum Werfen':'SITZT! Loslassen zum Werfen'):Math.abs(aimYaw)>SHOT_TUNING.yawAssist[G.level]+1?'Seitlich korrigieren · Escape bricht ab':aimPower<perfectPower?(keyboardAim?'↑ Mehr Power':'Etwas weiter zurückziehen'):(keyboardAim?'↓ Weniger Power':'Etwas weniger ziehen');
 }
-function hidePreview(){ previewDots.forEach(d=>d.visible=false);aimTarget.visible=false; }
+function hidePreview(){ previewDots.forEach(d=>d.visible=false); }
 
 function releaseShot(){
   if(G.state!=='play'||shot.mode!=='aim')return;
@@ -823,8 +788,8 @@ function releaseShot(){
   ball.position.copy(spawnPos);ball.scale.setScalar(1);
   shot.mode='fly'; shot.t=0; G.clockOn=false;
   flightAccumulator=0;clearAimInput();
-  hidePreview(); hideMeter();
-  $('shot-status').textContent=shot.perfect?'SAUBER LOSGELASSEN.':'BALL IST UNTERWEGS.';
+  hidePreview();
+  $('shot-status').textContent='BALL IST UNTERWEGS.';
   SND.click();
 }
 
@@ -928,7 +893,7 @@ function afterQuiz(){
 }
 function evaluateLevel(){
   G.state='level';
-  G.clockOn=false;hideMeter();hidePreview();$('hint-drag').classList.add('hidden');
+  G.clockOn=false;hidePreview();$('hint-drag').classList.add('hidden');
   const passed=G.hitsInLevel>=HITS_NEEDED;
   $('lv-hits').textContent=G.hitsInLevel+'/'+(BALLS_PER_ROUND*ROUNDS_PER_LEVEL);
   $('lv-pts').textContent=G.levelScore;
@@ -981,7 +946,7 @@ function pickQuestion(){
   return q;
 }
 function openQuiz(){
-  clearAimInput();hideMeter();hidePreview();$('hint-drag').classList.add('hidden');
+  clearAimInput();hidePreview();$('hint-drag').classList.add('hidden');
   G.state='quiz'; G.quizAttempt=0;
   renderQuestion(pickQuestion());
   $('quiz').classList.remove('hidden');
@@ -1078,10 +1043,6 @@ function confetti(){
 }
 
 /* ---------------- EINGABE (Ziehen + Timing) ---------------- */
-const meter=$('meter'), needle=$('meter-needle'), meterLabel=$('meter-label');
-function showMeter(){ meter.style.display='block'; meterLabel.style.display='block'; }
-function hideMeter(){ meter.style.display='none'; meterLabel.style.display='none'; }
-
 function onDown(e){
   if(G.state!=='play'||shot.mode!=='idle'||!e.isPrimary||e.button!==0)return;
   e.preventDefault();ac();canvas.focus({preventScroll:true});
@@ -1092,13 +1053,11 @@ function onDown(e){
 }
 function beginAim(keyboard){
   keyboardAim=keyboard;shot.mode='aim';aimYaw=0;aimPower=keyboard?.3:0;
-  canvas.classList.add('aiming');showMeter();updateAim();
+  canvas.classList.add('aiming');updateAim();
   $('hint-drag').classList.add('hidden');
 }
 function updateAim(){
-  needle.style.left=(aimPower*100)+'%';
   showPreview();
-  if(aimPower<.04)meterLabel.textContent=keyboardAim?'↑ mehr Power · ↓ weniger · ← → zielen':'Nach unten ziehen = mehr Power';
 }
 function updateDrag(event){
   if(event.pointerId!==activePointer||shot.mode!=='aim'||!dragStart)return;
@@ -1106,12 +1065,7 @@ function updateDrag(event){
   dragStart.pull=Math.max(0,vertical);
   aimPower=THREE.MathUtils.clamp(vertical/dragStart.scale,0,1);
   aimYaw=THREE.MathUtils.clamp(horizontal/dragStart.scale*12,-16,16);
-  const line=$('drag-line'),origin=$('drag-origin'),end=$('drag-end');
-  line.setAttribute('x1',dragStart.x);line.setAttribute('y1',dragStart.y);
-  line.setAttribute('x2',event.clientX);line.setAttribute('y2',event.clientY);
-  origin.setAttribute('cx',dragStart.x);origin.setAttribute('cy',dragStart.y);
-  end.setAttribute('cx',event.clientX);end.setAttribute('cy',event.clientY);
-  $('drag-guide').classList.remove('hidden');updateAim();
+  updateAim();
 }
 function onUp(event){
   if(event.pointerId!==activePointer||shot.mode!=='aim')return;
@@ -1121,7 +1075,7 @@ function onUp(event){
 function clearAimInput(){
   const pointer=activePointer;activePointer=null;dragStart=null;keyboardAim=false;
   if(pointer!==null&&canvas.hasPointerCapture(pointer))canvas.releasePointerCapture(pointer);
-  canvas.classList.remove('aiming');$('drag-guide').classList.add('hidden');hideMeter();
+  canvas.classList.remove('aiming');
 }
 function cancelAim(){
   if(shot.mode!=='aim')return;
