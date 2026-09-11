@@ -7,7 +7,7 @@
 <meta name="lernspiel:thema"        content="Past Tenses & Present Perfect">
 <meta name="lernspiel:stufe"        content="7. Schulstufe">
 <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
-<meta name="lernspiel:beschreibung" content="Bomberman-Klon: Sprenge Kisten und jage Bots — gehen die Bomben aus, gibt's Nachschub nur für richtige Antworten zu Past Simple, Past Progressive & Present Perfect. Bot-Kills schalten Spezialbomben frei!">
+<meta name="lernspiel:beschreibung" content="Bomberman-Klon mit fünf einzigartigen Welten und taktischen Bots, die pro Level stärker werden. Bombennachschub gibt es durch Grammatikfragen zu Past Tenses und Present Perfect.">
 <title>Bomber Grammar 2 💣 — Past Tenses vs. Present Perfect</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -547,25 +547,35 @@ function drawQuestion(){
    Bot-Speed in px/s (lineares Tracking, keine Konvergenz)
    ============================================================ */
 const TILE = 48;
-/* KI-Stufen pro Level (skills-test/game-physics: Intelligenz über Entscheidungen, nie über Speed-Cheats):
-   bfs     = echte Wegfindung um Kisten herum statt Manhattan-Greedy
-   predict = zielt 2 Felder VOR den Spieler (Abfangen)
-   anyFuse = meidet jede Bombenlinie, egal wie lang die Zündschnur noch ist
-   escape  = Bomber legt nur, wenn er selbst einen Fluchtweg hat (kein Selbstmord)
-   cd      = Bomber-Cooldown [min,max] s */
+/* KI-Stufen pro Level: Stärke entsteht vor allem durch bessere Entscheidungen.
+   bfs         = echte Wegfindung statt zufälligem Manhattan-Laufen
+   predict     = Anzahl Felder, die der Spieler vorausberechnet wird
+   flank       = Verfolger schneiden seitliche Fluchtwege ab
+   aggro       = Radius, in dem der Spieler immer verfolgt wird
+   bombChance  = Angriffswahrscheinlichkeit an einer taktisch sinnvollen Position
+   opening     = Mindestwartezeit vor der ersten Bot-Bombe
+   cd          = Bomber-Cooldown [min,max] s */
 const LEVELS = [
-  {name:'Garten',   w:13, h:11, bots:2, bombers:0, botSpeed:55,  chase:0.25, avoid:false, density:0.42, floor:'#7CB94E', floorAlt:'#8FC95F',
-   ai:{bfs:false, predict:false, aggro:0, escape:false, cd:[4.5,7.5]}},
-  {name:'Schulhof', w:15, h:11, bots:3, bombers:1, botSpeed:70,  chase:0.45, avoid:false, density:0.46, floor:'#C9A36A', floorAlt:'#D6B37D',
-   ai:{bfs:false, predict:false, aggro:0, escape:true,  cd:[4.5,7.5]}},
-  {name:'Fabrik',   w:15, h:13, bots:4, bombers:1, botSpeed:85,  chase:0.60, avoid:true,  density:0.48, floor:'#8A94A6', floorAlt:'#98A2B3',
-   ai:{bfs:true,  predict:false, aggro:3, escape:true,  cd:[4,6.5]}},
-  {name:'Burg',     w:17, h:13, bots:5, bombers:2, botSpeed:100, chase:0.75, avoid:true,  density:0.50, floor:'#9B8AA6', floorAlt:'#A898B3',
-   ai:{bfs:true,  predict:true,  aggro:5, escape:true,  cd:[3.5,6]}},
-  {name:'Vulkan',   w:17, h:15, bots:6, bombers:3, botSpeed:115, chase:0.90, avoid:true,  density:0.52, floor:'#B96A4E', floorAlt:'#C97B5F',
-   ai:{bfs:true,  predict:true,  aggro:7, escape:true,  cd:[3.5,5.5]}},
-   // aggro = Manhattan-Radius (Tiles), in dem IMMER gejagt wird (kein Würfeln).
-   // anyFuse getestet und verworfen: Bots wurden übervorsichtig und jagten nicht mehr (Sim 2026-07-12)
+  {name:'Garten', w:13, h:11, bots:2, bombers:0, botSpeed:58, chase:0.55, avoid:false, density:0.38,
+   floor:'#7CB94E', floorAlt:'#8FC95F', solid:{kind:'hedge',base:'#267A3E',edge:'#14532D',hi:'#86EFAC'},
+   walls:[[5,3],[6,3],[7,3],[5,7],[6,7],[7,7]],
+   ai:{bfs:false,predict:0,flank:false,aggro:3,bombChance:0,opening:99,cd:[7,9]}},
+  {name:'Schulhof', w:15, h:11, bots:3, bombers:1, botSpeed:72, chase:0.70, avoid:true, density:0.42,
+   floor:'#C9A36A', floorAlt:'#D6B37D', solid:{kind:'court',base:'#64748B',edge:'#334155',hi:'#CBD5E1'},
+   walls:[[5,3],[6,3],[8,3],[9,3],[5,7],[6,7],[8,7],[9,7]],
+   ai:{bfs:true,predict:0,flank:false,aggro:4,bombChance:0.55,opening:4.2,cd:[5.2,7.2]}},
+  {name:'Fabrik', w:15, h:13, bots:4, bombers:1, botSpeed:86, chase:0.82, avoid:true, density:0.44,
+   floor:'#8A94A6', floorAlt:'#98A2B3', solid:{kind:'machine',base:'#475569',edge:'#1E293B',hi:'#94A3B8'},
+   walls:[[4,3],[5,3],[9,3],[10,3],[4,9],[5,9],[9,9],[10,9],[7,5],[7,7]],
+   ai:{bfs:true,predict:1,flank:true,aggro:5,bombChance:0.66,opening:3.8,cd:[4.4,6.2]}},
+  {name:'Burg', w:17, h:13, bots:5, bombers:2, botSpeed:100, chase:0.92, avoid:true, density:0.46,
+   floor:'#9B8AA6', floorAlt:'#A898B3', solid:{kind:'castle',base:'#6B7280',edge:'#374151',hi:'#D1D5DB'},
+   walls:[[8,3],[9,3],[5,5],[11,5],[5,6],[11,6],[5,7],[11,7],[7,9],[8,9],[9,9]],
+   ai:{bfs:true,predict:2,flank:true,aggro:7,bombChance:0.76,opening:3.4,cd:[3.8,5.4]}},
+  {name:'Vulkan', w:17, h:15, bots:6, bombers:3, botSpeed:112, chase:1, avoid:true, density:0.48,
+   floor:'#B96A4E', floorAlt:'#C97B5F', solid:{kind:'volcano',base:'#3F3F46',edge:'#18181B',hi:'#F97316'},
+   walls:[[6,3],[7,3],[9,3],[10,3],[4,5],[12,5],[4,6],[12,6],[4,8],[12,8],[4,9],[12,9],[6,11],[7,11],[9,11],[10,11]],
+   ai:{bfs:true,predict:3,flank:true,aggro:10,bombChance:0.86,opening:3,cd:[3.2,4.8]}},
 ];
 const BOT_COLORS = ['#DC2626','#9333EA','#F97316','#EC4899','#0D9488','#16A34A'];
 const BOT_COLORS_PSY = ['#FF0033','#BF00FF','#FF6600','#FF00FF','#00FFFF','#00FF41'];
@@ -697,6 +707,10 @@ function startLevel(n, resetScore){
       if(g[cy+dy] && g[cy+dy][cx+dx]===0) mark(cx+dx,cy+dy);
     });
   });
+  // Jede Welt besitzt ein festes, unzerstörbares Grundmuster. Spawnwege bleiben frei.
+  for(const [wallX,wallY] of L.walls){
+    if(g[wallY]?.[wallX]===0 && !safe.has(wallX+','+wallY)) g[wallY][wallX]=1;
+  }
   // Kisten verteilen
   for(let y=1;y<L.h-1;y++) for(let x=1;x<L.w-1;x++){
     if(g[y][x]===0 && !safe.has(x+','+y) && Math.random()<L.density) g[y][x]=2;
@@ -710,11 +724,15 @@ function startLevel(n, resetScore){
     const [bx,by] = botSpots[i];
     const isBomber = i >= L.bots - L.bombers;   // Bomber = die letzten N Bots
     state.bots.push({
+      id:'bot-'+i,
       x:(bx+.5)*TILE, y:(by+.5)*TILE,
       tx:bx, ty:by, dir:null,
       speed:L.botSpeed*(0.9 + CONFIG.BOT_SPREAD*i),   // Offsets: Verfolger spreizen statt stapeln
       color:i%BOT_COLORS.length, alive:true, wob:Math.random()*10,
-      bomber:isBomber, bombCd:2+Math.random()*3, fleeT:0
+      role:isBomber?'bomber':(i%2?'flanker':'hunter'),
+      bomber:isBomber,
+      bombCd:L.ai.opening+Math.random()*1.2,
+      fleeT:0, escapePath:[]
     });
   }
 
@@ -910,17 +928,33 @@ function movePlayer(dt){
 }
 
 /* ---------- Bot-KI: Tile-zu-Tile, lineare Geschwindigkeit ---------- */
-function tileDangerous(cx,cy, anyFuse, horizon){
+const DIRS4 = [[1,0],[-1,0],[0,1],[0,-1]];
+
+function blastTiles(cx,cy,range,pierce){
+  const tiles=[[cx,cy]];
+  for(const [dirX,dirY] of DIRS4){
+    for(let distance=1;distance<=range;distance++){
+      const tileX=cx+dirX*distance, tileY=cy+dirY*distance;
+      const cell=state.grid[tileY]?.[tileX];
+      if(cell===1 || cell===undefined) break;
+      tiles.push([tileX,tileY]);
+      if(cell===2 && !pierce) break;
+    }
+  }
+  return tiles;
+}
+function bombThreatensTile(bomb,cx,cy){
+  return blastTiles(bomb.cx,bomb.cy,bomb.range,bomb.pierce).some(([tileX,tileY])=>tileX===cx&&tileY===cy);
+}
+function tileDangerous(cx,cy,anyFuse,horizon){
   if(state.blasts.has(cx+','+cy)) return true;
-  for(const b of state.bombsArr){
-    if(b.timer===Infinity) continue;
-    if(b.timer>(horizon||1.2) && !anyFuse) continue;
-    if(b.cx===cx && Math.abs(b.cy-cy)<=b.range) return true;
-    if(b.cy===cy && Math.abs(b.cx-cx)<=b.range) return true;
+  for(const bomb of state.bombsArr){
+    if(bomb.timer===Infinity) continue;
+    if(bomb.timer>(horizon||1.2) && !anyFuse) continue;
+    if(bombThreatensTile(bomb,cx,cy)) return true;
   }
   return false;
 }
-const DIRS4 = [[1,0],[-1,0],[0,1],[0,-1]];
 
 /* BFS: erster Schritt auf dem kürzesten Weg zum Ziel (über freie Tiles, max 160 Knoten) */
 function bfsStep(sx,sy,tx,ty, avoidDanger, anyFuse){
@@ -972,15 +1006,56 @@ function fleeStep(bot, anyFuse){
   return null;
 }
 
+function nearestOpenTarget(targetX,targetY){
+  if(state.grid[targetY]?.[targetX]===0) return [targetX,targetY];
+  const seen=new Set([targetX+','+targetY]);
+  const queue=[[targetX,targetY]];
+  while(queue.length){
+    const [currentX,currentY]=queue.shift();
+    for(const [dirX,dirY] of DIRS4){
+      const nextX=currentX+dirX, nextY=currentY+dirY;
+      const targetKey=nextX+','+nextY;
+      if(seen.has(targetKey)) continue;
+      seen.add(targetKey);
+      if(state.grid[nextY]?.[nextX]===0) return [nextX,nextY];
+      if(state.grid[nextY]?.[nextX]!==undefined) queue.push([nextX,nextY]);
+    }
+  }
+  return [targetX,targetY];
+}
+
+function tacticalTarget(bot,L){
+  const player=state.player;
+  const [playerX,playerY]=tileOf(player.x,player.y);
+  let targetX=playerX+player.dir[0]*L.ai.predict;
+  let targetY=playerY+player.dir[1]*L.ai.predict;
+  if(L.ai.flank && bot.role==='flanker'){
+    const side=Number(bot.id.split('-')[1])%2===0?1:-1;
+    targetX+=-player.dir[1]*2*side;
+    targetY+=player.dir[0]*2*side;
+  }
+  targetX=Math.max(1,Math.min(state.W-2,targetX));
+  targetY=Math.max(1,Math.min(state.H-2,targetY));
+  return nearestOpenTarget(targetX,targetY);
+}
+
 function chooseBotDir(bot, L){
   const A = L.ai;
   const anyFuse = bot.fleeT>0;
   const hz = A.horizon || 1.2;   // wie früh (s Restzündschnur) eine Bombenlinie gemieden wird
+  // Ein geprüfter Fluchtplan hat immer Vorrang vor Jagd und Anti-Stacking.
+  if(bot.escapePath.length){
+    const planned=bot.escapePath.shift();
+    if(!blockedTile(bot.tx+planned[0],bot.ty+planned[1],false)) return planned;
+    bot.escapePath=[];
+  }
   // 1) In Gefahr? → gezielt zum nächsten sicheren Tile fliehen (nicht zufällig)
   if((L.avoid || bot.bomber) && tileDangerous(bot.tx,bot.ty,anyFuse,hz)){
     const f = fleeStep(bot, anyFuse);
     if(f) return f;
   }
+  // Am berechneten Schutzpunkt warten, bis die eigene Explosion vorbei ist.
+  if(bot.fleeT>0 && bot.escapePath.length===0) return null;
   let valid = DIRS4.filter(([dx,dy])=>!blockedTile(bot.tx+dx, bot.ty+dy, false));
   if(valid.length===0) return null;
   if(L.avoid || bot.bomber){
@@ -996,12 +1071,7 @@ function chooseBotDir(bot, L){
   const [pcx,pcy] = tileOf(p.x,p.y);
   const mdist = Math.abs(bot.tx-pcx)+Math.abs(bot.ty-pcy);
   if(mdist <= A.aggro || Math.random() < L.chase){   // im Aggro-Radius wird IMMER gejagt
-    // Abfangen: Ziel 2 Tiles VOR dem Spieler in seiner Laufrichtung
-    let tx = pcx, ty = pcy;
-    if(A.predict){
-      const gx = pcx+p.dir[0]*2, gy = pcy+p.dir[1]*2;
-      if(state.grid[gy]?.[gx]===0){ tx = gx; ty = gy; }
-    }
+    const [tx,ty]=tacticalTarget(bot,L);
     if(A.bfs){
       let s = bfsStep(bot.tx,bot.ty, tx,ty, (L.avoid||bot.bomber), anyFuse);
       if(!s && (tx!==pcx || ty!==pcy)) s = bfsStep(bot.tx,bot.ty, pcx,pcy, (L.avoid||bot.bomber), anyFuse); // Fallback: direkt zum Spieler
@@ -1021,37 +1091,56 @@ function chooseBotDir(bot, L){
   }
   return valid[Math.floor(Math.random()*valid.length)];
 }
-/* Fluchtweg-Check: Gäbe es nach einer Bombe auf (cx,cy) binnen 4 Schritten ein sicheres Tile? */
-function bombEscapePossible(cx,cy,range){
-  const key=(x,y)=>x+','+y;
-  const inLine=(x,y)=>(x===cx && Math.abs(y-cy)<=range) || (y===cy && Math.abs(x-cx)<=range);
-  const seen = new Set([key(cx,cy)]);
-  const q = [[cx,cy,0]];
-  while(q.length){
-    const [x,y,d] = q.shift();
-    if(!inLine(x,y) && !tileDangerous(x,y,true)) return true;
-    if(d>=4) continue;
-    for(const [dx,dy] of DIRS4){
-      const nx=x+dx, ny=y+dy, k=key(nx,ny);
-      if(seen.has(k) || blockedTile(nx,ny,false)) continue;
-      seen.add(k); q.push([nx,ny,d+1]);
+
+function findEscapeRoute(bot,cx,cy,range,fuse){
+  const tileKey=(x,y)=>x+','+y;
+  const ownBlast=new Set(blastTiles(cx,cy,range,false).map(([tileX,tileY])=>tileKey(tileX,tileY)));
+  const safeTravelTime=Math.max(0,fuse-0.35);
+  const maxSteps=Math.floor(safeTravelTime*bot.speed/TILE);
+  if(maxSteps<1) return null;
+  const seen=new Set([tileKey(cx,cy)]);
+  const queue=[{x:cx,y:cy,path:[]}];
+  while(queue.length){
+    const current=queue.shift();
+    const currentKey=tileKey(current.x,current.y);
+    if(current.path.length>0 && !ownBlast.has(currentKey) && !tileDangerous(current.x,current.y,true)) return current.path;
+    if(current.path.length>=maxSteps) continue;
+    for(const direction of DIRS4){
+      const nextX=current.x+direction[0], nextY=current.y+direction[1];
+      const nextKey=tileKey(nextX,nextY);
+      if(seen.has(nextKey) || blockedTile(nextX,nextY,false)) continue;
+      if(tileDangerous(nextX,nextY,true)) continue;
+      seen.add(nextKey);
+      queue.push({x:nextX,y:nextY,path:current.path.concat([direction])});
     }
   }
-  return false;
+  return null;
+}
+function clearBlastLine(cx,cy,targetX,targetY,range){
+  if(cx!==targetX && cy!==targetY) return false;
+  const distance=Math.abs(targetX-cx)+Math.abs(targetY-cy);
+  if(distance>range) return false;
+  const dirX=Math.sign(targetX-cx), dirY=Math.sign(targetY-cy);
+  for(let step=1;step<distance;step++){
+    if(state.grid[cy+dirY*step]?.[cx+dirX*step]!==0) return false;
+  }
+  return true;
 }
 function botTryBomb(bot, L){
   if(bot.bombCd>0 || bombAt(bot.tx,bot.ty)) return;
   const A = L.ai;
   const [pcx,pcy] = tileOf(state.player.x,state.player.y);
-  const inLine = (bot.tx===pcx && Math.abs(bot.ty-pcy)<=3) || (bot.ty===pcy && Math.abs(bot.tx-pcx)<=3);
+  const inLine = clearBlastLine(bot.tx,bot.ty,pcx,pcy,2);
   const crateAdj = DIRS4.some(([dx,dy])=>state.grid[bot.ty+dy]?.[bot.tx+dx]===2);
   // Taktik: Angriff in der Schusslinie ODER Kisten wegbomben (öffnet die Map — nötig für Druck)
-  if(!(inLine || crateAdj) || Math.random()>=0.6) return;
-  if(A.escape && !bombEscapePossible(bot.tx,bot.ty,2)) return;   // kein Selbstmord
+  if(!(inLine || crateAdj) || Math.random()>=A.bombChance) return;
+  const escapePath=findEscapeRoute(bot,bot.tx,bot.ty,2,FUSE);
+  if(!escapePath) return;
   state.bombsArr.push({cx:bot.tx,cy:bot.ty,type:'normal',timer:FUSE,range:2,bot:true,
-    pass: overlapsTile(state.player.x,state.player.y,bot.tx,bot.ty)});
+    owner:bot.id,pass:overlapsTile(state.player.x,state.player.y,bot.tx,bot.ty)});
   bot.bombCd = A.cd[0] + Math.random()*(A.cd[1]-A.cd[0]);
-  bot.fleeT = 1.8;
+  bot.fleeT = FUSE+BLAST_T;
+  bot.escapePath=escapePath;
   sfx.place();
 }
 function moveBots(dt, L){
@@ -1188,11 +1277,39 @@ function drawTile(g,x,y,cell){
   const px = x*TILE, py = y*TILE;
   const psy = themeColors();
   if(cell===1){ // Fels
-    g.fillStyle = psy ? psy.solid : '#4B5563';
+    const solid=LEVELS[state.level].solid;
+    g.fillStyle = psy ? psy.solid : solid.base;
     g.beginPath(); g.roundRect(px+2,py+2,TILE-4,TILE-4,10); g.fill();
-    g.strokeStyle = psy ? psy.solidHi : '#1F2937'; g.lineWidth=3; g.stroke();
-    g.fillStyle = psy ? 'rgba(191,0,255,.35)' : 'rgba(255,255,255,.22)';
+    g.strokeStyle = psy ? psy.solidHi : solid.edge; g.lineWidth=3; g.stroke();
+    g.fillStyle = psy ? 'rgba(191,0,255,.35)' : solid.hi;
+    g.globalAlpha=.32;
     g.beginPath(); g.roundRect(px+8,py+8,TILE-30,10,5); g.fill();
+    g.globalAlpha=1;
+    g.strokeStyle=psy?psy.solidHi:solid.hi;
+    g.fillStyle=psy?psy.solidHi:solid.hi;
+    g.lineWidth=2;
+    if(solid.kind==='hedge'){
+      for(const [leafX,leafY] of [[14,17],[27,14],[22,29],[34,27]]){
+        g.beginPath();g.arc(px+leafX,py+leafY,5,0,7);g.fill();
+      }
+    }else if(solid.kind==='court'){
+      g.beginPath();g.moveTo(px+8,py+24);g.lineTo(px+40,py+24);g.stroke();
+      g.beginPath();g.arc(px+24,py+24,8,0,7);g.stroke();
+    }else if(solid.kind==='machine'){
+      for(const rivetX of [11,37]) for(const rivetY of [12,36]){
+        g.beginPath();g.arc(px+rivetX,py+rivetY,2.5,0,7);g.fill();
+      }
+      g.beginPath();g.moveTo(px+11,py+24);g.lineTo(px+37,py+24);g.stroke();
+    }else if(solid.kind==='castle'){
+      g.beginPath();
+      g.moveTo(px+4,py+19);g.lineTo(px+44,py+19);
+      g.moveTo(px+4,py+33);g.lineTo(px+44,py+33);
+      g.moveTo(px+18,py+4);g.lineTo(px+18,py+19);
+      g.moveTo(px+31,py+19);g.lineTo(px+31,py+33);g.stroke();
+    }else if(solid.kind==='volcano'){
+      g.beginPath();g.moveTo(px+10,py+10);g.lineTo(px+22,py+22);g.lineTo(px+16,py+38);
+      g.moveTo(px+38,py+8);g.lineTo(px+29,py+24);g.lineTo(px+38,py+38);g.stroke();
+    }
   } else if(cell===2){ // Kiste
     g.fillStyle = psy ? psy.crate : '#B45309';
     g.beginPath(); g.roundRect(px+3,py+3,TILE-6,TILE-6,8); g.fill();
