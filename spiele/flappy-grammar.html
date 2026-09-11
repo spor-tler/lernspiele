@@ -8,7 +8,7 @@
   <meta name="lernspiel:thema"        content="Past vs Present Perfect">
   <meta name="lernspiel:stufe"        content="7. Schulstufe">
   <meta name="lernspiel:fach"         content="Englisch (Grammatik)">
-  <meta name="lernspiel:beschreibung" content="Flieg durch die Lücken mit der richtigen Zeitform: Past oder Present Perfect.">
+  <meta name="lernspiel:beschreibung" content="Flieg durch die Röhren und trainiere Past Simple, Present Perfect oder beide Zeitformen – mit drei wählbaren Schwierigkeitsgraden.">
 <title>Flappy Grammar — Past vs Present Perfect | School Games 🎓</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -95,6 +95,21 @@ h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif
 }
 :root[data-theme="psychedelic"] .controls-box{ background:#000; }
 .controls-box b{ color:var(--blue); }
+.setup-group{ margin:16px 0; text-align:left; }
+.setup-label{ display:block; font-family:'Fredoka One','Nunito',sans-serif; font-size:17px; color:var(--purple); margin-bottom:8px; }
+.choice-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.choice-btn{
+  min-height:64px; padding:8px; border:3px solid var(--text-dark); border-radius:16px;
+  background:var(--bg-main); color:var(--text-dark); cursor:pointer; font-family:'Nunito',sans-serif;
+  font-size:14px; font-weight:900; line-height:1.25; transition:transform .15s,background .15s,box-shadow .15s;
+}
+.choice-btn small{ display:block; font-size:11px; font-weight:800; opacity:.78; margin-top:3px; }
+.choice-btn:hover{ transform:translateY(-2px); }
+.choice-btn:active{ transform:translate(1px,1px) scale(.98); }
+.choice-btn:focus-visible{ outline:3px solid var(--orange); outline-offset:2px; }
+.choice-btn[aria-pressed="true"]{ background:var(--purple); color:#fff; border-color:var(--purple); box-shadow:3px 3px 0 #581C87; }
+:root[data-theme="psychedelic"] .choice-btn{ background:#000; color:#fff; border-color:var(--purple); }
+:root[data-theme="psychedelic"] .choice-btn[aria-pressed="true"]{ background:var(--yellow); color:#000; border-color:var(--yellow); box-shadow:var(--shadow-btn-green); }
 
 /* ---------- BUTTONS ---------- */
 .btn{
@@ -239,6 +254,17 @@ h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif
 .kbd{ display:inline-block; background:var(--text-dark); color:#fff; border-radius:6px; padding:1px 8px; font-size:13px; font-weight:900; }
 :root[data-theme="psychedelic"] .kbd{ background:var(--purple); color:#000; }
 .foot-tag{ margin-top:18px; font-size:12px; font-weight:800; color:var(--teal); }
+@media(max-width:600px){
+  .screen-card{ padding:24px 16px; }
+  .choice-grid{ grid-template-columns:1fr; }
+  .choice-btn{ min-height:52px; }
+}
+@media(max-height:760px) and (min-width:601px){
+  .screen-card{ padding:16px; }
+  .screen-card .sub,.controls-box{ margin-bottom:12px; }
+  .setup-group{ margin:10px 0; }
+  .choice-btn{ min-height:54px; }
+}
 </style>
 </head>
 <body>
@@ -253,12 +279,28 @@ h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif
 <!-- START SCREEN -->
 <div class="screen" id="startScreen">
   <div class="screen-card">
-    <span class="badge">7. Klasse · AHS · B1</span>
+    <span class="badge">7. Schulstufe · MS &amp; AHS</span>
     <h1>Flappy Grammar 🐦</h1>
-    <h2>Past Simple vs. Present Perfect</h2>
+    <h2>Wähle dein Training</h2>
     <div class="rule-strip">
       Flieg durch die Röhren! Bei jedem <b>Checkpoint</b> kommt eine
       Grammatik-Aufgabe: <b>Multiple Choice</b>, <b>Lückentext</b> oder <b>Fehler finden</b>.
+    </div>
+    <div class="setup-group">
+      <span class="setup-label">1. Grammatik</span>
+      <div class="choice-grid" id="topicChoices" role="group" aria-label="Grammatikthema wählen">
+        <button class="choice-btn" data-topic="past" aria-pressed="false">Past Simple<small>yesterday, ago, last …</small></button>
+        <button class="choice-btn" data-topic="perfect" aria-pressed="false">Present Perfect<small>just, yet, since, for …</small></button>
+        <button class="choice-btn" data-topic="mixed" aria-pressed="true">Beide gemischt<small>Welche Zeitform passt?</small></button>
+      </div>
+    </div>
+    <div class="setup-group">
+      <span class="setup-label">2. Schwierigkeit</span>
+      <div class="choice-grid" id="difficultyChoices" role="group" aria-label="Schwierigkeit wählen">
+        <button class="choice-btn" data-difficulty="easy" aria-pressed="true">🟢 Leicht<small>MS Standard · große Lücken</small></button>
+        <button class="choice-btn" data-difficulty="medium" aria-pressed="false">🔵 Mittel<small>MS/AHS · normales Tempo</small></button>
+        <button class="choice-btn" data-difficulty="hard" aria-pressed="false">🔴 Schwer<small>AHS · anspruchsvoll &amp; schnell</small></button>
+      </div>
     </div>
     <div class="controls-box">
       🕹️ <b>Fliegen:</b> <span class="kbd">Leertaste</span> · Klick · Tippen<br>
@@ -282,7 +324,7 @@ h1,h2,h3,.fredoka{ font-family:'Fredoka One','Nunito','Comic Sans MS',sans-serif
       <span style="font-size:14px; color:var(--teal);">Richtige Antworten: <b id="finalCorrect">0</b> · Beste Serie: <b id="finalStreak">0</b></span>
     </div>
     <div id="overTip" class="controls-box" style="font-size:14px; line-height:1.6;"></div>
-    <button class="btn success" id="againBtn">Nochmal fliegen 🔁</button>
+    <button class="btn success" id="againBtn">Neue Runde &amp; Auswahl 🔁</button>
   </div>
 </div>
 
@@ -413,78 +455,71 @@ const GROUND_Y = H - GROUND_H;
    diff: 1 (leicht) … 3 (fordernd)
 ------------------------------------------------------------------- */
 const QUESTIONS = [
-  // ----- MULTIPLE CHOICE -----
-  { type:'mc', diff:1, prompt:'Wähle die richtige Form.',
-    text:'I ___ my homework an hour ago.',
-    opts:['did','have done','have did'], answer:0,
-    rule:'„an hour ago" ist abgeschlossene Vergangenheit → Past Simple (did).' },
-  { type:'mc', diff:1, prompt:'Choose the correct form.',
-    text:'She ___ just ___ her keys.',
-    opts:['has / found','did / find','has / find'], answer:0,
-    rule:'„just" = Signalwort für Present Perfect: has/have + just + Partizip (found).' },
-  { type:'mc', diff:2, prompt:'Past Simple oder Present Perfect?',
-    text:'We ___ in Vienna since 2019.',
-    opts:['have lived','lived','live'], answer:0,
-    rule:'„since" + Zeitpunkt → Handlung dauert an → Present Perfect (have lived).' },
-  { type:'mc', diff:2, prompt:'Choose the correct option.',
-    text:'___ you ever ___ sushi?',
-    opts:['Have / eaten','Did / eat','Have / ate'], answer:0,
-    rule:'„ever" (Erfahrung im Leben) → Present Perfect: Have you ever eaten…?' },
-  { type:'mc', diff:2, prompt:'Welcher Satz ist richtig?',
-    text:'Erfahrung gestern – welche Form?',
-    opts:['I saw that film last night.','I have seen that film last night.','I seen that film last night.'], answer:0,
-    rule:'„last night" = bestimmter Zeitpunkt in der Vergangenheit → Past Simple (saw).' },
-  { type:'mc', diff:3, prompt:'Choose the best answer.',
-    text:'When ___ you ___ to London?  — Last summer.',
-    opts:['did / go','have / gone','did / went'], answer:0,
-    rule:'Frage mit „When" nach einem genauen Zeitpunkt → Past Simple (did you go).' },
-  { type:'mc', diff:3, prompt:'Pick the correct form.',
-    text:'The train ___ already ___ when we got to the station.',
-    opts:['had / left','has / left','did / leave'], answer:0,
-    rule:'Vorzeitig vor einer anderen Vergangenheit → Past Perfect (had left). Achtung: NICHT Present Perfect!' },
+  // Past Simple · MS Standard
+  {id:'p1m1',topic:'past',type:'mc',diff:1,prompt:'Wähle die richtige Form.',text:'I ___ my homework an hour ago.',opts:['did','have done','do'],answer:0,rule:'„an hour ago" bezeichnet einen abgeschlossenen Zeitpunkt → Past Simple.'},
+  {id:'p1m2',topic:'past',type:'mc',diff:1,prompt:'Choose the correct form.',text:'Mia ___ tennis last Saturday.',opts:['played','has played','plays'],answer:0,rule:'„last Saturday" → Past Simple: played.'},
+  {id:'p1m3',topic:'past',type:'mc',diff:1,prompt:'Welcher Satz ist richtig?',text:'Was geschah gestern Abend?',opts:['We saw a funny film.','We have seen a funny film yesterday.','We see a funny film.'],answer:0,rule:'Ein klarer vergangener Zeitpunkt verlangt Past Simple: saw.'},
+  {id:'p1g1',topic:'past',type:'gap',diff:1,prompt:'Setze das Verb ins Past Simple.',text:'Yesterday I (visit) ___ my grandparents.',verb:'visit',answer:['visited'],rule:'Regelmäßige Verben erhalten im Past Simple meist -ed.'},
+  {id:'p1g2',topic:'past',type:'gap',diff:1,prompt:'Setze die richtige Form ein.',text:'Leo (go) ___ to school by bus yesterday.',verb:'go',answer:['went'],rule:'go ist unregelmäßig: go → went.'},
+  {id:'p1g3',topic:'past',type:'gap',diff:1,prompt:'Bilde die Verneinung.',text:'We (not / watch) ___ TV last night.',verb:'not watch',answer:["didn't watch",'did not watch'],rule:'Verneinung im Past Simple: did not + Grundform.'},
+  {id:'p1e1',topic:'past',type:'error',diff:1,prompt:'Klick das falsche Wort an.',words:['I','play','football','yesterday','.'],wrongIndex:1,fix:'played',rule:'„yesterday" → Past Simple: played.'},
+  {id:'p1e2',topic:'past',type:'error',diff:1,prompt:'Finde den Fehler.',words:['She','didn\'t','went','home','early','.'],wrongIndex:2,fix:'go',rule:'Nach didn\'t steht die Grundform: go.'},
+  {id:'p1e3',topic:'past',type:'error',diff:1,prompt:'Welches Wort ist falsch?',words:['Did','Tom','played','chess','?'],wrongIndex:2,fix:'play',rule:'Nach did steht die Grundform: play.'},
 
-  // ----- GAP FILL -----
-  { type:'gap', diff:1, prompt:'Setze das Verb in der richtigen Zeit ein.',
-    text:'Yesterday I (visit) ___ my grandparents.',
-    verb:'visit', answer:['visited'],
-    rule:'„Yesterday" → Past Simple. visit → visited.' },
-  { type:'gap', diff:2, prompt:'Present Perfect: have/has + Partizip Perfekt.',
-    text:'Look! She (break) ___ her phone.',
-    verb:'break', answer:['has broken','she has broken'],
-    rule:'Sichtbares Ergebnis jetzt, keine Zeitangabe → Present Perfect: has broken.' },
-  { type:'gap', diff:2, prompt:'Fülle die Lücke mit der richtigen Form.',
-    text:'They (not / finish) ___ their project yet.',
-    verb:'not finish', answer:["haven't finished","have not finished"],
-    rule:'„yet" → Present Perfect, verneint: have not / haven\'t finished.' },
-  { type:'gap', diff:2, prompt:'Past Simple – Vergangenheitsform einsetzen.',
-    text:'We (buy) ___ this car two years ago.',
-    verb:'buy', answer:['bought'],
-    rule:'„… ago" → Past Simple. buy → bought (unregelmäßig).' },
-  { type:'gap', diff:3, prompt:'Present Perfect mit „for".',
-    text:'I (know) ___ her for ten years.',
-    verb:'know', answer:['have known',"i have known","'ve known"],
-    rule:'„for" + Zeitdauer, die andauert → Present Perfect: have known.' },
-  { type:'gap', diff:3, prompt:'Wähle die richtige Zeitform.',
-    text:'He (live) ___ in Graz when he was a child.',
-    verb:'live', answer:['lived'],
-    rule:'Abgeschlossen in der Kindheit („when he was a child") → Past Simple: lived.' },
+  // Past Simple · MS/AHS
+  {id:'p2m1',topic:'past',type:'mc',diff:2,prompt:'Choose the best answer.',text:'Where ___ you ___ your new jacket?',opts:['did / buy','have / bought','did / bought'],answer:0,rule:'Frage im Past Simple: did + Grundform.'},
+  {id:'p2m2',topic:'past',type:'mc',diff:2,prompt:'Wähle die richtige Form.',text:'The class ___ at eight and ___ at one.',opts:['started / finished','has started / has finished','start / finish'],answer:0,rule:'Eine abgeschlossene Abfolge in der Vergangenheit steht im Past Simple.'},
+  {id:'p2m3',topic:'past',type:'mc',diff:2,prompt:'Choose the correct sentence.',text:'Welche Frage ist grammatisch richtig?',opts:['Why did she leave early?','Why did she left early?','Why has she leave early yesterday?'],answer:0,rule:'did übernimmt die Vergangenheit; leave bleibt Grundform.'},
+  {id:'p2g1',topic:'past',type:'gap',diff:2,prompt:'Setze das Verb ins Past Simple.',text:'We (buy) ___ this car two years ago.',verb:'buy',answer:['bought'],rule:'buy ist unregelmäßig: buy → bought.'},
+  {id:'p2g2',topic:'past',type:'gap',diff:2,prompt:'Bilde eine Frage.',text:'(you / see) ___ Anna at the party?',verb:'you / see',answer:['did you see'],rule:'Past-Simple-Frage: Did + Subjekt + Grundform.'},
+  {id:'p2g3',topic:'past',type:'gap',diff:2,prompt:'Setze das Verb ins Past Simple.',text:'Ben (send) ___ me the photo after class.',verb:'send',answer:['sent'],rule:'send ist unregelmäßig: send → sent.'},
+  {id:'p2e1',topic:'past',type:'error',diff:2,prompt:'Find the mistake.',words:['We','didn\'t','saw','the','film','last','week','.'],wrongIndex:2,fix:'see',rule:'Nach didn\'t steht der Infinitiv: see.'},
+  {id:'p2e2',topic:'past',type:'error',diff:2,prompt:'Klick das falsche Wort an.',words:['When','did','the','concert','started','?'],wrongIndex:4,fix:'start',rule:'Nach did steht die Grundform: start.'},
+  {id:'p2e3',topic:'past',type:'error',diff:2,prompt:'Welches Wort passt nicht?',words:['Last','summer','we','have','camped','in','Carinthia','.'],wrongIndex:3,fix:'camped',rule:'„Last summer" ist abgeschlossen: we camped.'},
 
-  // ----- ERROR CORRECTION (falsches Wort anklicken) -----
-  { type:'error', diff:1, prompt:'Klick das falsche Wort an.',
-    words:['I','have','seen','him','yesterday','.'], wrongIndex:1, fix:'saw',
-    rule:'„yesterday" = Past Simple. Richtig: „I SAW him yesterday." (nicht have seen).' },
-  { type:'error', diff:2, prompt:'Welches Wort ist falsch?',
-    words:['She','has','went','to','Spain','three','times','.'], wrongIndex:2, fix:'gone',
-    rule:'Present Perfect braucht das Partizip: „has GONE", nicht „has went".' },
-  { type:'error', diff:2, prompt:'Find the mistake.',
-    words:['We','didn\'t','saw','the','film','last','week','.'], wrongIndex:2, fix:'see',
-    rule:'Nach „didn\'t" steht der Infinitiv: „didn\'t SEE", nicht „didn\'t saw".' },
-  { type:'error', diff:3, prompt:'Klick auf den Fehler.',
-    words:['I','have','met','him','in','2018','.'], wrongIndex:1, fix:'met (Past Simple)',
-    rule:'„in 2018" = genaues Jahr → Past Simple: „I MET him in 2018." (kein Present Perfect).' },
-  { type:'error', diff:3, prompt:'Which word is wrong?',
-    words:['Have','you','ever','ate','frog','legs','?'], wrongIndex:3, fix:'eaten',
-    rule:'„Have you ever …?" verlangt das Partizip: „ever EATEN", nicht „ever ate".' }
+  // Past Simple · AHS
+  {id:'p3m1',topic:'past',type:'mc',diff:3,prompt:'Choose the best continuation.',text:'The lights went out, so we ___.',opts:['used our phone torches','have used our phone torches','did used our phone torches'],answer:0,rule:'Eine abgeschlossene Reaktion in einer Erzählung steht im Past Simple.'},
+  {id:'p3m2',topic:'past',type:'mc',diff:3,prompt:'Wähle die korrekte Frage.',text:'Du fragst nach einem genauen Zeitpunkt.',opts:['When did the lesson begin?','When has the lesson begun?','When did the lesson began?'],answer:0,rule:'When + genauer Zeitpunkt → Past Simple; nach did folgt begin.'},
+  {id:'p3m3',topic:'past',type:'mc',diff:3,prompt:'Choose the correct sequence.',text:'First Nora ___ the email, then she ___ her teacher.',opts:['read / called','has read / called','readed / has called'],answer:0,rule:'Abgeschlossene Ereigniskette → Past Simple; read bleibt in der Schreibweise gleich.'},
+  {id:'p3g1',topic:'past',type:'gap',diff:3,prompt:'Schreibe den vollständigen Satzteil.',text:'Why (they / cancel) ___ the match yesterday?',verb:'they / cancel',answer:['did they cancel'],rule:'Why did they cancel …? Nach did steht cancel.'},
+  {id:'p3g2',topic:'past',type:'gap',diff:3,prompt:'Setze Verneinung und Verb ein.',text:'The shop (not / close) ___ until nine.',verb:'not close',answer:["didn't close",'did not close'],rule:'Past-Simple-Verneinung: did not + Grundform.'},
+  {id:'p3g3',topic:'past',type:'gap',diff:3,prompt:'Setze die passende unregelmäßige Form ein.',text:'I (lose) ___ my ticket on the tram.',verb:'lose',answer:['lost'],rule:'lose ist unregelmäßig: lose → lost.'},
+  {id:'p3e1',topic:'past',type:'error',diff:3,prompt:'Klick den grammatischen Fehler an.',words:['How','many','goals','did','your','team','scored','?'],wrongIndex:6,fix:'score',rule:'Nach did folgt die Grundform score.'},
+  {id:'p3e2',topic:'past',type:'error',diff:3,prompt:'Find the wrong verb form.',words:['She','did','not','understood','the','question','.'],wrongIndex:3,fix:'understand',rule:'Nach did not steht die Grundform: understand.'},
+  {id:'p3e3',topic:'past',type:'error',diff:3,prompt:'Finde die falsche Verbform.',words:['The','dog','catched','the','ball','and','ran','away','.'],wrongIndex:2,fix:'caught',rule:'catch ist unregelmäßig: catch → caught.'},
+
+  // Present Perfect · MS Standard
+  {id:'f1m1',topic:'perfect',type:'mc',diff:1,prompt:'Choose the correct form.',text:'She ___ just ___ her keys.',opts:['has / found','did / find','has / find'],answer:0,rule:'Present Perfect: has + Partizip; „just" betont das aktuelle Ergebnis.'},
+  {id:'f1m2',topic:'perfect',type:'mc',diff:1,prompt:'Wähle die richtige Form.',text:'I ___ never ___ a snake.',opts:['have / seen','did / see','have / saw'],answer:0,rule:'Lebenserfahrung ohne Zeitpunkt → have never seen.'},
+  {id:'f1m3',topic:'perfect',type:'mc',diff:1,prompt:'Welcher Satz ist richtig?',text:'Die Hausübung ist jetzt fertig.',opts:['We have finished our homework.','We finished our homework tomorrow.','We have finish our homework.'],answer:0,rule:'Aktuelles Ergebnis → Present Perfect: have finished.'},
+  {id:'f1g1',topic:'perfect',type:'gap',diff:1,prompt:'Setze das Present Perfect ein.',text:'Tom (lose) ___ his phone.',verb:'lose',answer:['has lost',"tom has lost"],rule:'Tom = he → has + lost.'},
+  {id:'f1g2',topic:'perfect',type:'gap',diff:1,prompt:'Bilde das Present Perfect.',text:'We (visit) ___ London twice.',verb:'visit',answer:['have visited'],rule:'We → have + Partizip visited.'},
+  {id:'f1g3',topic:'perfect',type:'gap',diff:1,prompt:'Bilde die Verneinung.',text:'I (not / finish) ___ yet.',verb:'not finish',answer:["haven't finished",'have not finished'],rule:'I have not finished; „yet" steht häufig in Verneinungen.'},
+  {id:'f1e1',topic:'perfect',type:'error',diff:1,prompt:'Klick das falsche Wort an.',words:['She','have','cleaned','her','room','.'],wrongIndex:1,fix:'has',rule:'She verlangt has: She has cleaned.'},
+  {id:'f1e2',topic:'perfect',type:'error',diff:1,prompt:'Finde den Fehler.',words:['I','have','saw','that','film','.'],wrongIndex:2,fix:'seen',rule:'Present Perfect braucht das Partizip: seen.'},
+  {id:'f1e3',topic:'perfect',type:'error',diff:1,prompt:'Welches Wort ist falsch?',words:['They','has','already','eaten','.'],wrongIndex:1,fix:'have',rule:'They verlangt have: They have eaten.'},
+
+  // Present Perfect · MS/AHS
+  {id:'f2m1',topic:'perfect',type:'mc',diff:2,prompt:'Choose the correct option.',text:'___ you ever ___ sushi?',opts:['Have / eaten','Did / eat','Have / ate'],answer:0,rule:'Erfahrung bis jetzt → Have you ever eaten …?'},
+  {id:'f2m2',topic:'perfect',type:'mc',diff:2,prompt:'Wähle die richtige Form.',text:'We ___ in Vienna since 2019.',opts:['have lived','lived','are living'],answer:0,rule:'„since" + Startpunkt einer andauernden Situation → Present Perfect.'},
+  {id:'f2m3',topic:'perfect',type:'mc',diff:2,prompt:'Choose the best answer.',text:'Dad is still painting. He ___ the room ___.',opts:["hasn't finished / yet",'didn\'t finish / just','hasn\'t finish / yet'],answer:0,rule:'Noch nicht abgeschlossen → has not finished yet.'},
+  {id:'f2g1',topic:'perfect',type:'gap',diff:2,prompt:'Setze das Present Perfect ein.',text:'Look! She (break) ___ her phone.',verb:'break',answer:['has broken'],rule:'Sichtbares Ergebnis jetzt → has broken.'},
+  {id:'f2g2',topic:'perfect',type:'gap',diff:2,prompt:'Bilde eine Frage.',text:'(you / ever / ride) ___ a horse?',verb:'you / ever / ride',answer:['have you ever ridden'],rule:'Frage: Have + Subjekt + ever + Partizip ridden.'},
+  {id:'f2g3',topic:'perfect',type:'gap',diff:2,prompt:'Setze die vollständige Verbform ein.',text:'My friends (not / arrive) ___ yet.',verb:'not arrive',answer:["haven't arrived",'have not arrived'],rule:'My friends = they → have not arrived.'},
+  {id:'f2e1',topic:'perfect',type:'error',diff:2,prompt:'Welches Wort ist falsch?',words:['She','has','went','to','Spain','three','times','.'],wrongIndex:2,fix:'gone',rule:'go → gone im Present Perfect.'},
+  {id:'f2e2',topic:'perfect',type:'error',diff:2,prompt:'Find the mistake.',words:['Have','you','ever','ate','frog','legs','?'],wrongIndex:3,fix:'eaten',rule:'eat → eaten im Present Perfect.'},
+  {id:'f2e3',topic:'perfect',type:'error',diff:2,prompt:'Klick die falsche Form an.',words:['Leo','has','write','three','emails','today','.'],wrongIndex:2,fix:'written',rule:'write → written im Present Perfect.'},
+
+  // Present Perfect · AHS
+  {id:'f3m1',topic:'perfect',type:'mc',diff:3,prompt:'Choose the best answer.',text:'This is the most exciting match I ___.',opts:['have ever watched','ever watched yesterday','have ever watch'],answer:0,rule:'Nach einem Superlativ verwendet man oft Present Perfect: have ever watched.'},
+  {id:'f3m2',topic:'perfect',type:'mc',diff:3,prompt:'Wähle die passende Form.',text:'The bus is late. It ___ yet.',opts:["hasn't arrived",'didn\'t arrive yesterday','hasn\'t arrive'],answer:0,rule:'Die erwartete Handlung ist bis jetzt nicht geschehen → has not arrived yet.'},
+  {id:'f3m3',topic:'perfect',type:'mc',diff:3,prompt:'Choose the correct sentence.',text:'Die Situation begann früher und dauert an.',opts:['She has known him for years.','She knew him since years.','She has knew him for years.'],answer:0,rule:'for + Dauer einer andauernden Situation → has known.'},
+  {id:'f3g1',topic:'perfect',type:'gap',diff:3,prompt:'Schreibe die vollständige Verbform.',text:'How long (you / know) ___ your best friend?',verb:'you / know',answer:['have you known'],rule:'How long + andauernder Zustand → Present Perfect.'},
+  {id:'f3g2',topic:'perfect',type:'gap',diff:3,prompt:'Setze die Verneinung ein.',text:'The scientists (not / discover) ___ the cause yet.',verb:'not discover',answer:["haven't discovered",'have not discovered'],rule:'Plural subject → have not + discovered.'},
+  {id:'f3g3',topic:'perfect',type:'gap',diff:3,prompt:'Schreibe die vollständige Verbform.',text:'Mila (already / read) ___ three books this month.',verb:'already read',answer:['has already read'],rule:'Mila = she → has already read; der Zeitraum läuft noch.'},
+  {id:'f3e1',topic:'perfect',type:'error',diff:3,prompt:'Finde die falsche Verbform.',words:['The','players','has','won','five','matches','so','far','.'],wrongIndex:2,fix:'have',rule:'The players ist Plural → have won.'},
+  {id:'f3e2',topic:'perfect',type:'error',diff:3,prompt:'Klick den Fehler an.',words:['How','long','have','she','lived','here','?'],wrongIndex:2,fix:'has',rule:'she verlangt has: How long has she lived here?'},
+  {id:'f3e3',topic:'perfect',type:'error',diff:3,prompt:'Which form is wrong?',words:['I','have','never','flew','in','a','helicopter','.'],wrongIndex:3,fix:'flown',rule:'fly → flown im Present Perfect.'}
 ];
 
 /* ---------- GAME STATE ---------- */
@@ -494,25 +529,47 @@ let camTime = 0, score = 0, lives = 3, pipesPassed = 0, cpCount = 0;
 let correctAnswers = 0, streak = 0, bestStreak = 0, speedTier = 1;
 let pipesSinceCp = 0;
 const PIPES_PER_CP = 4;          // alle 4 Röhren ein Checkpoint
+const TOPICS = {
+  past:{label:'Past Simple',short:'Past Simple'},
+  perfect:{label:'Present Perfect',short:'Present Perfect'},
+  mixed:{label:'Past Simple & Present Perfect',short:'Beide gemischt'}
+};
+const DIFFICULTIES = {
+  easy:{label:'Leicht · MS Standard',levels:[1],gravity:1380,flap:-415,gap:238,gapStep:3,speed:104,speedStep:16,pipeDistance:275},
+  medium:{label:'Mittel · MS/AHS',levels:[1,2],gravity:1500,flap:-430,gap:215,gapStep:5,speed:120,speedStep:22,pipeDistance:250},
+  hard:{label:'Schwer · AHS',levels:[2,3],gravity:1580,flap:-445,gap:192,gapStep:6,speed:136,speedStep:25,pipeDistance:232}
+};
+let selectedTopic = 'mixed';
+let selectedDifficulty = 'easy';
 let highscore = 0;
 try { highscore = parseInt(localStorage.getItem('flappyGrammarHS')||'0',10) || 0; } catch(e){}
 
-let usedQ = [];                  // schon gestellte Fragen (Indizes), Anti-Wiederholung
+let questionDeck = [], lastQuestionId = null, lastQuestionType = null, lastQuestionTopic = null;
+function shuffle(items){
+  const result = items.slice();
+  for(let i=result.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [result[i],result[j]]=[result[j],result[i]];
+  }
+  return result;
+}
+function eligibleQuestions(){
+  const levels=DIFFICULTIES[selectedDifficulty].levels;
+  return QUESTIONS.filter(q=>(selectedTopic==='mixed'||q.topic===selectedTopic)&&levels.includes(q.diff));
+}
+function refillQuestionDeck(){ questionDeck=shuffle(eligibleQuestions()); }
 function pickQuestion(){
-  const maxDiff = speedTier >= 4 ? 3 : (speedTier >= 2 ? 2 : 2); // leicht steigend, ab Start 1-2
-  let pool = QUESTIONS.map((q,i)=>({q,i}))
-                      .filter(o => o.q.diff <= (speedTier>=3?3:(speedTier>=2?3:2)))
-                      .filter(o => !usedQ.includes(o.i));
-  if(pool.length === 0){ usedQ = []; pool = QUESTIONS.map((q,i)=>({q,i})); }
-  // gleichmäßige Typ-Verteilung: bevorzuge einen Typ, der zuletzt selten kam
-  const choice = pool[Math.floor(Math.random()*pool.length)];
-  usedQ.push(choice.i);
-  return choice.q;
+  if(!questionDeck.length) refillQuestionDeck();
+  let candidates=questionDeck.map((q,index)=>({q,index})).filter(({q})=>q.id!==lastQuestionId);
+  const varied=candidates.filter(({q})=>q.type!==lastQuestionType&&(selectedTopic!=='mixed'||q.topic!==lastQuestionTopic));
+  if(varied.length)candidates=varied;
+  const picked=candidates[Math.floor(Math.random()*candidates.length)];
+  const [choice]=questionDeck.splice(picked.index,1);
+  lastQuestionId=choice.id;lastQuestionType=choice.type;lastQuestionTopic=choice.topic;
+  return choice;
 }
 
 /* ---------- BIRD PHYSICS ---------- */
-const GRAV = 1500;          // px/s²
-const FLAP_V = -430;        // px/s
 function resetBird(){
   bird = { x: W*0.28, y: H*0.42, vy:0, r:18, rot:0, wing:0, dead:false };
 }
@@ -520,7 +577,7 @@ function spawnInitialWorld(){
   pipes = [];
   // erste Röhre etwas weiter rechts, damit der Spieler ankommt
   let startX = W + 80;
-  for(let i=0;i<4;i++){ pipes.push(makePipe(startX + i*PIPE_GAP_X)); }
+  for(let i=0;i<4;i++){ pipes.push(makePipe(startX + i*pipeGapX())); }
   clouds = [];
   for(let i=0;i<5;i++) clouds.push({ x:Math.random()*W, y:40+Math.random()*220, s:.3+Math.random()*.3, w:60+Math.random()*60 });
   hills = [];
@@ -531,21 +588,24 @@ function spawnInitialWorld(){
 }
 
 const PIPE_W = 70;
-const PIPE_GAP_X = 250;     // horizontaler Abstand zwischen Röhren
-function curGapY(){ return 215 - Math.min(35, (speedTier-1)*5); }   // vertikale Lücke breit, schrumpft nur leicht
+function pipeGapX(){ return DIFFICULTIES[selectedDifficulty].pipeDistance; }
+function curGapY(){
+  const config=DIFFICULTIES[selectedDifficulty];
+  return config.gap-Math.min(selectedDifficulty==='easy'?24:38,(speedTier-1)*config.gapStep);
+}
 function makePipe(x){
   const gap = curGapY();
   const margin = 80;
   const topH = margin + Math.random() * (GROUND_Y - gap - margin*2);
   return { x, topH, gap, passed:false, scored:false };
 }
-function curSpeed(){ return 120 + (speedTier-1)*22; }   // px/s, steigt pro Stufe
+function curSpeed(){ const config=DIFFICULTIES[selectedDifficulty];return config.speed+(speedTier-1)*config.speedStep; }
 
 /* ---------- INPUT ---------- */
 function flap(){
   if(state !== 'playing') return;
   ensureAudio();
-  bird.vy = FLAP_V;
+  bird.vy = DIFFICULTIES[selectedDifficulty].flap;
   bird.wing = 1;
   SND.flap();
   hideHint();
@@ -555,6 +615,8 @@ function hideHint(){ if(!hintHidden){ hintHidden = true; $('tapHint').style.disp
 
 canvas.addEventListener('pointerdown', e=>{ e.preventDefault(); flap(); });
 addEventListener('keydown', e=>{
+  const isAnswerField = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target.isContentEditable;
+  if(isAnswerField) return;
   if(e.code === 'Space' || e.code === 'ArrowUp'){
     e.preventDefault();
     if(state === 'playing') flap();
@@ -577,7 +639,8 @@ function startGame(){
   ensureAudio();
   state = 'playing';
   score = 0; lives = 3; pipesPassed = 0; pipesSinceCp = 0; cpCount = 0;
-  correctAnswers = 0; streak = 0; bestStreak = 0; speedTier = 1; usedQ = [];
+  correctAnswers = 0; streak = 0; bestStreak = 0; speedTier = 1;
+  questionDeck=[];lastQuestionId=null;lastQuestionType=null;lastQuestionTopic=null;
   hintHidden = false; $('tapHint').style.display='block';
   resetBird(); spawnInitialWorld();
   updateHUD();
@@ -611,13 +674,11 @@ function pickGO(){
   return arr[Math.floor(Math.random()*arr.length)];
 }
 function pickTip(){
-  const tips = [
-    'Signalwörter Present Perfect: <b>just, already, yet, ever, never, since, for</b>.',
-    'Signalwörter Past Simple: <b>yesterday, ago, last…, in 2018, when</b>.',
-    'Present Perfect = <b>have/has + 3. Verbform</b> (Partizip): go → gone, see → seen.',
-    'Genauer Zeitpunkt in der Vergangenheit → fast immer <b>Past Simple</b>.',
-    '„since" = ab einem Zeitpunkt, „for" = über eine Zeitdauer — beide mit Present Perfect.'
-  ];
+  const topicTips={
+    past:['Past Simple: <b>abgeschlossene Handlung</b> in der Vergangenheit.','Signalwörter: <b>yesterday, ago, last…, in 2018, when</b>.','Frage und Verneinung: <b>did/didn\'t + Grundform</b>.'],
+    perfect:['Present Perfect = <b>have/has + 3. Verbform</b>.','Signalwörter: <b>just, already, yet, ever, never, since, for</b>.','<b>since</b> nennt den Startpunkt, <b>for</b> die Dauer.']
+  };
+  const tips=selectedTopic==='mixed'?[...topicTips.past,...topicTips.perfect]:topicTips[selectedTopic];
   return tips[Math.floor(Math.random()*tips.length)];
 }
 
@@ -625,7 +686,7 @@ function pickTip(){
 function updateHUD(){
   $('scorePill').textContent = score;
   $('hearts').textContent = '❤️'.repeat(Math.max(0,lives)) + '🖤'.repeat(Math.max(0,3-lives));
-  $('hdr-level').textContent = 'Tempo-Stufe ' + speedTier + ' · Past vs Present Perfect';
+  $('hdr-level').textContent = 'Tempo '+speedTier+' · '+TOPICS[selectedTopic].short+' · '+DIFFICULTIES[selectedDifficulty].label;
   const left = PIPES_PER_CP - pipesSinceCp;
   $('barText').textContent = pipesSinceCp + ' / ' + PIPES_PER_CP + ' Röhren';
   $('barFill').style.width = Math.min(100, (pipesSinceCp/PIPES_PER_CP)*100) + '%';
@@ -645,7 +706,7 @@ function loop(now){
 function update(dt){
   camTime += dt;
   // Bird
-  bird.vy += GRAV*dt;
+  bird.vy += DIFFICULTIES[selectedDifficulty].gravity*dt;
   bird.y += bird.vy*dt;
   bird.rot = Math.max(-0.5, Math.min(1.2, bird.vy/600));
   bird.wing = Math.max(0, bird.wing - dt*4);
@@ -681,7 +742,7 @@ function update(dt){
   if(pipes.length && pipes[0].x < -PIPE_W){
     pipes.shift();
     const lastX = pipes[pipes.length-1].x;
-    pipes.push(makePipe(lastX + PIPE_GAP_X));
+    pipes.push(makePipe(lastX + pipeGapX()));
   }
   // Kollision mit Pipes
   for(const p of pipes){
@@ -718,7 +779,7 @@ function handleCrash(){
       resetBird();
       // Pipes, die zu nah sind, nach rechts schieben
       let safeX = bird.x + 220;
-      for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += PIPE_GAP_X; p.scored=false; } }
+      for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += pipeGapX(); p.scored=false; } }
       crashLock = false;
     }, 350);
   } else {
@@ -738,7 +799,7 @@ function openCheckpoint(){
 
 function buildQuiz(q){
   const TYPE_LABEL = { mc:'MULTIPLE CHOICE', gap:'LÜCKENTEXT', error:'FEHLER FINDEN' };
-  $('qType').textContent = TYPE_LABEL[q.type];
+  $('qType').textContent = TYPE_LABEL[q.type]+' · '+TOPICS[q.topic].short;
   $('qCp').textContent = 'CHECKPOINT ' + cpCount;
   $('qPrompt').textContent = q.prompt;
   const body = $('qBody');
@@ -870,7 +931,7 @@ function resumeFromQuiz(){
   // sanfter Wiedereinstieg: Vogel mittig, Pipes vor ihm freiräumen
   resetBird();
   let safeX = bird.x + 240;
-  for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += PIPE_GAP_X; p.scored=false; } }
+  for(const p of pipes){ if(p.x < safeX){ p.x = safeX; safeX += pipeGapX(); p.scored=false; } }
   crashLock = false;
   state = 'playing';
   lastT = performance.now();
@@ -1124,9 +1185,24 @@ function applyPsyFilter(){
 }
 
 /* ---------- BUTTON WIRING ---------- */
+function selectChoice(containerId,dataKey,value){
+  document.querySelectorAll('#'+containerId+' .choice-btn').forEach(button=>{
+    button.setAttribute('aria-pressed',String(button.dataset[dataKey]===value));
+  });
+  questionDeck=[];lastQuestionId=null;lastQuestionType=null;lastQuestionTopic=null;
+}
+document.querySelectorAll('#topicChoices .choice-btn').forEach(button=>{
+  button.onclick=()=>{SND.button();selectedTopic=button.dataset.topic;selectChoice('topicChoices','topic',selectedTopic);};
+});
+document.querySelectorAll('#difficultyChoices .choice-btn').forEach(button=>{
+  button.onclick=()=>{SND.button();selectedDifficulty=button.dataset.difficulty;selectChoice('difficultyChoices','difficulty',selectedDifficulty);};
+});
+function returnToStart(){
+  state='menu';$('quizOverlay').classList.remove('active');showScreen('startScreen');
+}
 $('startBtn').onclick = ()=>{ SND.button(); startGame(); };
-$('againBtn').onclick = ()=>{ SND.button(); startGame(); };
-$('backBtn').onclick = ()=>{ SND.button(); state='menu'; $('quizOverlay').classList.remove('active'); showScreen('startScreen'); };
+$('againBtn').onclick = ()=>{ SND.button(); returnToStart(); };
+$('backBtn').onclick = ()=>{ SND.button(); returnToStart(); };
 $('psyBtn').onclick = ()=>{
   SND.button();
   setTheme(!psyMode);
