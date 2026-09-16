@@ -21,7 +21,7 @@
     "thema": "Present Simple vs. Progressive",
     "stufe": "5. Schulstufe, 6. Schulstufe",
     "fach": "Englisch (Grammatik)",
-    "beschreibung": "3D-Basketball in der Legends Arena: Power-Balken treffen, Swish werfen, alle 3 Bälle eine Frage — 5 Level bis zum Championship Ring."
+    "beschreibung": "3D-Basketball in der Legends Arena: Ball zurückziehen, zielen und loslassen — mit Flugvorschau, Zielhilfe und neuer Arcade-Grafik. Alle 3 Bälle eine Grammatikfrage, 5 Level bis zum Championship Ring."
   },
   {
     "datei": "spiele/bomber-grammar.html",
@@ -190,6 +190,14 @@
     "stufe": "6. Schulstufe",
     "fach": "Englisch (Grammatik)",
     "beschreibung": "Returniere den Ball mit der richtigen Vergangenheitsform."
+  },
+  {
+    "datei": "spiele/to-be-champ.html",
+    "titel": "TO BE CHAMP!",
+    "thema": "Forms of to be",
+    "stufe": "5. Schulstufe",
+    "fach": "Englisch (Grammatik)",
+    "beschreibung": "Boxe gegen drei lustige Comic-Gegner und trainiere am, is, are mit allen Personalpronomen. Nach jeder Runde: Lückentext, Wortreihenfolge und Multiple Choice. 108 Aufgaben, Standard und AHS, Tablet-Steuerung und Sternschläge."
   },
   {
     "datei": "spiele/verb-dash.html",
