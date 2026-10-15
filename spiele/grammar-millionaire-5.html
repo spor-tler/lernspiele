@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="standard">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="lernspiel:titel"        content="Who Wants To Be A Grammar Millionaire?">
+<meta name="lernspiel:thema"        content="Grammatik-Mix 1. Klasse">
+<meta name="lernspiel:stufe"        content="5. Schulstufe">
+<meta name="lernspiel:fach"         content="Englisch (Grammatik)">
+<meta name="lernspiel:beschreibung" content="Millionär-Quiz im 8-Bit-Nintendo-Look für den Beamer: 1–4 Teams klettern die Münz-Leiter hoch – Plurals, to be, Numbers bis 25, there is/are, Prepositions of Place und Present Simple frei kombinierbar, Standard oder AHS, mit 50:50-, Publikums- und Telefonjoker (die Lehrkraft hilft!).">
+<title>Grammar Millionaire · 5. Klasse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEME
+   ============================================================ */
+:root[data-theme="standard"]{
+  --color-primary-blue:#2563EB; --color-primary-yellow:#FACC15; --color-primary-green:#16A34A;
+  --color-primary-red:#DC2626; --color-primary-purple:#9333EA;
+  --color-bg-main:#FFF9F0; --color-bg-card:#FFFFFF; --color-bg-dark:#1E1B4B;
+  --color-accent-orange:#F97316; --color-accent-pink:#EC4899; --color-accent-teal:#0D9488;
+  --color-success:#22C55E; --color-error:#EF4444; --color-text-dark:#1F2937; --color-text-light:#F9FAFB;
+
+  --px:#111827;                 /* Pixel-Kontur */
+  --panel:#FFF9F0; --panel-ink:#1F2937; --panel-sub:#4B5563;
+  --ans-bg:#2563EB; --ans-ink:#FFFFFF; --ans-key:#FACC15;
+  --ans-sel:#F97316; --ans-sel-ink:#1F2937;
+  --ans-ok:#22C55E;  --ans-ok-ink:#1F2937;
+  --ans-bad:#DC2626; --ans-bad-ink:#FFFFFF;
+  --ladder-bg:#1E1B4B; --ladder-ink:#F9FAFB; --ladder-cur:#FACC15; --ladder-safe:#F97316;
+  --gold:#FACC15; --head-bg:#1E1B4B; --head-ink:#F9FAFB;
+  --glow:none;
+}
+:root[data-theme="psychedelic"]{
+  --color-bg-main:#000000; --neon-pink:#FF00FF; --neon-green:#00FF41; --neon-yellow:#FFFF00;
+  --neon-cyan:#00FFFF; --neon-orange:#FF6600; --neon-purple:#BF00FF; --neon-red:#FF0033;
+  --px:#FF00FF;
+  --panel:#0D001A; --panel-ink:#F9FAFB; --panel-sub:#00FFFF;
+  --ans-bg:#000000; --ans-ink:#00FFFF; --ans-key:#FFFF00;
+  --ans-sel:#FF6600; --ans-sel-ink:#000000;
+  --ans-ok:#00FF41;  --ans-ok-ink:#000000;
+  --ans-bad:#FF0033; --ans-bad-ink:#FFFFFF;
+  --ladder-bg:#0D001A; --ladder-ink:#00FFFF; --ladder-cur:#FFFF00; --ladder-safe:#FF6600;
+  --gold:#FFFF00; --head-bg:#000000; --head-ink:#FF00FF;
+  --glow:0 0 12px #00FFFF, 0 0 24px #FF00FF;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Nunito','Quicksand',sans-serif; font-weight:800;
+  background:var(--color-bg-dark); color:var(--panel-ink);
+  overflow-x:hidden; -webkit-tap-highlight-color:transparent;
+}
+.pixel{font-family:'Press Start 2P',monospace;font-weight:400;letter-spacing:.03em}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--color-accent-orange,#F97316);outline-offset:6px}
+
+/* Pixel-Rahmen: Kontur mit "abgebrochenen" Ecken wie bei NES-Fenstern */
+.px{
+  position:relative;
+  box-shadow:
+    0 -4px 0 0 var(--px), 0 4px 0 0 var(--px), -4px 0 0 0 var(--px), 4px 0 0 0 var(--px),
+    inset 0 -4px 0 0 rgba(0,0,0,.22), inset 0 4px 0 0 rgba(255,255,255,.28),
+    0 12px 0 0 rgba(0,0,0,.35);
+}
+:root[data-theme="psychedelic"] .px{
+  box-shadow:
+    0 -4px 0 0 var(--px), 0 4px 0 0 var(--px), -4px 0 0 0 var(--px), 4px 0 0 0 var(--px),
+    0 0 16px 4px rgba(0,255,255,.45);
+}
+
+/* ============================================================
+   STUDIO-HINTERGRUND & EBENEN
+   ============================================================ */
+#studio{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;z-index:0}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+.app{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column}
+
+/* ============================================================
+   HEADER / FOOTER
+   ============================================================ */
+header{
+  display:flex;align-items:center;gap:16px;padding:8px 16px;
+  background:var(--head-bg);color:var(--head-ink);
+  border-bottom:4px solid var(--px);
+}
+.hbtn{
+  min-height:48px;min-width:48px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:#312E81;color:#F9FAFB;font-size:12px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)
+}
+:root[data-theme="psychedelic"] .hbtn{background:#000;color:#00FFFF}
+.hbtn:hover{transform:scale(1.05)}
+.hbtn:active{transform:translate(2px,2px)}
+.htitle{flex:1;min-width:0;text-align:center}
+.htitle .t{font-size:clamp(10px,1.3vw,16px);color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htitle .s{font-size:clamp(9px,.9vw,11px);margin-top:8px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coins{font-size:clamp(11px,1.2vw,16px);color:var(--gold);padding:0 16px;min-height:48px;display:flex;align-items:center;gap:8px;background:#000;white-space:nowrap}
+.hright{display:flex;gap:8px;align-items:center}
+
+footer{padding:8px 16px 16px;background:var(--head-bg);border-top:4px solid var(--px)}
+.prog{height:24px;background:#0b0a24;position:relative;overflow:hidden}
+.prog .bar{position:absolute;left:0;top:0;bottom:0;width:0;transition:width .6s cubic-bezier(.34,1.56,.64,1);
+  background:repeating-linear-gradient(90deg,var(--bar,#FACC15) 0 12px,rgba(0,0,0,.18) 12px 16px)}
+.prog .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;text-shadow:2px 2px 0 #000}
+
+main{flex:1;display:flex;justify-content:center;padding:24px 16px}
+.screen{display:none;width:100%}
+.screen.on{display:block}
+
+/* ============================================================
+   SETUP
+   ============================================================ */
+.setup{max-width:1100px;margin:0 auto}
+.logo{text-align:center;margin:8px 0 24px;color:var(--gold);text-shadow:4px 4px 0 #000}
+.logo .l1{font-size:clamp(10px,1.4vw,16px);color:#F9FAFB}
+.logo .l2{font-size:clamp(20px,3.6vw,44px);margin-top:16px;line-height:1.3}
+.logo .l3{font-size:clamp(10px,1.2vw,14px);margin-top:16px;color:#5EEAD4}
+:root[data-theme="psychedelic"] .logo .l2{animation:hue 3s linear infinite}
+@keyframes hue{from{filter:hue-rotate(0)}to{filter:hue-rotate(360deg)}}
+
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.panel{background:var(--panel);color:var(--panel-ink);padding:24px;margin:4px}
+.panel h3{font-size:12px;margin-bottom:16px;color:var(--panel-ink)}
+.panel h3 span{color:var(--color-accent-orange,#F97316)}
+.panel.wide{grid-column:1/-1}
+.row{display:flex;flex-wrap:wrap;gap:16px}
+.opt{
+  flex:1;min-width:120px;min-height:64px;padding:8px 16px;margin:4px;
+  background:#E5E7EB;color:#1F2937;font-size:18px;text-align:center;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s;
+}
+.opt small{display:block;font-size:13px;font-weight:600;opacity:.8;margin-top:4px}
+.opt:hover{transform:scale(1.05)}
+.opt:active{transform:translate(2px,2px)}
+.opt.on{background:#2563EB;color:#fff}
+.opt.lvl-std.on{background:#0D9488;color:#fff}
+.opt.lvl-ahs.on{background:#EA580C;color:#1F2937}
+:root[data-theme="psychedelic"] .opt{background:#000;color:#00FFFF}
+:root[data-theme="psychedelic"] .opt.on{background:#FF00FF;color:#000}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.chip{min-height:72px;display:flex;align-items:center;gap:8px;text-align:left;font-size:17px;padding:8px 12px}
+.chip img{width:40px;height:40px;image-rendering:pixelated;flex:none}
+.chip small{display:block;font-size:12px;margin-top:2px}
+.teamrow{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.tname{display:flex;align-items:center;gap:8px;background:#fff;padding:4px 8px;margin:4px;min-height:48px}
+:root[data-theme="psychedelic"] .tname{background:#000}
+.tname .sw{width:24px;height:24px;flex:none;box-shadow:0 0 0 3px #111}
+.tname input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:18px;color:inherit;padding:8px 0}
+.tname input:focus{outline:none}
+.startrow{display:flex;justify-content:center;margin:40px 0 16px}
+.bigbtn{
+  min-height:72px;padding:0 48px;font-size:clamp(14px,2vw,22px);
+  background:#16A34A;color:#fff;transition:transform .15s cubic-bezier(.34,1.56,.64,1)
+}
+.bigbtn:hover{transform:scale(1.05)}
+.bigbtn:active{transform:translate(2px,2px)}
+.bigbtn:disabled{filter:grayscale(1);opacity:.6;cursor:not-allowed;transform:none}
+.hint{font-size:14px;font-weight:600;color:var(--panel-sub);margin-top:12px}
+.keys{text-align:center;color:#C7D2FE;font-size:13px;font-weight:600;margin-top:8px}
+:root[data-theme="psychedelic"] .keys{color:#00FFFF}
+
+/* ============================================================
+   GAME
+   ============================================================ */
+.game{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 272px;gap:32px;align-items:start}
+.stage{display:flex;flex-direction:column;gap:20px;min-width:0}
+.hostrow{display:flex;align-items:flex-end;gap:16px;min-height:96px}
+#hostcv{width:64px;height:112px;image-rendering:pixelated;flex:none}
+.bubble{
+  flex:1;background:#fff;color:#1F2937;padding:16px 20px;font-size:clamp(16px,1.6vw,22px);margin-bottom:16px;
+  min-height:56px;display:flex;align-items:center;gap:16px
+}
+.bubble::before{content:"";position:absolute;left:-16px;bottom:12px;width:12px;height:12px;background:#fff;
+  box-shadow:-4px 4px 0 0 #fff, 0 -4px 0 0 var(--px), -4px 0 0 0 var(--px), -8px 4px 0 0 var(--px), -4px 8px 0 0 var(--px), 0 8px 0 0 var(--px)}
+:root[data-theme="psychedelic"] .bubble{background:#000;color:#FFFF00}
+:root[data-theme="psychedelic"] .bubble::before{background:#000;box-shadow:-4px 4px 0 0 #000}
+.turnchip{margin-left:auto;font-size:11px;padding:8px 12px;color:#1F2937;white-space:nowrap}
+
+.card{background:var(--panel);color:var(--panel-ink);padding:24px 24px 28px;text-align:center}
+.card .qhead{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:11px;color:var(--panel-sub)}
+.qprompt{font-size:clamp(12px,1.2vw,15px);color:#2563EB;margin-top:16px;line-height:1.5}
+:root[data-theme="psychedelic"] .qprompt{color:#FF00FF}
+.qde{font-size:15px;font-weight:600;color:var(--panel-sub);margin-top:4px}
+.vis{margin:16px auto 0;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+.vis img.em{width:clamp(44px,5vw,72px);height:clamp(44px,5vw,72px);image-rendering:pixelated}
+.vis .arrow{font-size:20px;color:var(--panel-sub)}
+.vis .group{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:8px;background:rgba(37,99,235,.08)}
+.vis .bigword{font-size:clamp(28px,5vw,64px);color:#1F2937;background:#FACC15;padding:16px 32px;margin:8px}
+:root[data-theme="psychedelic"] .vis .bigword{background:#000;color:#00FF41;text-shadow:0 0 12px #00FF41}
+.vis .desent{font-size:clamp(17px,1.8vw,24px);background:#FEF3C7;color:#1F2937;padding:12px 20px;margin:4px}
+.vis .desent b{color:#B91C1C}
+.vis .flag{font-size:12px;display:block;color:#92400E;margin-bottom:4px}
+.vis canvas.scene{width:min(100%,400px);max-height:30vh;aspect-ratio:96/60;object-fit:contain;image-rendering:pixelated;margin:4px}
+.qtext{font-size:clamp(22px,2.6vw,38px);line-height:1.35;margin-top:16px;font-weight:900}
+.gap{display:inline-block;min-width:3.2em;border-bottom:6px solid currentColor;color:#9333EA;padding:0 4px;line-height:1.1}
+.gap.fill{color:#15803D;border-color:#22C55E}
+:root[data-theme="psychedelic"] .gap{color:#FF00FF}
+:root[data-theme="psychedelic"] .gap.fill{color:#00FF41;border-color:#00FF41}
+.tbar{height:16px;background:#E5E7EB;margin-top:16px;position:relative;display:none}
+.tbar.on{display:block}
+.tbar i{position:absolute;left:0;top:0;bottom:0;background:#22C55E;transition:width .25s linear}
+.tbar.low i{background:#DC2626}
+.tbar span{position:absolute;right:8px;top:-24px;font-size:11px}
+
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:24px 32px}
+.ans{
+  min-height:72px;padding:12px 16px;display:flex;align-items:center;gap:16px;text-align:left;
+  background:var(--ans-bg);color:var(--ans-ink);font-size:clamp(18px,1.9vw,28px);margin:4px;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),background .15s, opacity .3s;
+  opacity:0;transform:translateY(16px)
+}
+.ans.in{opacity:1;transform:none}
+.ans .k{font-size:clamp(12px,1.3vw,18px);color:var(--ans-key);flex:none}
+.ans:hover:not(:disabled){transform:scale(1.04)}
+.ans:active:not(:disabled){transform:translate(2px,2px)}
+.ans.sel{background:var(--ans-sel);color:var(--ans-sel-ink)}
+.ans.sel .k,.ans.ok .k{color:#1F2937}
+.ans.lock{animation:blink .35s steps(2) infinite}
+.ans.ok{background:var(--ans-ok);color:var(--ans-ok-ink);animation:okflash .2s steps(2) 4}
+.ans.bad{background:var(--ans-bad);color:var(--ans-bad-ink)}
+.ans.bad .k{color:#fff}
+.ans.gone{visibility:hidden}
+.ans:disabled{cursor:default}
+@keyframes blink{50%{filter:brightness(1.35)}}
+@keyframes okflash{50%{filter:brightness(1.4)}}
+.ans.bounce{animation:bounce .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bounce{0%{transform:scale(1)}30%{transform:scale(1.15,.85)}60%{transform:scale(.95,1.08)}100%{transform:scale(1)}}
+
+.controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.joker{
+  width:96px;min-height:64px;background:#7C3AED;color:#fff;font-size:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:4px;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1)
+}
+.joker small{font-size:9px}
+.joker:hover:not(:disabled){transform:scale(1.07)}
+.joker:active:not(:disabled){transform:translate(2px,2px)}
+.joker:disabled{filter:grayscale(1) brightness(.7);cursor:default}
+.joker.used{position:relative}
+.joker.used::after{content:"";position:absolute;left:8px;right:8px;top:50%;height:6px;background:#DC2626;transform:rotate(-20deg)}
+:root[data-theme="psychedelic"] .joker{background:#000;color:#FF00FF}
+.walk{min-height:64px;padding:0 16px;background:#0D9488;color:#fff;font-size:12px;margin:4px}
+.action{margin-left:auto;min-height:64px;padding:0 32px;font-size:clamp(12px,1.3vw,16px);background:#F97316;color:#1F2937;margin:4px;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.action.next{background:#16A34A;color:#fff}
+.action:hover{transform:scale(1.05)}
+.action:active{transform:translate(2px,2px)}
+.action[hidden]{display:none}
+
+/* Leiter */
+.ladder{background:var(--ladder-bg);color:var(--ladder-ink);padding:16px 12px;margin:4px}
+.ladder h4{font-size:10px;text-align:center;margin-bottom:12px;color:var(--gold)}
+.lrow{display:flex;align-items:center;gap:8px;min-height:30px;padding:2px 8px;font-size:11px;position:relative}
+.lrow .n{width:24px;text-align:right;opacity:.7}
+.lrow .a{flex:1}
+.lrow.safe .a{color:var(--ladder-safe)}
+.lrow.top .a{color:var(--gold)}
+.lrow.cur{background:var(--ladder-cur);color:#1F2937}
+.lrow.cur .n{opacity:1}
+.lrow.cur.safe .a{color:#9A3412}
+.lrow.done .a{opacity:.55}
+.lrow.start{margin-top:8px;border-top:2px dashed rgba(255,255,255,.3);padding-top:6px}
+.toks{display:flex;gap:2px}
+.tok{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;font-size:14px;background:var(--c);box-shadow:0 0 0 2px #000;margin-left:2px;font-family:'Nunito',sans-serif}
+.tok.now{animation:tokbob .6s ease-in-out infinite alternate}
+@keyframes tokbob{to{transform:translateY(-4px)}}
+
+.coin{width:1em;height:1em;image-rendering:pixelated;vertical-align:-.12em}
+.floaty{position:fixed;z-index:70;pointer-events:none;font-size:16px;color:var(--gold);text-shadow:3px 3px 0 #000;
+  animation:floaty .9s ease-out forwards}
+@keyframes floaty{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-64px)}}
+
+.shake{animation:shake .25s linear 1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.slidein{animation:slidein .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes slidein{from{opacity:0;transform:translateY(-32px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   OVERLAYS
+   ============================================================ */
+#ov{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(10,8,40,.72)}
+#ov.on{display:flex}
+.ovbox{background:var(--panel);color:var(--panel-ink);padding:32px;max-width:720px;width:100%;text-align:center;max-height:calc(100vh - 32px);overflow:auto;
+  animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.ovbox h2{font-size:clamp(14px,2vw,24px);line-height:1.5;margin-bottom:16px;color:var(--panel-ink)}
+.ovbox p{font-size:clamp(17px,1.7vw,22px);margin:8px 0}
+.ovbtns{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:24px}
+.ovbtn{min-height:56px;padding:0 24px;font-size:12px;background:#2563EB;color:#fff;margin:4px;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.ovbtn.go{background:#16A34A}
+.ovbtn.no{background:#6B7280}
+.ovbtn.bonus{background:#DC2626}
+.ovbtn:disabled{filter:grayscale(1);opacity:.5;cursor:not-allowed}
+.ovbox .hint{font-size:15px;margin-top:16px}
+.card.hard{background:#FEE2E2}
+:root[data-theme="psychedelic"] .card.hard{background:#1a0008}
+.ovbtn:hover{transform:scale(1.05)}
+.ovbtn:active{transform:translate(2px,2px)}
+.bigemoji{font-size:64px;margin:8px 0;line-height:1}
+.bigemoji img{width:96px;height:96px;image-rendering:pixelated}
+.ringing img{animation:ring .15s linear infinite}
+@keyframes ring{0%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}100%{transform:rotate(-12deg)}}
+.count{font-size:clamp(40px,8vw,96px);color:#DC2626;margin:16px 0}
+.aud{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px;align-items:end}
+.aud .col{display:flex;flex-direction:column;align-items:center;gap:8px}
+.aud .barwrap{height:180px;width:56px;background:rgba(0,0,0,.08);display:flex;align-items:flex-end}
+.aud .b{width:100%;height:0;background:repeating-linear-gradient(0deg,#2563EB 0 12px,#1D4ED8 12px 16px);transition:height .9s steps(12)}
+.aud .pct{font-size:12px;min-height:16px}
+.aud .lab{font-size:14px}
+.aud .cnt{font-size:22px;min-width:48px}
+.aud .pm{display:flex;gap:8px}
+.aud .pm button{width:48px;height:48px;background:#E5E7EB;color:#1F2937;font-size:22px;margin:4px}
+.aud .col.off{opacity:.3;pointer-events:none}
+.rank{list-style:none;margin:16px auto 0;max-width:480px;text-align:left}
+.rank li{display:flex;align-items:center;gap:16px;padding:12px 16px;margin:12px 4px;background:#fff;color:#1F2937;font-size:20px}
+:root[data-theme="psychedelic"] .rank li{background:#000;color:#00FFFF}
+.rank li .p{font-family:'Press Start 2P';font-size:14px;width:40px}
+.rank li .m{margin-left:auto;font-family:'Press Start 2P';font-size:11px;color:#B45309}
+.rank li.win{background:#FACC15;color:#1F2937}
+
+/* Splash */
+#splash{position:fixed;inset:0;z-index:100;background:#1E1B4B;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity .4s}
+#splash .sg{font-family:'Fredoka One','Nunito',sans-serif;font-size:36px;color:#C084FC;text-shadow:0 0 2px #fff}
+#splash .star{font-size:64px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#splash.out{opacity:0;pointer-events:none}
+
+.warp{animation:warp .6s ease-out}
+@keyframes warp{0%{filter:hue-rotate(0) saturate(3) blur(2px);transform:scale(1.04)}100%{filter:none;transform:none}}
+:root[data-theme="psychedelic"] .card,:root[data-theme="psychedelic"] .panel,:root[data-theme="psychedelic"] .ovbox{box-shadow:0 -4px 0 0 var(--px),0 4px 0 0 var(--px),-4px 0 0 0 var(--px),4px 0 0 0 var(--px),var(--glow)}
+:root[data-theme="psychedelic"] .qtext{animation:hue 6s linear infinite;color:#00FFFF}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:980px){
+  .game{grid-template-columns:1fr}
+  .ladder{order:-1;padding:12px}
+  .ladder h4{display:none}
+  .lrows{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+  .lrow{min-height:32px;padding:4px 6px;font-size:9px;flex-direction:column;gap:2px}
+  .lrow .a{display:none}
+  .lrow.start{margin-top:0;border-top:0;padding-top:4px}
+  .sgrid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .answers{grid-template-columns:1fr;gap:16px}
+  .chips{grid-template-columns:1fr 1fr}
+  .teamrow{grid-template-columns:1fr}
+  .htitle .s{display:none}
+  .coins{padding:0 8px}
+  .hbtn{padding:0 10px}
+  .joker{width:72px}
+}
+/* Beamer mit wenig Höhe (1366×768, 1280×800): kompakter */
+@media (min-width:981px) and (max-height:900px){
+  main{padding:12px 16px}
+  .stage{gap:12px}
+  .hostrow{min-height:64px}
+  #hostcv{width:44px;height:77px}
+  .bubble{padding:8px 16px;min-height:44px;margin-bottom:8px}
+  .card{padding:12px 20px 16px}
+  .qprompt{margin-top:8px}
+  .vis{margin-top:8px}
+  .vis canvas.scene{max-height:21vh}
+  .vis img.em{width:48px;height:48px}
+  .vis .bigword{padding:8px 24px;font-size:clamp(28px,4vw,48px)}
+  .qtext{margin-top:8px;font-size:clamp(22px,2.3vw,32px)}
+  .answers{gap:12px 24px}
+  .ans{min-height:60px;padding:8px 16px}
+  .joker,.walk,.action{min-height:56px}
+  .lrow{min-height:26px}
+  footer{padding:6px 16px 8px}
+  .prog{height:18px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<canvas id="studio" width="320" height="180"></canvas>
+<canvas id="fx"></canvas>
+
+<div id="splash"><div class="star">⭐</div><div class="sg">School Games 🎓</div></div>
+
+<div class="app">
+  <header>
+    <button class="hbtn pixel px" id="backBtn" aria-label="Zurück">◀</button>
+    <div class="htitle">
+      <div class="t pixel">GRAMMAR MILLIONAIRE</div>
+      <div class="s pixel" id="hsub">5. Klasse</div>
+    </div>
+    <div class="hright">
+      <div class="coins pixel px" id="coins">🪙 0</div>
+      <button class="hbtn px" id="muteBtn" aria-label="Ton an/aus" style="font-size:20px">🔊</button>
+      <button class="hbtn px" id="psyBtn" aria-label="Psychedelic Mode" style="font-size:20px">🌈</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- SETUP -->
+    <section class="screen on setup" id="setup">
+      <div class="logo pixel">
+        <div class="l1">WHO WANTS TO BE A</div>
+        <div class="l2">GRAMMAR<br>MILLIONAIRE?</div>
+        <div class="l3">5. KLASSE · ENGLISCH</div>
+      </div>
+      <div class="sgrid">
+        <div class="panel px">
+          <h3 class="pixel"><span>1</span> NIVEAU</h3>
+          <div class="row" id="lvlRow">
+            <button class="opt px lvl-std" data-lvl="std">Standard<small>5. Klasse · MS</small></button>
+            <button class="opt px lvl-ahs" data-lvl="ahs">AHS<small>5. Klasse · herausfordernd</small></button>
+          </div>
+        </div>
+        <div class="panel px">
+          <h3 class="pixel"><span>3</span> SPIELLÄNGE</h3>
+          <div class="row" id="lenRow">
+            <button class="opt px" data-len="5">Kurz<small>5 Fragen · ~10 min</small></button>
+            <button class="opt px" data-len="10">Mittel<small>10 Fragen · ~20 min</small></button>
+            <button class="opt px" data-len="15">Lang<small>15 Fragen · 1 Stunde</small></button>
+          </div>
+        </div>
+        <div class="panel px wide">
+          <h3 class="pixel"><span>2</span> STOFF <span style="color:var(--panel-sub)">(mehrere möglich)</span></h3>
+          <div class="chips" id="topicRow"></div>
+          <div class="row" style="margin-top:16px">
+            <button class="opt px" id="allBtn" style="flex:0 0 auto;min-width:200px">✅ Alle Themen</button>
+          </div>
+        </div>
+        <div class="panel px">
+          <h3 class="pixel"><span>4</span> TEAMS</h3>
+          <div class="row" id="teamCountRow">
+            <button class="opt px" data-tc="1">1<small>Solo</small></button>
+            <button class="opt px" data-tc="2">2</button>
+            <button class="opt px" data-tc="3">3</button>
+            <button class="opt px" data-tc="4">4</button>
+          </div>
+          <div class="teamrow" id="teamNames"></div>
+          <div class="hint" id="modeHint"></div>
+        </div>
+        <div class="panel px">
+          <h3 class="pixel"><span>5</span> TIMER</h3>
+          <div class="row" id="timerRow">
+            <button class="opt px" data-timer="0">Aus<small>ohne Zeitdruck</small></button>
+            <button class="opt px" data-timer="1">30 s<small>pro Frage</small></button>
+          </div>
+          <div class="hint">Läuft die Zeit ab, zählt die Antwort als falsch.</div>
+          <div class="row" style="margin-top:16px"><button class="opt px" id="seenBtn" style="font-size:14px">🧠 Fragen-Gedächtnis löschen</button></div>
+          <div class="hint">Das Spiel merkt sich, welche Fragen schon dran waren, und bringt zuerst neue.</div>
+        </div>
+      </div>
+      <div class="startrow"><button class="bigbtn pixel px" id="startBtn">▶ START</button></div>
+      <div class="keys">Tastatur: A–D wählen · Enter = Final Answer / Weiter · F = 50:50 · P = Publikum · T = Telefon · M = Ton</div>
+    </section>
+
+    <!-- GAME -->
+    <section class="screen" id="game">
+      <div class="game">
+        <div class="stage">
+          <div class="hostrow">
+            <canvas id="hostcv" width="16" height="28"></canvas>
+            <div class="bubble px" id="bubble"><span id="bubbleTxt">Hello!</span><span class="turnchip pixel px" id="turnchip" hidden></span></div>
+          </div>
+          <div class="card px" id="card">
+            <div class="qhead pixel"><span id="qnum">FRAGE 1</span><span id="qtopic"></span></div>
+            <div class="qprompt pixel" id="qprompt"></div>
+            <div class="qde" id="qde"></div>
+            <div class="vis" id="qvis"></div>
+            <div class="qtext" id="qtext"></div>
+            <div class="tbar px" id="tbar"><i></i><span class="pixel"></span></div>
+          </div>
+          <div class="answers" id="answers"></div>
+          <div class="controls">
+            <button class="joker px" id="j50"><span class="pixel" style="font-size:14px">50:50</span><small class="pixel">F</small></button>
+            <button class="joker px" id="jaud">🙋<small class="pixel">P</small></button>
+            <button class="joker px" id="jtel">📞<small class="pixel">T</small></button>
+            <button class="walk pixel px" id="walkBtn">💰 AUSSTEIGEN</button>
+            <button class="action pixel px" id="actionBtn" hidden>🔒 FINAL ANSWER</button>
+          </div>
+        </div>
+        <aside class="ladder px" id="ladder"><h4 class="pixel" id="lhead">LEITER</h4><div class="lrows" id="lrows"></div></aside>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="prog px"><div class="bar" id="pbar"></div><div class="lbl pixel" id="plbl">0 / 10</div></div></footer>
+</div>
+
+<div id="ov" role="dialog" aria-modal="true"><div class="ovbox px" id="ovbox"></div></div>
+
+<script>
+'use strict';
+// #CONTENT-START ==============================================================
+/* ============================================================
+   FRAGEN-GENERATOREN
+   Jede Frage: {topic,type,key,tier,prompt,de,text,vis,opts,ans}
+   tier 0 = leicht (unteres Leiter-Drittel), 1 = mittel, 2 = schwer
+   AHS: ab tier 1 fast nur harte Formate (Fehler finden, 2 Lücken,
+   Signalwörter, W-Fragen, Themen kombiniert, gemeine Distraktoren)
+   ============================================================ */
+const R = Math.random;
+const pick = a => a[Math.floor(R() * a.length)];
+const rint = (a, b) => a + Math.floor(R() * (b - a + 1));
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const words = (...p) => p.filter(Boolean).join(' ');
+const WRONG_P = 'Which sentence is WRONG?', WRONG_D = 'Achtung: Welcher Satz ist FALSCH?';
+
+function mk(o){
+  const seen = new Set([o.correct.toLowerCase()]);
+  const wrong = [];
+  for(const w of o.wrong){ const k = w.toLowerCase(); if(!seen.has(k)){ seen.add(k); wrong.push(w); } }
+  if(wrong.length < 3) return null;
+  const opts = shuffle([o.correct, ...wrong.slice(0,3)]);
+  const q = Object.assign({}, o, { opts, ans: opts.indexOf(o.correct) });
+  delete q.wrong;
+  return q;
+}
+// "Which sentence is WRONG?": 3 richtige + 1 falscher Satz → richtig zu tippen ist der falsche
+function mkWrong(o, good, bad){
+  return mk(Object.assign({prompt:WRONG_P, de:WRONG_D, text:''}, o, {correct:bad, wrong:good}));
+}
+
+/* ---------- Zahlwörter ---------- */
+const NUMW = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty',
+  'twenty-one','twenty-two','twenty-three','twenty-four','twenty-five','twenty-six','twenty-seven','twenty-eight','twenty-nine','thirty'];
+const NMISS = {
+  1:['wan','onne','oen'], 2:['tow','tuo','twoo'], 3:['tree','thre','threee'], 4:['for','fuor','foure'], 5:['fiev','fife','fiv'],
+  6:['sicks','siks','sixe'], 7:['sevn','seben','sefen'], 8:['eigth','eigt','eihgt'], 9:['nein','nien','nyne'], 10:['tenn','tan','tenne'],
+  11:['elevn','elfen','eleben'], 12:['twelf','twelv','twelfe'], 13:['threeteen','thirdteen','thirtin'], 14:['forteen','fourtin','fourteeen'],
+  15:['fiveteen','fiftin','fivteen'], 16:['sixtin','sixteeen','sixtean'], 17:['seventin','sebenteen','seventean'],
+  18:['eightteen','eigthteen','eighteeen'], 19:['ninteen','nineten','nientin'], 20:['twendy','twanty','tweny'],
+  21:['one-twenty','twenty-won','twendy-one'], 22:['two-twenty','twenty-too','twendy-two'], 23:['three-twenty','twenty-tree','twendy-three'],
+  24:['four-twenty','twenty-for','twendy-four'], 25:['five-twenty','twenty-fiev','twendy-five'], 26:['six-twenty','twenty-sicks','twendy-six'],
+  27:['seven-twenty','twenty-sevn','twendy-seven'], 28:['eight-twenty','twenty-eigth','twendy-eight'], 29:['nine-twenty','twenty-nein','twendy-nine'],
+  30:['thirdy','thurty','thirtee'],
+};
+const TY = {3:'thirty',4:'forty',5:'fifty',6:'sixty',7:'seventy',8:'eighty',9:'ninety'};
+// gemeiner Zahl-Distraktor: thirteen ↔ thirty, sonst Rechtschreibfehler
+const numTrap = n => (n >= 13 && n <= 19) ? TY[n-10] : n === 30 ? 'thirteen' : n === 20 ? 'twelve' : NMISS[n][0];
+function nearWords(n, lo, hi){ return shuffle([n-2,n-1,n+1,n+2].filter(x => x >= lo && x <= hi)).map(x => NUMW[x]); }
+
+/* ---------- 1. PLURALS ---------- */
+// [singular, plural, emoji, deutsch (Plural), 3 falsche Formen, Schwierigkeit 1-5]
+const PL = [
+  ['cat','cats','🐱','Katzen',['cat','cates','catts'],1],
+  ['dog','dogs','🐶','Hunde',['dog','doges','dogz'],1],
+  ['book','books','📚','Bücher',['book','bookes','bookz'],1],
+  ['apple','apples','🍎','Äpfel',['apple','applees','appls'],1],
+  ['girl','girls','👧','Mädchen',['girl','girles','girlen'],1],
+  ['house','houses','🏠','Häuser',['house','housen','housies'],1],
+  ['horse','horses','🐴','Pferde',['horse','horsen','horseses'],1],
+  ['chair','chairs','🪑','Sessel',['chair','chaires','chairen'],1],
+  ['egg','eggs','🥚','Eier',['egg','egges','eggen'],1],
+  ['banana','bananas','🍌','Bananen',['banana','bananaes','bananen'],1],
+  ['pencil','pencils','✏️','Bleistifte',['pencil','penciles','pencilz'],1],
+  ['boy','boys','👦','Buben',['boy','boies','boyes'],3],
+  ['key','keys','🔑','Schlüssel',['key','kies','keyes'],3],
+  ['toy','toys','🧸','Spielsachen',['toy','toies','toyes'],3],
+  ['day','days','📅','Tage',['day','daies','dayes'],3],
+  ['monkey','monkeys','🐒','Affen',['monkey','monkies','monkeyes'],3],
+  ['bus','buses','🚌','Busse',['bus','buss','busies'],2],
+  ['box','boxes','📦','Schachteln',['box','boxs','boxen'],2],
+  ['watch','watches','⌚','Uhren',['watch','watchs','watchies'],2],
+  ['glass','glasses','🥛','Gläser',['glass','glasies','glassen'],2],
+  ['dish','dishes','🍽️','Teller',['dish','dishs','dishies'],2],
+  ['fox','foxes','🦊','Füchse',['fox','foxs','foxen'],2],
+  ['sandwich','sandwiches','🥪','Sandwiches',['sandwich','sandwichs','sandwichies'],2],
+  ['beach','beaches','🏖️','Strände',['beach','beachs','beachies'],2],
+  ['brush','brushes','🪥','Bürsten',['brush','brushs','brushies'],2],
+  ['dress','dresses','👗','Kleider',['dress','dressies','dressen'],2],
+  ['tomato','tomatoes','🍅','Tomaten',['tomato','tomatos','tomatoies'],4],
+  ['potato','potatoes','🥔','Kartoffeln',['potato','potatos','potatoies'],4],
+  ['hero','heroes','🦸','Helden',['hero','heros','heroies'],4],
+  ['baby','babies','👶','Babys',['baby','babys','babyes'],3],
+  ['city','cities','🏙️','Städte',['city','citys','cityes'],3],
+  ['family','families','👨‍👩‍👧','Familien',['family','familys','familyes'],3],
+  ['party','parties','🎉','Partys',['party','partys','partyes'],3],
+  ['story','stories','📖','Geschichten',['story','storys','storyes'],3],
+  ['cherry','cherries','🍒','Kirschen',['cherry','cherrys','cherryes'],3],
+  ['butterfly','butterflies','🦋','Schmetterlinge',['butterfly','butterflys','butterflyes'],3],
+  ['strawberry','strawberries','🍓','Erdbeeren',['strawberry','strawberrys','strawberryes'],3],
+  ['knife','knives','🔪','Messer',['knife','knifes','knivs'],4],
+  ['leaf','leaves','🍃','Blätter',['leaf','leafs','leafes'],4],
+  ['wolf','wolves','🐺','Wölfe',['wolf','wolfs','wolfes'],4],
+  ['shelf','shelves','🗄️','Regale',['shelf','shelfs','shelfes'],5],
+  ['half','halves','🌗','Hälften',['half','halfs','halfes'],5],
+  ['loaf','loaves','🍞','Brotlaibe',['loaf','loafs','loafes'],5],
+  ['wife','wives','👰','Ehefrauen',['wife','wifes','wivs'],5],
+  ['thief','thieves','🦹','Diebe',['thief','thiefs','thiefes'],5],
+  ['man','men','👨','Männer',['mans','mens','manes'],3],
+  ['woman','women','👩','Frauen',['womans','womens','womanes'],3],
+  ['child','children','🧒','Kinder',['childs','childrens','childen'],3],
+  ['foot','feet','🦶','Füße',['foots','feets','footes'],4],
+  ['tooth','teeth','🦷','Zähne',['tooths','teeths','toothes'],4],
+  ['mouse','mice','🐭','Mäuse',['mouses','mices','mousen'],4],
+  ['person','people','🧑','Leute',['persones','peoples','persen'],4],
+  ['sheep','sheep','🐑','Schafe',['sheeps','sheepes','sheepies'],4],
+  ['goose','geese','🪿','Gänse',['gooses','geeses','goosen'],5],
+  ['deer','deer','🦌','Hirsche',['deers','deeres','deeries'],5],
+];
+function plSingWrong(sg, pl){
+  const c = [pl, pl.replace(/s$/,''), pl.replace(/es$/,''), pl.replace(/ies$/,'ie'), pl.replace(/ves$/,'ve'), pl.replace(/ves$/,'f'), sg + 's', pl + 's', sg.replace(/y$/,'ie'), pl.replace(/ys$/,'ies')];
+  return [...new Set(c)].filter(x => x !== sg && x.length > 2);
+}
+function genPlurals(A, add){
+  for(const [sg,pl,e,de,wr,d] of PL){
+    if(!A && d >= 5) continue;
+    const base = A ? (d <= 2 ? 0 : d === 3 ? 1 : 2) : (d <= 1 ? 0 : d <= 3 ? 1 : 2);
+    if(!(A && d === 1)){
+      const t = A ? (d <= 3 ? 0 : 1) : base;
+      add('pl', t, mk({type:'gap', key:'pl-gap-'+sg, prompt:'Complete the plural!', de:'Ergänze die Mehrzahl.',
+        text:`One ${sg}, two ___.`, vis:{kind:'emoji', left:[e], right:[e,e]}, correct:pl, wrong:wr}));
+      add('pl', t, mk({type:'trans', key:'pl-tr-'+sg, prompt:"What's this in English?", de:'Wie heißt das auf Englisch?',
+        text:`die ${de} = ___`, vis:{kind:'emoji', right:[e,e,e]}, correct:pl, wrong:wr}));
+      const n = rint(2, 6);
+      add('pl', A ? (d >= 4 ? 2 : 1) : base, mk({type:'sent', key:'pl-se-'+sg, prompt:'Which sentence is correct?', de:'Welcher Satz ist richtig?',
+        text:'', vis:{kind:'emoji', right:Array(n).fill(e)}, correct:`I can see ${NUMW[n]} ${pl}.`, wrong:wr.map(w => `I can see ${NUMW[n]} ${w}.`)}));
+    }
+    // Plural + Zahl kombiniert (AHS: 10–30)
+    const nc = A ? rint(10, 30) : rint(2, 12);
+    add('pl', A ? (d >= 4 ? 2 : 1) : base, mk({type:'combo', key:'pl-co-'+sg, prompt:'Use the plural!', de:'Setze die Mehrzahl ein.',
+      text:`There are ${NUMW[nc]} ___ in the picture. (${sg})`, correct:pl, wrong:wr}));
+    // Singular finden
+    if(d >= 2 && sg !== 'person'){
+      add('pl', A ? (d >= 4 ? 2 : 1) : 2, mk({type:'sing', key:'pl-sg-'+sg, prompt:'Find the singular!', de:'Finde die Einzahl.',
+        text:`One ___, two ${pl}.`, vis:{kind:'emoji', left:[e], right:[e,e]}, correct:sg, wrong:plSingWrong(sg, pl)}));
+    }
+    // Zwei Lücken (AHS)
+    if(A && d >= 2){
+      const m = rint(3, 9);
+      add('pl', 2, mk({type:'two', key:'pl-two-'+sg, prompt:'Fill in both gaps!', de:'Beide Lücken füllen.',
+        text:`I can see one ___ and ${NUMW[m]} ___. (${sg})`, correct:`${sg} … ${pl}`,
+        wrong:[`${sg} … ${wr[0]}`, `${pl} … ${pl}`, `${sg} … ${wr[1]}`, `${wr[2]} … ${pl}`]}));
+    }
+  }
+  // Fehler finden: 3 richtige Plurale + 1 falscher
+  const pool = PL.filter(p => p[5] >= 2 && (A || p[5] <= 4));
+  for(let i = 0; i < (A ? 30 : 15); i++){
+    const [bad, ...good] = shuffle(pool).slice(0, 4);
+    const wf = pick(bad[4].filter(w => w !== bad[0]));
+    add('pl', A ? (i < 12 ? 1 : 2) : 2, mk({type:'odd', key:'pl-odd-'+[bad[0], ...good.map(g => g[0])].sort().join(','),
+      prompt:'Which plural is WRONG?', de:'Achtung: Welche Mehrzahl ist FALSCH?', text:'', correct:wf, wrong:good.map(g => g[1])}));
+  }
+}
+
+/* ---------- 2. FORMS OF TO BE ---------- */
+const BE_SUBJ = [ // Satzanfang, klein, Form, Art, Deutsch
+  ['I','I','am','p','Ich bin'],['You','you','are','p','Du bist'],['He','he','is','p','Er ist'],['She','she','is','p','Sie ist'],['We','we','are','p','Wir sind'],['They','they','are','p','Sie sind'],
+  ['Tom','Tom','is','n','Tom ist'],['Anna','Anna','is','n','Anna ist'],['My brother','my brother','is','n','Mein Bruder ist'],['My mum','my mum','is','n','Meine Mama ist'],['Our teacher','our teacher','is','n','Unsere Lehrerin ist'],
+  ['My friends','my friends','are','n','Meine Freunde sind'],['Tom and Anna','Tom and Anna','are','n','Tom und Anna sind'],['My parents','my parents','are','n','Meine Eltern sind'],['The children','the children','are','n','Die Kinder sind'],
+];
+const BE_PRED = {'at home':'zu Hause','happy':'glücklich','hungry':'hungrig','tired':'müde','in the garden':'im Garten','from Austria':'aus Österreich',
+  'at school':'in der Schule','in the kitchen':'in der Küche','good at maths':'gut in Mathe','late':'zu spät','ready':'fertig','in the classroom':'im Klassenzimmer'};
+const BE_PREDS = Object.keys(BE_PRED);
+const BE_ANIM = [['The dog','the dog','is'],['My cat','my cat','is'],['The birds','the birds','are'],['The horses','the horses','are']];
+const BE_APRED = ['hungry','in the garden','very small','black','happy','in the kitchen','brown'];
+const BE_NEG = { am:["am not",["isn't","aren't","amn't"]], is:["isn't",["aren't","am not","not is"]], are:["aren't",["isn't","am not","not are"]] };
+const BE_SHORT = [ // Frage-Subjekt, Frageform, Antwort-Pronomen, Antwortform
+  ['you','Are','I','am'],['Tom','Is','he','is'],['Anna','Is','she','is'],['your parents','Are','they','are'],['your brother','Is','he','is'],
+  ['your sister','Is','she','is'],['your friends','Are','they','are'],['the dog','Is','it','is'],['you and Tom','Are','we','are'],
+];
+function beNoOpts(pron, f){
+  if(f === 'am') return ["I'm not.", ["I amn't.","I isn't.","I don't."]];
+  if(f === 'is') return [`${pron} isn't.`, [`${pron} aren't.`, `${pron} doesn't.`, `${pron} not.`]];
+  return [`${pron} aren't.`, [`${pron} isn't.`, `${pron} don't.`, `${pron} not are.`]];
+}
+const BE_WH = [['Where ___ your parents?','are'],['How old ___ your sister?','is'],['What ___ your name?','is'],['Where ___ you from?','are'],
+  ['Who ___ your best friends?','are'],['Why ___ Tom so happy?','is'],['When ___ your birthday?','is'],['How ___ you today?','are'],
+  ['Where ___ my keys?','are'],['What colour ___ your bike?','is'],['How old ___ your grandparents?','are'],['Who ___ that girl?','is'],
+  ['Where ___ I?','am'],['What ___ your favourite animals?','are'],['Where ___ the cat?','is'],['How old ___ you?','are']];
+const BE_CONTR = [ // Kurzform, Langform, falsch
+  ["I'm",'I am',['I is','I are','I have']], ["you're",'you are',['you is','your are','you am']], ["he's",'he is',['he are','his is','he am']],
+  ["she's",'she is',['she are','she am','she does']], ["it's",'it is',['its is','it are','it am']], ["we're",'we are',['we is','were are','we am']],
+  ["they're",'they are',['they is','there are','their are']], ["isn't",'is not',['is no','are not','am not']], ["aren't",'are not',['is not','am not','are no']],
+  ["I'm not",'I am not',['I is not','I not am','I are not']],
+];
+const BEFORMS = ['am','is','are','be'];
+
+function genBe(A, add){
+  for(const [S,low,f,kind,deS] of BE_SUBJ){
+    const ps = shuffle(BE_PREDS);
+    for(const p of ps.slice(0,3)){
+      if(!(A && kind === 'p')){
+        add('be', A ? 0 : (kind === 'p' ? 0 : 1), mk({type:'gap', key:`be-gap-${S}-${p}`, prompt:'Fill in am, is or are!', de:'Setze die richtige Form von "to be" ein.',
+          text:`${S} ___ ${p}.`, correct:f, wrong:BEFORMS}));
+      }
+    }
+    if(!A){
+      const p = ps[3];
+      add('be', kind === 'p' ? 0 : 1, mk({type:'de', key:`be-de-${S}-${p}`, prompt:'Translate!', de:'Übersetze den deutschen Satz.',
+        text:`${S} ___ ${p}.`, vis:{kind:'de', html:`${deS} <b>${BE_PRED[p]}</b>.`}, correct:f, wrong:BEFORMS}));
+    }
+    for(const p of ps.slice(4,6)){
+      const [c, w] = BE_NEG[f];
+      add('be', A ? (kind === 'p' ? 0 : 1) : 2, mk({type:'neg', key:`be-neg-${S}-${p}`, prompt:'Make it negative!', de:'Verneine den Satz (not).',
+        text:`${S} ___ (not) ${p}.`, correct:c, wrong:w}));
+    }
+    const qp = S === 'I' ? ['late','ready'] : ps.slice(6,8);
+    for(const p of qp){
+      add('be', A ? 1 : (kind === 'p' ? 1 : 2), mk({type:'q', key:`be-q-${S}-${p}`, prompt:'Make a question!', de:'Bilde eine Frage.',
+        text:`___ ${low} ${p}?`, correct:cap(f), wrong:BEFORMS.map(cap)}));
+    }
+    if(A){
+      const p = ps[8];
+      add('be', 1, mk({type:'sent', key:`be-se-${S}-${p}`, prompt:'Which sentence is correct?', de:'Welcher Satz ist richtig?',
+        text:'', correct:`${S} ${f} ${p}.`, wrong:BEFORMS.map(x => `${S} ${x} ${p}.`)}));
+      if(kind === 'n' || S === 'I'){ // to be + Zahlen 10–30
+        const n = S === 'I' ? rint(10, 12) : rint(10, 30);
+        add('be', 0, mk({type:'age', key:`be-age-${S}`, prompt:'Fill in am, is or are!', de:'', text:`${S} ___ ${NUMW[n]} years old.`, correct:f, wrong:BEFORMS}));
+      }
+    }
+  }
+  for(const [S,,f] of BE_ANIM){
+    for(const p of shuffle(BE_APRED).slice(0,3)){
+      add('be', A ? 0 : 1, mk({type:'gap', key:`be-gap-${S}-${p}`, prompt:'Fill in am, is or are!', de:'Setze die richtige Form von "to be" ein.',
+        text:`${S} ___ ${p}.`, correct:f, wrong:BEFORMS}));
+    }
+  }
+  for(const [qs,qf,pron,af] of BE_SHORT){
+    for(const p of shuffle(['hungry','tired','at home','happy','ready','in the garden']).slice(0,2)){
+      add('be', A ? 1 : 2, mk({type:'shortY', key:`be-sy-${qs}-${p}`, prompt:'Complete the short answer!', de:'Ergänze die Kurzantwort.',
+        text:`${qf} ${qs} ${p}? – Yes, ${pron} ___.`, correct:af, wrong:['am','is','are','do']}));
+      if(A){
+        const [c, w] = beNoOpts(pron, af);
+        add('be', 2, mk({type:'shortN', key:`be-sn-${qs}-${p}`, prompt:'Choose the short answer!', de:'',
+          text:`${qf} ${qs} ${p}? – No, ___`, correct:c, wrong:w}));
+      }
+    }
+    // Zwei Lücken (AHS)
+    if(A && af !== 'am'){
+      const p = pick(['hungry','tired','at home','happy','at school']);
+      const neg = af === 'is' ? "isn't" : "aren't", oQ = qf === 'Is' ? 'Are' : 'Is', oNeg = af === 'is' ? "aren't" : "isn't";
+      const yes = R() < 0.5;
+      add('be', 2, mk({type:'two', key:`be-two-${qs}`, prompt:'Fill in both gaps!', de:'',
+        text:`___ ${qs} ${p}? – ${yes ? 'Yes' : 'No'}, ${pron} ___.`,
+        correct: yes ? `${qf} … ${af}` : `${qf} … ${neg}`,
+        wrong: yes ? [`${oQ} … ${af}`, `${qf} … ${qf === 'Is' ? 'are' : 'is'}`, `Does … does`, `Do … do`]
+                   : [`${oQ} … ${neg}`, `${qf} … ${oNeg}`, `Does … doesn't`, `Do … don't`]}));
+    }
+  }
+  // W-Fragen
+  for(const [t, f] of BE_WH){
+    add('be', A ? 1 : 2, mk({type:'wh', key:'be-wh-'+t, prompt:'Complete the question!', de:'Ergänze die Frage.', text:t, correct:f, wrong:['am','is','are','do']}));
+  }
+  // Kurzformen
+  for(const [s, l, w] of BE_CONTR){
+    add('be', A ? 0 : 1, mk({type:'contr', key:'be-c-'+s, prompt:"What's the long form?", de:'Wie lautet die Langform?', text:`${s} = ___`, correct:l, wrong:w}));
+  }
+  // Fehler finden (AHS)
+  if(A){
+    for(let i = 0; i < 24; i++){
+      const ss = shuffle(BE_SUBJ).slice(0, 4), pp = shuffle(BE_PREDS);
+      const good = ss.slice(1).map(([S,,f], k) => `${S} ${f} ${pp[k]}.`);
+      const [S,,f] = ss[0];
+      const wf = pick(['am','is','are'].filter(x => x !== f));
+      add('be', i < 8 ? 1 : 2, mkWrong({type:'wrong', key:'be-w-'+ss.map(s => s[0]).join(',')}, good, `${S} ${wf} ${pp[3]}.`));
+    }
+  }
+}
+
+/* ---------- 3. NUMBERS (Standard 1–25, AHS 10–30) ---------- */
+const NFACTS = [ // Frage, Zahl, Niveau ('s' Standard, 'a' AHS, 'b' beide)
+  ['How many days are there in a week?',7,'s'], ['How many legs has a spider got?',8,'s'], ['How many legs has a dog got?',4,'s'],
+  ['How many legs has a bird got?',2,'s'], ['How many seasons are there in a year?',4,'s'], ['How many sides has a triangle got?',3,'s'],
+  ['How many colours has a traffic light got?',3,'s'],
+  ['How many months are there in a year?',12,'b'], ['How many players are there in a football team?',11,'b'], ['How many hours are there in a day?',24,'b'],
+  ['How many fingers are there on two hands?',10,'b'],
+  ['How many eggs are there in a dozen?',12,'a'], ['How many minutes are there in a quarter of an hour?',15,'a'], ['How many hours are there in half a day?',12,'a'],
+  ['How many days are there in February? (not in a leap year)',28,'a'], ['How many days are there in two weeks?',14,'a'],
+  ['How many letters are there in the English alphabet?',26,'a'], ['How many minutes are there in half an hour?',30,'a'],
+  ['How many days has September got?',30,'a'], ['How many players are there in two football teams?',22,'a'], ['How many toes have two people got?',20,'a'],
+  ['How many legs have three spiders got?',24,'a'], ['How many months are there in two years?',24,'a'], ['How many days are there in three weeks?',21,'a'],
+];
+function numWrongDigits(n){
+  const c = [];
+  if(n >= 13 && n <= 19) c.push((n-10)*10);
+  if(n >= 21 && n % 10) c.push(Number(String(n).split('').reverse().join('')));
+  if(n === 20) c.push(12);
+  if(n === 12) c.push(20);
+  if(n === 30) c.push(13);
+  c.push(n + 10);
+  if(n > 10) c.push(n - 10);
+  c.push(n + 1);
+  if(n > 1) c.push(n - 1);
+  c.push(n + 2, n * 2 + 1);
+  return [...new Set(c)].filter(x => x !== n && x > 0).slice(0,3).map(String);
+}
+function genNum(A, add){
+  const lo = A ? 10 : 1, hi = A ? 30 : 25;
+  for(let n = lo; n <= hi; n++){
+    const t = A ? 0 : (n <= 12 ? 0 : n <= 20 ? 1 : 2);
+    const other = (n >= 13 && n <= 19) ? TY[n-10] : n === 30 ? 'thirteen' : NUMW[n === hi ? n - 1 : n + 1];
+    add('num', t, mk({type:'dw', key:'num-dw-'+n, prompt:'How do you write this number?', de:'Wie schreibt man diese Zahl auf Englisch?',
+      text:'', vis:{kind:'big', text:String(n)}, correct:NUMW[n], wrong:[NMISS[n][0], NMISS[n][1], other]}));
+    add('num', t, mk({type:'wd', key:'num-wd-'+n, prompt:'Which number is it?', de:'Welche Zahl ist das?',
+      text:'', vis:{kind:'big', text:NUMW[n]}, correct:String(n), wrong:numWrongDigits(n)}));
+    if((A && n >= 13) || (!A && n >= 11 && n <= 20)){
+      add('num', A ? 1 : 2, mk({type:'spell', key:'num-sp-'+n, prompt:'Which word is spelled correctly?', de:'Welches Wort ist richtig geschrieben?',
+        text:'', vis:{kind:'big', text:String(n)}, correct:NUMW[n], wrong:NMISS[n]}));
+    }
+  }
+  const mathOpts = s => A ? [numTrap(s), ...nearWords(s, 10, 30)] : [...nearWords(s, 1, 25).slice(0,2), NMISS[s][0]];
+  // Rechnen + / −   (Standard: Ergebnis bis 20 · AHS: Ergebnis 10–30)
+  for(let i = 0; i < 70; i++){
+    const minus = R() < 0.45;
+    let a, b, s;
+    if(A){
+      if(!minus){ a = rint(10, 22); b = rint(3, 19); s = a + b; if(s > 30) continue; }
+      else { a = rint(16, 30); b = rint(3, 16); s = a - b; if(s < 10) continue; }
+    } else {
+      if(!minus){ a = rint(2, 12); b = rint(2, 10); s = a + b; if(s > 20) continue; }
+      else { a = rint(6, 20); b = rint(2, a - 2); s = a - b; }
+    }
+    const op = minus ? 'minus' : 'plus';
+    add('num', A ? 1 : 2, mk({type:'math', key:`num-m-${a}${op}${b}`, prompt:'Do the maths!', de:'Rechne – und wähle das richtige Wort.',
+      text:`${NUMW[a]} ${op} ${NUMW[b]} = ___`, correct:NUMW[s], wrong:mathOpts(s)}));
+  }
+  // AHS: drei Zahlen
+  if(A){
+    for(let i = 0; i < 40; i++){
+      const a = rint(10, 20), b = rint(5, 15), c = rint(3, 12), s = a + b - c;
+      if(s < 10 || s > 30 || a + b > 30) continue;
+      add('num', 2, mk({type:'math3', key:`num-m3-${a}-${b}-${c}`, prompt:'Do the maths!', de:'',
+        text:`${NUMW[a]} plus ${NUMW[b]} minus ${NUMW[c]} = ___`, correct:NUMW[s], wrong:mathOpts(s)}));
+    }
+  }
+  // Zahlenreihen
+  for(let i = 0; i < 40; i++){
+    const d = A ? pick([2,3,4,5,-2,-3,-4]) : pick([1,2,2,5]);
+    const a = A ? rint(10, 30) : rint(1, 10);
+    const seq = [a, a+d, a+2*d, a+3*d];
+    if(seq.some(x => x < lo || x > hi)) continue;
+    const s = seq[3];
+    add('num', A ? (i % 2 ? 1 : 2) : (d === 1 ? 1 : 2), mk({type:'seq', key:`num-seq-${a}-${d}`, prompt:"What's next?", de:'Wie geht die Reihe weiter?',
+      text:`${NUMW[seq[0]]}, ${NUMW[seq[1]]}, ${NUMW[seq[2]]}, ___`, correct:NUMW[s], wrong:A ? mathOpts(s) : [...nearWords(s, 1, 25).slice(0,2), NMISS[s][0]]}));
+  }
+  // AHS: größte / kleinste Zahl (mit thirteen/thirty-Falle)
+  if(A){
+    for(let i = 0; i < 20; i++){
+      let ns = shuffle([13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]).slice(0, 3);
+      if(R() < 0.5 && !ns.includes(30) && !ns.includes(13)) ns = [13, 30, ns[0], ns[1]]; else ns.push(rint(10, 12));
+      ns = [...new Set(ns)].slice(0, 4); if(ns.length < 4) continue;
+      const big = R() < 0.6, c = big ? Math.max(...ns) : Math.min(...ns);
+      add('num', 1, mk({type:'cmp', key:`num-cmp-${big}-${ns.slice().sort().join(',')}`, prompt:`Which number is the ${big ? 'BIGGEST' : 'SMALLEST'}?`, de:'',
+        text:'', correct:NUMW[c], wrong:ns.filter(x => x !== c).map(x => NUMW[x])}));
+    }
+    // Text-Rechnungen
+    const STORIES = [
+      (a, b) => [`Anna is ${NUMW[a]}. Her cousin is ${NUMW[b]} years older. How old is her cousin?`, a + b],
+      (a, b) => [`There are ${NUMW[a]} pupils in our class. ${cap(NUMW[b])} pupils are ill today. How many pupils are at school?`, a - b],
+      (a, b) => [`Tom has got ${NUMW[a]} stickers. Anna gives him ${NUMW[b]} more. How many stickers has he got now?`, a + b],
+      (a, b) => [`A bus has got ${NUMW[a]} seats. ${cap(NUMW[b])} seats are free. How many people are on the bus?`, a - b],
+      (a, b) => [`Lisa reads ${NUMW[a]} pages on Monday and ${NUMW[b]} pages on Tuesday. How many pages is that?`, a + b],
+    ];
+    for(let i = 0; i < 40; i++){
+      const f = pick(STORIES), a = rint(10, 28), b = rint(3, 15);
+      const [t, s] = f(a, b);
+      if(s < 10 || s > 30) continue;
+      add('num', 2, mk({type:'story', key:'num-st-'+t, prompt:'Quiz time!', de:'', text:t, correct:NUMW[s], wrong:mathOpts(s)}));
+    }
+  } else {
+    for(let n = 9; n <= 15; n++){
+      add('num', 1, mk({type:'age', key:'num-age-'+n, prompt:'How old?', de:'Wie alt? Wähle die richtige Zahl.',
+        text:`I am ${NUMW[n]} years old. Next year I am ___.`, correct:NUMW[n+1], wrong:[NUMW[n], NUMW[n+2], NMISS[n+1][0]]}));
+    }
+  }
+  for(const [q, n, lv] of NFACTS){
+    if(lv === 's' && A) continue;
+    if(lv === 'a' && !A) continue;
+    add('num', 2, mk({type:'fact', key:'num-f-'+q, prompt:'Quiz time!', de:'Quizfrage – wähle die richtige Zahl.',
+      text:q, correct:NUMW[n], wrong:A ? mathOpts(n) : nearWords(n, 1, 25)}));
+  }
+}
+
+/* ---------- 4. THERE IS / THERE ARE ---------- */
+const TH = [ // Singular (mit a/an), Plural, Ort, Emoji, Adjektiv
+  ['a cat','cats','in the garden','🐱','black'], ['a book','books','on the table','📚','new'], ['an apple','apples','in the fridge','🍎','red'],
+  ['a picture','pictures','on the wall','🖼️','nice'], ['a ball','balls','under the bed','⚽','old'], ['a pencil','pencils','in my bag','✏️','blue'],
+  ['a computer','computers','in the classroom','💻','new'], ['a dog','dogs','in the park','🐶','brown'], ['an egg','eggs','in the box','🥚','white'],
+  ['a bird','birds','in the tree','🐦','small'], ['a banana','bananas','on the plate','🍌','yellow'], ['a mouse','mice','in the kitchen','🐭','grey'],
+  ['a child','children','in the pool','🧒','happy'], ['a bike','bikes','in front of the school','🚲','new'],
+];
+const TH_UNC = [['some milk','in the fridge','🥛'],['some water','in the glass','💧'],['some bread','on the table','🍞'],
+  ['some juice','in the bottle','🧃'],['some cheese','on the plate','🧀'],['some money','in my pocket','💰']];
+const TH_W = ['There is','There are','There am','There be'];
+function genThere(A, add){
+  const P = 'Fill in there is or there are!', D = 'Setze "There is" oder "There are" ein.';
+  for(const [sg,pl,place,e,adj] of TH){
+    const sgBare = sg.replace(/^an? /,'');
+    if(!A){
+      const n = rint(2, 6);
+      add('there', 0, mk({type:'gapS', key:'th-gs-'+sg, prompt:P, de:D, text:`___ ${sg} ${place}.`, vis:{kind:'emoji', right:[e]}, correct:'There is', wrong:TH_W}));
+      add('there', 0, mk({type:'gapP', key:'th-gp-'+pl, prompt:P, de:D, text:`___ ${NUMW[n]} ${pl} ${place}.`, vis:{kind:'emoji', right:Array(n).fill(e)}, correct:'There are', wrong:TH_W}));
+      add('there', 1, mk({type:'some', key:'th-so-'+pl, prompt:P, de:D, text:`___ some ${pl} ${place}.`, correct:'There are', wrong:TH_W}));
+    } else {
+      const n = rint(11, 30);
+      add('there', 0, mk({type:'gapP', key:'th-gp-'+pl, prompt:P, de:'', text:`___ ${NUMW[n]} ${pl} ${place}.`, correct:'There are', wrong:["There's", 'There is', 'They are']}));
+      add('there', 0, mk({type:'gapS', key:'th-gs-'+sg, prompt:P, de:'', text:`___ ${sg} ${place}.`, correct:'There is', wrong:['There are', 'Their is', 'It are']}));
+    }
+    add('there', A ? 0 : 1, mk({type:'qS', key:'th-qs-'+sg, prompt:'Make a question!', de:'Bilde eine Frage.', text:`___ ${sg} ${place}?`, correct:'Is there', wrong:['Are there','There is','Is it']}));
+    add('there', A ? 0 : 1, mk({type:'qP', key:'th-qp-'+pl, prompt:'Make a question!', de:'Bilde eine Frage.', text:`___ any ${pl} ${place}?`, correct:'Are there', wrong:['Is there','There are','Are they']}));
+    add('there', A ? 0 : 1, mk({type:'howmany', key:'th-hm-'+pl, prompt:'Complete the question!', de:'Ergänze die Frage.', text:`How many ${pl} ___ there ${place}?`, correct:'are', wrong:['is','am','do']}));
+    add('there', A ? 1 : 2, mk({type:'negS', key:'th-ns-'+sg, prompt:'Make it negative!', de:'Verneine den Satz (not).', text:`There ___ (not) ${sg} ${place}.`, correct:"isn't", wrong:["aren't","not is","don't"]}));
+    add('there', A ? 1 : 2, mk({type:'negP', key:'th-np-'+pl, prompt:'Make it negative!', de:'Verneine den Satz (not).', text:`There ___ (not) any ${pl} ${place}.`, correct:"aren't", wrong:["isn't","not are","don't"]}));
+    add('there', A ? 1 : 2, mk({type:'shortY', key:'th-sy-'+sg, prompt:'Complete the short answer!', de:'Ergänze die Kurzantwort.', text:`Is there ${sg} ${place}? – Yes, there ___.`, correct:'is', wrong:['are','has','does']}));
+    // there / they (2 Lücken)
+    const m = A ? rint(11, 30) : rint(2, 9);
+    add('there', A ? 1 : 2, mk({type:'they', key:'th-they-'+pl, prompt:'Fill in both gaps!', de:'There are … oder They are …?',
+      text:`___ ${NUMW[m]} ${pl} ${place}. ___ ${adj}.`, correct:'There are … They are', wrong:['They are … There are','There are … There are','Their are … They are']}));
+    // Zahl als Wort (kombiniert)
+    const k = A ? rint(13, 30) : rint(11, 20);
+    add('there', A ? 1 : 2, mk({type:'num', key:'th-num-'+pl, prompt:'Write the number!', de:'Schreib die Zahl als Wort.',
+      text:`There are ___ ${pl} ${place}. (${k})`, correct:NUMW[k], wrong:A ? [numTrap(k), NMISS[k][1], ...nearWords(k, 10, 30)] : [numTrap(k), ...NMISS[k]]}));
+    if(A){
+      add('there', 2, mk({type:'shortN', key:'th-sn-'+pl, prompt:'Complete the short answer!', de:'', text:`Are there any ${pl} ${place}? – No, there ___.`, correct:"aren't", wrong:["isn't","don't","haven't"]}));
+      const yes = R() < 0.5;
+      add('there', 2, mk({type:'two', key:'th-two-'+pl, prompt:'Fill in both gaps!', de:'', text:`___ there any ${pl} ${place}? – ${yes ? 'Yes' : 'No'}, there ___.`,
+        correct: yes ? 'Are … are' : "Are … aren't", wrong: yes ? ['Is … is','Are … is','Do … do'] : ["Is … isn't","Are … isn't","Do … don't"]}));
+      const j = rint(11, 30);
+      add('there', 1, mk({type:'sent', key:'th-se-'+pl, prompt:'Which sentence is correct?', de:'', text:'',
+        correct:`There are ${NUMW[j]} ${pl} ${place}.`,
+        wrong:[`There is ${NUMW[j]} ${pl} ${place}.`, `There are ${NUMW[j]} ${sgBare} ${place}.`, `There are ${sg} ${place}.`]}));
+    }
+  }
+  if(A){
+    for(const [u,place,e] of TH_UNC){
+      add('there', 1, mk({type:'unc', key:'th-u-'+u, prompt:P, de:'', text:`___ ${u} ${place}.`, vis:{kind:'emoji', right:[e]}, correct:'There is', wrong:['There are','There be','They are']}));
+    }
+    // Fehler finden
+    const goodF = [
+      ([sg,,place]) => `There is ${sg} ${place}.`, ([,pl,place]) => `There are ${NUMW[rint(11,30)]} ${pl} ${place}.`,
+      ([sg,,place]) => `Is there ${sg} ${place}?`, ([,pl,place]) => `There aren't any ${pl} ${place}.`, ([,pl,place]) => `Are there any ${pl} ${place}?`];
+    const badF = [
+      ([,pl,place]) => `There is ${NUMW[rint(11,30)]} ${pl} ${place}.`, ([sg,,place]) => `There are ${sg} ${place}.`,
+      ([sg,,place]) => `Are there ${sg} ${place}?`, ([,pl,place]) => `There isn't any ${pl} ${place}.`, ([,pl,place]) => `Is there any ${pl} ${place}?`];
+    for(let i = 0; i < 24; i++){
+      const its = shuffle(TH).slice(0, 4), gf = shuffle(goodF);
+      add('there', 2, mkWrong({type:'wrong', key:'th-w-'+its.map(x => x[1]).join(',')}, its.slice(1).map((it, k) => gf[k](it)), pick(badF)(its[0])));
+    }
+  }
+}
+
+/* ---------- 5. PREPOSITIONS OF PLACE ---------- */
+const PSUBJ = { cat:{e:'🐱',de:'Die Katze'}, ball:{e:'⚽',de:'Der Ball'}, mouse:{e:'🐭',de:'Die Maus'}, bird:{e:'🐦',de:'Der Vogel'} };
+const POBJ  = { box:'der Schachtel', table:'dem Tisch', boxes:'den Schachteln' };
+const PDE   = { 'in':'IN', 'on':'AUF', 'under':'UNTER', 'next to':'NEBEN', 'behind':'HINTER', 'in front of':'VOR', 'between':'ZWISCHEN', 'above':'ÜBER' };
+const PCONF = { 'in':['behind'], 'behind':['in','next to','on'], 'on':['above'], 'above':['on'], 'between':['next to'],
+                'next to':['between','behind','in front of'], 'in front of':['next to','behind'], 'under':[] };
+// [Präposition, Objekt, Subjekte, Stufe Standard, Stufe AHS]  (-1 = nicht in diesem Niveau)
+const PSCENES = [
+  ['in','box',['cat','ball','mouse'],0,0], ['on','box',['cat','ball','mouse'],0,0], ['on','table',['cat','ball','mouse'],0,0],
+  ['under','table',['cat','ball','mouse'],0,0], ['next to','box',['cat','ball','mouse'],1,0], ['next to','table',['cat','mouse'],1,0],
+  ['between','boxes',['cat','ball','mouse'],1,0], ['behind','box',['cat','ball','mouse'],2,1], ['in front of','box',['cat','ball','mouse'],2,1],
+  ['above','table',['bird'],-1,1], ['on','table',['bird'],-1,1], ['on','box',['bird'],-1,1],
+];
+const PTEXT = [ // Satz, richtig, falsch, nur AHS?
+  ['My shoes are ___ the bed. (unter)','under',['on','in','behind'],0],
+  ['The milk is ___ the fridge. (im)','in',['on','under','between'],0],
+  ['The picture is ___ the wall. (an der Wand)','on',['in','under','between'],0],
+  ['Tom sits ___ me. (neben)','next to',['between','under','in'],0],
+  ['The car is ___ the house. (vor)','in front of',['behind','under','in'],0],
+  ['The garden is ___ the house. (hinter)','behind',['in front of','on','under'],0],
+  ['The cat is sleeping ___ the sofa. (auf)','on',['in','under','between'],0],
+  ['The bank is ___ the supermarket and the school. (zwischen)','between',['next to','in front of','behind'],0],
+  ['My bag is ___ my desk. (unter)','under',['on','in','between'],0],
+  ['The teacher is standing ___ the class. (vor)','in front of',['behind','under','between'],0],
+  ['The clock is ___ the wall. (an der Wand)','on',['in','under','between'],0],
+  ['The children are ___ the classroom. (im)','in',['on','under','between'],0],
+  ['The dog is sleeping ___ the table. (unter)','under',['on','in','between'],0],
+  ['Anna sits ___ Tom and Lisa. (zwischen)','between',['next to','behind','under'],0],
+  ['Please stand ___ me in the line. (hinter)','behind',['in front of','on','under'],0],
+  ['There is a cinema ___ my house. (neben)','next to',['between','under','in'],0],
+  ['My keys are ___ my bag. (in)','in',['on','under','between'],0],
+  ['The cat is hiding ___ the sofa. (hinter)','behind',['in front of','on','between'],0],
+  ['Vienna is ___ Austria.','in',['on','under','between'],1],
+  ['The bus stop is ___ the school. (gegenüber)','opposite',['between','under','on'],1],
+  ['The lamp is ___ the table. (über – berührt ihn nicht)','above',['on','under','between'],1],
+  ['There is a big tree ___ our school. (hinter)','behind',['in front of','opposite','under'],1],
+  ['The ball is ___ the two cars. (zwischen)','between',['next to','opposite','above'],1],
+  ['The post office is ___ the bank. (gegenüber)','opposite',['between','above','in'],1],
+  ['The plane is flying ___ the clouds. (über)','above',['on','under','between'],1],
+  ['My bed is ___ the window. (unter dem Fenster)','under',['above','opposite','between'],1],
+];
+function genPrep(A, add){
+  const SET = A ? ['in','on','under','next to','between','behind','in front of','above'] : ['in','on','under','next to','between','behind','in front of'];
+  for(const [rel,obj,subs,tS,tA] of PSCENES){
+    const tier = A ? tA : tS;
+    if(tier < 0) continue;
+    const others = () => shuffle(SET.filter(p => p !== rel && !(PCONF[rel] || []).includes(p)));
+    for(const s of subs){
+      const vis = {kind:'scene', s, rel, obj};
+      add('prep', tier, mk({type:'pic', key:`pp-pic-${s}-${rel}-${obj}`, prompt:`Where is the ${s}?`, de:'Schau aufs Bild: Wo ist das Ding?',
+        text:`The ${s} is ___ the ${obj}.`, vis, correct:rel, wrong:others()}));
+      const sent = p => `The ${s} is ${p} the ${obj}.`;
+      add('prep', A ? tier : Math.max(1, tier), mk({type:'pics', key:`pp-pics-${s}-${rel}-${obj}`, prompt:'Look! Which sentence is right?', de:'Welcher Satz passt zum Bild?',
+        text:'', vis, correct:sent(rel), wrong:A ? [`The ${s} are ${rel} the ${obj}.`, ...others().slice(0,2).map(sent)] : others().map(sent)}));
+      if(s === 'bird') continue;
+      if(!A || tier >= 1 || R() < 0.5){
+        add('prep', A ? 1 : Math.min(tier, 1), mk({type:'de', key:`pp-de-${s}-${rel}-${obj}`, prompt:'Translate!', de:'Übersetze das großgeschriebene Wort.',
+          text:`The ${s} is ___ the ${obj}.`, vis:{kind:'de', html:`${PSUBJ[s].de} ist <b>${PDE[rel]}</b> ${POBJ[obj]}.`},
+          correct:rel, wrong:shuffle(SET.filter(p => p !== rel))}));
+      }
+      if(A){
+        const o = others();
+        add('prep', 1, mk({type:'two', key:`pp-two-${s}-${rel}-${obj}`, prompt:'Fill in both gaps!', de:'',
+          text:`Where ___ the ${s}? – It's ___ the ${obj}.`, vis, correct:`is … ${rel}`, wrong:[`are … ${rel}`, `is … ${o[0]}`, `are … ${o[1]}`]}));
+        const objBare = obj === 'boxes' ? 'box' : obj;
+        add('prep', 2, mk({type:'de2', key:`pp-de2-${s}-${rel}-${obj}`, prompt:'Translate the sentence!', de:'',
+          text:'', vis:{kind:'de', html:`${PSUBJ[s].de} ist ${PDE[rel].toLowerCase()} ${POBJ[obj]}.`},
+          correct:sent(rel), wrong:[`The ${s} are ${rel} the ${obj}.`, sent(o[0]), obj === 'boxes' ? `The ${s} is between the box.` : `The ${s} is ${rel} ${objBare}.`]}));
+      }
+    }
+  }
+  for(const [t,c,w,ahs] of PTEXT){
+    if(ahs && !A) continue;
+    add('prep', A ? (ahs ? 2 : 1) : 2, mk({type:'txt', key:'pp-t-'+t, prompt:'Choose the right preposition!', de:'Wähle die richtige Präposition.', text:t, correct:c, wrong:w}));
+  }
+}
+
+/* ---------- 6. PRESENT SIMPLE ---------- */
+const PS_SUBJ = [ // Satzanfang, klein, 3. Person?
+  ['I','I',0],['You','you',0],['We','we',0],['They','they',0],['He','he',1],['She','she',1],['Tom','Tom',1],['Anna','Anna',1],
+  ['My brother','my brother',1],['My mum','my mum',1],['My friends','my friends',0],['My parents','my parents',0],
+];
+const PS_V = [ // Grundform, s-Form, ing, Fehlerform, Ergänzung, Zeit, schwer?, W-Frage
+  ['play','plays','playing','playes','football','after school',0,'What ___ {s} play after school?'],
+  ['like','likes','liking','likies','pizza','',0,'What ___ {s} like?'],
+  ['read','reads','reading','reades','comics','in bed',0,'What ___ {s} read in bed?'],
+  ['eat','eats','eating','eates','an apple','every morning',0,'What ___ {s} eat for breakfast?'],
+  ['drink','drinks','drinking','drinkes','milk','for breakfast',0,'What ___ {s} drink for breakfast?'],
+  ['live','lives','living','livs','in Vienna','',0,'Where ___ {s} live?'],
+  ['speak','speaks','speaking','speakes','English','at school',0,'What languages ___ {s} speak?'],
+  ['ride','rides','riding','ridees','a bike','to school',0,'How ___ {s} get to school?'],
+  ['swim','swims','swimming','swimes','in the lake','in summer',0,'Where ___ {s} swim in summer?'],
+  ['watch','watches','watching','watchs','TV','every evening',1,'When ___ {s} watch TV?'],
+  ['go','goes','going','gos','to school','by bus',1,'How ___ {s} go to school?'],
+  ['do','does','doing','dos','the dishes','on Sundays',1,'When ___ {s} do the dishes?'],
+  ['have','has','having','haves','breakfast',"at seven o'clock",1,'When ___ {s} have breakfast?'],
+  ['study','studies','studying','studys','English','every day',1,'What ___ {s} study?'],
+  ['wash','washes','washing','washs','the car','on Saturdays',1,'When ___ {s} wash the car?'],
+  ['tidy','tidies','tidying','tidys','the room','on Fridays',1,'When ___ {s} tidy the room?'],
+  ['get up','gets up','getting up','get ups','',"at seven o'clock",1,'When ___ {s} get up?'],
+];
+const PS_SHORT = [['you',0,'I'],['your brother',1,'he'],['your sister',1,'she'],['Tom',1,'he'],['Anna',1,'she'],['your parents',0,'they'],['your friends',0,'they']];
+const FREQ = ['always','usually','often','sometimes','never'];
+function genPS(A, add){
+  for(const [S,low,third] of PS_SUBJ){
+    const vs = shuffle(PS_V);
+    const beQ = S === 'I' ? 'Am' : third ? 'Is' : 'Are';
+    for(const [b,s,ing,miss,rest,time,hard] of vs.slice(0,6)){
+      if(A && !third) continue;
+      add('ps', A ? 0 : (third && hard ? 1 : 0), mk({type:'gap', key:`ps-g-${S}-${b}`, prompt:'Fill in the right verb form!', de:'Setze das Verb in der richtigen Form ein.',
+        text:words(S,'___',`(${b})`,rest,time)+'.', correct:third ? s : b, wrong:[third ? b : s, ing, miss]}));
+    }
+    for(const [b,,,,rest,time] of vs.slice(6,8)){
+      const w = third ? ["don't","isn't","not"] : ["doesn't", S === 'I' ? 'am not' : "aren't", 'not'];
+      add('ps', A ? 0 : 2, mk({type:'neg', key:`ps-n-${S}-${b}`, prompt:'Make it negative!', de:"Verneine den Satz mit don't / doesn't.",
+        text:words(S,'___','(not)',b,rest,time)+'.', correct:third ? "doesn't" : "don't", wrong:w}));
+    }
+    for(const [b,,,,rest,time] of vs.slice(8,10)){
+      const w = third ? ['Do','Is','Has'] : ['Does', beQ, 'Have'];
+      add('ps', A ? 0 : 1, mk({type:'q', key:`ps-q-${S}-${b}`, prompt:'Make a question!', de:'Bilde eine Frage mit Do / Does.',
+        text:words('___',low,b,rest,time)+'?', correct:third ? 'Does' : 'Do', wrong:w}));
+    }
+    // Verb nach doesn't/don't
+    { const [b,s,ing,,rest,time] = vs[10];
+      add('ps', A ? 1 : 2, mk({type:'negv', key:`ps-nv-${S}-${b}`, prompt:'Fill in the verb!', de:"Nach don't / doesn't kommt …?",
+        text:words(S, third ? "doesn't" : "don't", '___', `(${b})`, rest, time)+'.', correct:b, wrong:[s, ing, 'to ' + b]})); }
+    // W-Fragen
+    { const v = vs[11];
+      add('ps', A ? 1 : 2, mk({type:'wh', key:`ps-wh-${S}-${v[0]}`, prompt:'Complete the question!', de:'Ergänze die W-Frage.',
+        text:v[7].replace('{s}', low), correct:third ? 'does' : 'do', wrong:[third ? 'do' : 'does', beQ.toLowerCase(), third ? 'has' : 'have']})); }
+    // Häufigkeitswörter (Stellung!)
+    { const [b,s,ing,,rest,time] = vs[12], adv = pick(FREQ), vf = third ? s : b, tail = rest || time;
+      add('ps', A ? 1 : 2, mk({type:'freq', key:`ps-fr-${S}-${b}-${adv}`, prompt:'Which sentence is correct?', de:`Wo steht "${adv}"?`, text:'',
+        correct:words(S, adv, vf, tail)+'.', wrong:[words(S, vf, adv, tail)+'.', words(S, adv, third ? b : s, tail)+'.', words(S, adv, ing, tail)+'.']})); }
+    if(A){
+      // Zwei Lücken
+      const [b,s,,,rest,time] = vs[13];
+      add('ps', 2, mk({type:'two', key:`ps-two-${S}-${b}`, prompt:'Fill in both gaps!', de:'',
+        text:words('___', low, '___', `(${b})`, rest, time)+'?', correct:`${third ? 'Does' : 'Do'} … ${b}`,
+        wrong: third ? [`Does … ${s}`, `Do … ${b}`, `Do … ${s}`] : [`Do … ${s}`, `Does … ${b}`, `Does … ${s}`]}));
+      if(third){
+        const [b2,s2,,,rest2,time2] = vs[14];
+        if(R() < 0.5){
+          add('ps', 2, mk({type:'sentN', key:`ps-sn-${S}-${b2}`, prompt:'Which sentence is correct?', de:'', text:'',
+            correct:words(S,"doesn't",b2,rest2,time2)+'.', wrong:[words(S,"doesn't",s2,rest2,time2)+'.', words(S,"don't",b2,rest2,time2)+'.', words(S,'not',s2,rest2,time2)+'.']}));
+        } else {
+          add('ps', 2, mk({type:'sentQ', key:`ps-sq-${S}-${b2}`, prompt:'Which question is correct?', de:'', text:'',
+            correct:words('Does',low,b2,rest2,time2)+'?', wrong:[words('Does',low,s2,rest2,time2)+'?', words('Do',low,b2,rest2,time2)+'?', words('Is',low,b2,rest2,time2)+'?']}));
+        }
+      }
+    }
+  }
+  for(const [qs,third,pron] of PS_SHORT){
+    for(const [b,s,ing,,rest] of shuffle(PS_V).slice(0,3)){
+      const Q = words(third ? 'Does' : 'Do', qs, b, rest) + '?';
+      const be = pron === 'I' ? 'am' : third ? 'is' : 'are';
+      add('ps', A ? 1 : 2, mk({type:'shortY', key:`ps-sy-${qs}-${b}`, prompt:'Complete the short answer!', de:'Ergänze die Kurzantwort.',
+        text:`${Q} – Yes, ${pron} ___.`, correct:third ? 'does' : 'do', wrong:[third ? 'do' : 'does', be, s, ing]}));
+      if(A){
+        const c = third ? `${pron} doesn't.` : `${pron} don't.`;
+        const w = third ? [`${pron} don't.`, `${pron} isn't.`, `${pron} not.`] : [`${pron} doesn't.`, pron === 'I' ? "I'm not." : `${pron} aren't.`, `${pron} not.`];
+        add('ps', 2, mk({type:'shortN', key:`ps-sn2-${qs}-${b}`, prompt:'Choose the short answer!', de:'', text:`${Q} – No, ___`, correct:c, wrong:w}));
+      }
+    }
+  }
+  // Fehler finden (AHS)
+  if(A){
+    const sentGood = ([S,low,third], [b,s,,,rest,time]) => pick([
+      () => words(S, third ? s : b, rest, time) + '.',
+      () => words(S, third ? "doesn't" : "don't", b, rest, time) + '.',
+      () => words(third ? 'Does' : 'Do', low, b, rest, time) + '?']);
+    const sentBad = ([S,low,third], [b,s,ing,,rest,time]) => pick(third ? [
+      () => words(S, b, rest, time) + '.', () => words(S, "doesn't", s, rest, time) + '.', () => words(S, "don't", b, rest, time) + '.', () => words('Does', low, s, rest, time) + '?']
+      : [() => words(S, s, rest, time) + '.', () => words(S, "doesn't", b, rest, time) + '.', () => words('Does', low, b, rest, time) + '?', () => words(S, "don't", s, rest, time) + '.']);
+    for(let i = 0; i < 30; i++){
+      const ss = shuffle(PS_SUBJ).slice(0, 4), vs = shuffle(PS_V).slice(0, 4);
+      add('ps', 2, mkWrong({type:'wrong', key:'ps-w-'+ss.map(x => x[0]).join(',')+vs[0][0]},
+        ss.slice(1).map((sj, k) => sentGood(sj, vs[k + 1])()), sentBad(ss[0], vs[0])()));
+    }
+  }
+}
+
+function buildPools(level){
+  const A = level === 'ahs';
+  const P = {};
+  const add = (topic, tier, q) => { if(!q) return; q.topic = topic; q.tier = tier; (P[topic] = P[topic] || [[],[],[]])[tier].push(q); };
+  genPlurals(A, add); genBe(A, add); genNum(A, add); genThere(A, add); genPrep(A, add); genPS(A, add);
+  return P;
+}
+// #CONTENT-END ================================================================
+
+/* ============================================================
+   KONSTANTEN & ZUSTAND
+   ============================================================ */
+const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LADDERS = {
+  5:[100,200,300,500,1000],
+  10:[100,200,300,500,1000,2000,4000,8000,16000,32000],
+  15:[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000],
+};
+const SAFE = {5:[],10:[5],15:[5,10]};
+const TEAM_DEFS = [
+  {emoji:'🍄', name:'Team Mushroom', color:'#EF4444'},
+  {emoji:'⭐', name:'Team Star',     color:'#FACC15'},
+  {emoji:'🔥', name:'Team Fire',     color:'#F97316'},
+  {emoji:'🐢', name:'Team Shell',    color:'#22C55E'},
+];
+const TOPICS = [
+  {id:'pl',    label:'Plurals',        sub:'+ irregular plurals', e:'🐭'},
+  {id:'be',    label:'Forms of to be', sub:'am · is · are',       e:'🙋'},
+  {id:'num',   label:'Numbers',        sub:'1 – 25',              e:'🔢'},
+  {id:'there', label:'There is / are', sub:'+ Fragen & Verneinung', e:'🏠'},
+  {id:'prep',  label:'Prepositions',   sub:'of place',            e:'📦'},
+  {id:'ps',    label:'Present Simple', sub:'he plays · does he…?', e:'⚽'},
+];
+const TOPIC_NAME = Object.fromEntries(TOPICS.map(t => [t.id, t.label]));
+const fmt = n => n.toLocaleString('de-AT');
+
+const LINES = {
+  intro:  ["Here's your next question!","Let's go!","Okay, listen carefully…","Ready? Here we go!","This one is tricky… or is it?","Think twice!"],
+  sel:    ["Is that your final answer? 🤔","Hmm… are you sure?","Final answer?","Really? Lock it in?"],
+  ok:     ["CORRECT! 🎉","Yes! That's right!","Wow – grammar star! ⭐","Brilliant!","Easy peasy!","Boom! 💥"],
+  bad:    ["Oh no! 😱","Oops… not quite!","Ouch! That hurts!","Noooo!"],
+  timeout:["Time's up! ⏰"],
+};
+
+const settings = { level:'std', topics:TOPICS.map(t => t.id), len:10, tc:2, timer:0, names:TEAM_DEFS.map(t => t.name) };
+try { const s = JSON.parse(localStorage.getItem('gm5-settings') || 'null'); if(s) Object.assign(settings, s); } catch(e){}
+let SEEN = {};
+try { SEEN = JSON.parse(localStorage.getItem('gm5-seen') || '{}') || {}; } catch(e){}
+function seenSet(){ return new Set(SEEN[settings.level] || []); }
+function markSeen(key){
+  S.seen.add(key);
+  const a = SEEN[settings.level] = SEEN[settings.level] || [];
+  if(a.includes(key)) return;
+  a.push(key); if(a.length > 4000) a.splice(0, a.length - 4000);
+  try { localStorage.setItem('gm5-seen', JSON.stringify(SEEN)); } catch(e){}
+}
+function saveSettings(){ try { localStorage.setItem('gm5-settings', JSON.stringify(settings)); } catch(e){} }
+
+const S = { screen:'setup', phase:'idle', teams:[], cur:0, q:null, sel:-1, hidden:new Set(), pools:null, used:new Set(),
+  seen:new Set(), mode:'normal', finalRound:false, tie:null, tieIdx:0, tieRes:[], target:null, timeMax:30,
+  topicCount:{}, lastTopic:null, lastType:{}, timeLeft:0, overlay:false, lastCorrect:false, cheer:0, hostMood:'idle', hostT:0, talkT:0, qCount:0 };
+
+/* ============================================================
+   SOUND (WebAudio, prozedural)
+   ============================================================ */
+const SND = { ctx:null, master:null, sfx:null, music:null, muted:false };
+try { SND.muted = localStorage.getItem('gm5-muted') === '1'; } catch(e){}
+const isPsy = () => document.documentElement.dataset.theme === 'psychedelic';
+function audioInit(){
+  if(SND.ctx){ if(SND.ctx.state === 'suspended') SND.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
+  const c = new AC(); SND.ctx = c;
+  SND.master = c.createGain(); SND.master.gain.value = SND.muted ? 0 : 0.9; SND.master.connect(c.destination);
+  SND.sfx = c.createGain(); SND.sfx.gain.value = 0.55; SND.sfx.connect(SND.master);
+  SND.music = c.createGain(); SND.music.gain.value = 0.11; SND.music.connect(SND.master);
+  startMusic();
+}
+function tone(f, dur, type, vol, when, slide, dest){
+  const c = SND.ctx; if(!c) return;
+  const t = c.currentTime + (when || 0);
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'square'; o.frequency.setValueAtTime(f, t);
+  if(slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest || SND.sfx); o.start(t); o.stop(t + dur + 0.03);
+}
+let noiseBuf = null;
+function noise(dur, vol, when, freq, dest){
+  const c = SND.ctx; if(!c) return;
+  if(!noiseBuf){ noiseBuf = c.createBuffer(1, c.sampleRate * 0.5, c.sampleRate); const d = noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i] = R()*2-1; }
+  const t = c.currentTime + (when || 0);
+  const s = c.createBufferSource(); s.buffer = noiseBuf;
+  const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq || 1800;
+  const g = c.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(dest || SND.sfx); s.start(t); s.stop(t + dur + 0.02);
+}
+const sfx = {
+  click(){ tone(isPsy() ? 990 : 660, 0.06, isPsy() ? 'sawtooth' : 'square', 0.12); },
+  select(){ tone(523, 0.08, 'square', 0.18); tone(784, 0.1, 'square', 0.18, 0.07); },
+  correct(){ const w = isPsy() ? 'sawtooth' : 'square'; [523,659,784,1047].forEach((f,i) => tone(f, 0.14, w, 0.22, i*0.08)); },
+  coin(){ tone(988, 0.08, 'square', 0.18, 0.36); tone(1319, 0.32, 'square', 0.18, 0.44); },
+  wrong(){ tone(isPsy() ? 330 : 220, 0.4, isPsy() ? 'sawtooth' : 'square', 0.25, 0, 80); tone(110, 0.4, 'triangle', 0.3, 0.05, 60); },
+  fanfare(){ const w = isPsy() ? 'sawtooth' : 'square'; [523,523,523,659,784].forEach((f,i) => tone(f, i === 4 ? 0.45 : 0.11, w, 0.22, i*0.13)); },
+  tick(){ tone(1400, 0.03, 'square', 0.1); },
+  drum(sec){ const n = Math.floor(sec / 0.06); for(let i=0;i<n;i++) noise(0.05, 0.05 + i*0.006, i*0.06, 900); },
+  ring(){ for(let k=0;k<2;k++) for(let i=0;i<8;i++) tone(i%2 ? 1480 : 1180, 0.05, 'square', 0.1, k*0.7 + i*0.05); },
+  poof(){ noise(0.3, 0.25, 0, 600); tone(600, 0.25, 'triangle', 0.15, 0, 150); },
+  turn(){ [392,523,659].forEach((f,i) => tone(f, 0.1, 'square', 0.18, i*0.07)); },
+};
+// Chiptune-Loop: Am – F – G – E
+const CHORDS = [[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66],[164.81,207.65,246.94]];
+let musicTimer = null, musicStep = 0, nextNote = 0;
+function startMusic(){
+  if(musicTimer || !SND.ctx) return;
+  nextNote = SND.ctx.currentTime + 0.15;
+  musicTimer = setInterval(() => {
+    const c = SND.ctx, step = 60 / 104 / 4;
+    while(nextNote < c.currentTime + 0.25){
+      const ch = CHORDS[Math.floor(musicStep / 16)], i = musicStep % 16, w = nextNote - c.currentTime, p = isPsy();
+      if(i % 4 === 0) tone(ch[0] / 2, 0.2, 'triangle', 0.55, w, null, SND.music);
+      if(i % 4 === 2) tone(ch[0] / 2, 0.08, 'triangle', 0.3, w, null, SND.music);
+      if(i % 2 === 0) tone(ch[[0,1,2,1][(i/2) % 4]] * 2, 0.09, p ? 'sawtooth' : 'square', 0.16, w, null, SND.music);
+      if(p && i % 2 === 1) tone(ch[2] * 4, 0.05, 'square', 0.05, w, null, SND.music);
+      if(i % 8 === 4) noise(0.04, 0.12, w, p ? 6000 : 4000, SND.music);
+      nextNote += step; musicStep = (musicStep + 1) % 64;
+    }
+  }, 50);
+}
+function setMuted(m){
+  SND.muted = m; $('#muteBtn').textContent = m ? '🔇' : '🔊';
+  if(SND.master) SND.master.gain.value = m ? 0 : 0.9;
+  try { localStorage.setItem('gm5-muted', m ? '1' : '0'); } catch(e){}
+}
+
+/* ============================================================
+   PIXEL-GRAFIK
+   ============================================================ */
+const emojiCache = {};
+function pixEmoji(e, res){
+  res = res || 16;
+  const k = e + '|' + res; if(emojiCache[k]) return emojiCache[k];
+  const c = document.createElement('canvas'); c.width = c.height = res;
+  const x = c.getContext('2d');
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = `${Math.round(res * 0.86)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+  x.fillText(e, res / 2, res / 2 + res * 0.06);
+  try {
+    const d = x.getImageData(0, 0, res, res), a = d.data;
+    for(let i = 0; i < a.length; i += 4){ a[i+3] = a[i+3] > 100 ? 255 : 0; }
+    x.putImageData(d, 0, 0);
+  } catch(err){}
+  emojiCache[k] = c; return c;
+}
+const emojiURLCache = {};
+function emojiURL(e, res){ const k = e + '|' + (res || 16); if(!emojiURLCache[k]) emojiURLCache[k] = pixEmoji(e, res).toDataURL(); return emojiURLCache[k]; }
+const COIN_SPR = ["...kkkk...","..kyyyyk..",".kyYYyyyk.","kyYyyyyyok","kyYyyyyyok","kyYyyyyyok","kyyyyyyook",".kyyyyook.","..kooook..","...kkkk..."];
+let COIN = '🪙';
+function initCoin(){
+  const c = document.createElement('canvas'); c.width = c.height = 10;
+  drawSprite(c.getContext('2d'), COIN_SPR, {k:'#713F12', y:'#FACC15', Y:'#FEF9C3', o:'#CA8A04'}, 0, 0);
+  COIN = `<img class="coin" src="${c.toDataURL()}" alt="">`;
+}
+function emojiImg(e, cls, res){ return `<img class="${cls || 'em'}" src="${emojiURL(e, res)}" alt="${e}">`; }
+
+// Moderator "Max Megabyte" (16×26)
+const HOST = [
+  "....kkkkkkkk....",
+  "...khhhhhhhhk...",
+  "..khhhhhhhhhhk..",
+  "..khsssssssshk..",
+  "..kssssssssssk..",
+  "..ksgwgssgwgsk..",
+  "..ksgggssgggsk..",
+  "..kssssssssssk..",
+  "..ksmmmmmmmmsk..",
+  "..kssskkkksssk..",
+  "...kssssssssk...",
+  "....kksssskk....",
+  "..kjjjWttWjjjk..",
+  ".kjjjjWttWjjjjk.",
+  "kjjjjjWttWjjjjjk",
+  "kjjjjjWttWjjjjjk",
+  "kjjjjjWWtWjjjjjk",
+  "ksjjjjWWWWjjjjsk",
+  "ksjjjjjjjjjjjjsk",
+  ".kkjjjjjjjjjjkk.",
+  "..kppppppppppk..",
+  "..kppppkkppppk..",
+  "..kpppk..kpppk..",
+  "..kpppk..kpppk..",
+  ".kbbbbk..kbbbbk.",
+  ".kkkkkk..kkkkkk.",
+];
+const HOST_PAL = { k:'#111827', h:'#7C2D12', s:'#FDBA74', g:'#111827', w:'#E0F2FE', m:'#3F1D0B', j:'#7C3AED', t:'#DC2626', W:'#F9FAFB', p:'#1E1B4B', b:'#000000', r:'#7F1D1D' };
+const HOST_PSY = { k:'#FF00FF', h:'#00FF41', s:'#FFFF00', g:'#000000', w:'#00FFFF', m:'#FF6600', j:'#BF00FF', t:'#FF0033', W:'#000000', p:'#00FFFF', b:'#FF00FF', r:'#FF0033' };
+function drawSprite(g, rows, pal, ox, oy, override){
+  for(let y = 0; y < rows.length; y++){
+    const row = (override && override[y]) || rows[y];
+    for(let x = 0; x < row.length; x++){
+      const ch = row[x]; if(ch === '.') continue;
+      g.fillStyle = pal[ch] || '#f0f'; g.fillRect(ox + x, oy + y, 1, 1);
+    }
+  }
+}
+function drawHost(t){
+  const cv = $('#hostcv'), g = cv.getContext('2d');
+  g.clearRect(0, 0, 16, 28);
+  const pal = isPsy() ? HOST_PSY : HOST_PAL;
+  let oy = 2, ov = {};
+  const mood = S.hostMood;
+  if(mood === 'happy') oy = 2 - Math.round(Math.abs(Math.sin(t * 9)) * 2);
+  else if(!RM) oy = 2 + (Math.sin(t * 2.5) > 0.6 ? -1 : 0);
+  const talking = S.talkT > 0 && Math.floor(t * 8) % 2 === 0;
+  if(mood === 'happy' || talking) ov[9] = "..ksssrrrrsssk..";
+  if(mood === 'sad'){ ov[9] = "..kssssssssssk.."; ov[10] = "...kskkkkkksk..."; }
+  drawSprite(g, HOST, pal, 0, oy, ov);
+  if(mood === 'sad'){ g.fillStyle = '#38BDF8'; g.fillRect(13, oy + 3, 1, 2); }
+}
+
+/* Präpositions-Szene (96×60) */
+function drawScene(cv, sc){
+  const W = 96, H = 60, BASE = 54;
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+  const psy = isPsy();
+  g.fillStyle = psy ? '#1a0033' : '#FDE68A'; g.fillRect(0, 0, W, 44);
+  g.fillStyle = psy ? '#2b0055' : '#FCD34D'; for(let x = 0; x < W; x += 8) g.fillRect(x, 0, 4, 44);
+  g.fillStyle = psy ? '#003322' : '#B45309'; g.fillRect(0, 44, W, 16);
+  g.fillStyle = psy ? '#00FF41' : '#92400E'; for(let y = 48; y < H; y += 5) g.fillRect(0, y, W, 1);
+  g.fillStyle = psy ? '#FF00FF' : '#78350F'; g.fillRect(0, 44, W, 1);
+
+  const box = (x, y, w, h, open) => {
+    const out = psy ? '#FF00FF' : '#5C3A1A';
+    g.fillStyle = out; g.fillRect(x - 1, y - 1, w + 2, h + 2);
+    g.fillStyle = psy ? '#331100' : '#C68642'; g.fillRect(x, y, w, h);
+    g.fillStyle = psy ? '#552200' : '#A86B32'; g.fillRect(x, y + h - 3, w, 3);
+    g.fillStyle = psy ? '#FFFF00' : '#E8C07D'; g.fillRect(x, y + 1, w, 1);
+    if(!open){ g.fillStyle = psy ? '#00FFFF' : '#EBD3A0'; g.fillRect(x + Math.floor(w/2) - 1, y, 3, h); }
+    else {
+      g.fillStyle = out;
+      for(let i = 0; i < 5; i++){ g.fillRect(x - 1 - i, y - 2 - i, 2, 1); g.fillRect(x + w - 1 + i, y - 2 - i, 2, 1); }
+      g.fillStyle = psy ? '#331100' : '#D9A066';
+      for(let i = 0; i < 4; i++){ g.fillRect(x - i, y - 1 - i, 1, 1); g.fillRect(x + w - 1 + i, y - 1 - i, 1, 1); }
+    }
+  };
+  const boxBack = (x, y, w) => { g.fillStyle = psy ? '#110000' : '#7A4E22'; g.fillRect(x + 1, y - 3, w - 2, 3); };
+  const table = (x, y, w) => {
+    const out = psy ? '#00FFFF' : '#451A03';
+    g.fillStyle = out; g.fillRect(x - 1, y - 1, w + 2, 6);
+    g.fillStyle = psy ? '#002244' : '#92400E'; g.fillRect(x, y, w, 4);
+    g.fillStyle = psy ? '#0044AA' : '#B45309'; g.fillRect(x, y, w, 1);
+    g.fillStyle = out; g.fillRect(x + 2, y + 4, 4, BASE - y - 4); g.fillRect(x + w - 6, y + 4, 4, BASE - y - 4);
+    g.fillStyle = psy ? '#002244' : '#78350F'; g.fillRect(x + 3, y + 4, 2, BASE - y - 4); g.fillRect(x + w - 5, y + 4, 2, BASE - y - 4);
+  };
+  const shadow = (cx, y, w) => { g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(cx - w/2, y, w, 2); };
+  const E = 14;
+  const outlined = size => {
+    const src = pixEmoji(PSUBJ[sc.s].e, size), k = 'ol|' + PSUBJ[sc.s].e + size + (psy ? 'p' : '');
+    if(emojiCache[k]) return emojiCache[k];
+    const c = document.createElement('canvas'); c.width = c.height = size + 2;
+    const x = c.getContext('2d');
+    const sil = document.createElement('canvas'); sil.width = sil.height = size;
+    const sx = sil.getContext('2d'); sx.drawImage(src, 0, 0); sx.globalCompositeOperation = 'source-in';
+    sx.fillStyle = psy ? '#FF00FF' : '#1F2937'; sx.fillRect(0, 0, size, size);
+    for(const [dx, dy] of [[0,1],[2,1],[1,0],[1,2]]) x.drawImage(sil, dx, dy);
+    x.drawImage(src, 1, 1);
+    return (emojiCache[k] = c);
+  };
+  const put = (x, y, size) => g.drawImage(outlined(size || E), x - 1, y - 1);
+
+  const bx = 35, bw = 26, bh = 18, by = BASE - bh;
+  const tx = 26, tw = 44, ty = 32;
+  switch(sc.rel + '|' + sc.obj){
+    case 'in|box':        boxBack(bx, by, bw); put(41, by - 11); box(bx, by, bw, bh, true); break;
+    case 'on|box':        box(bx, by, bw, bh, false); put(41, by - E); break;
+    case 'behind|box':    put(bx + bw - 11, by - 8); box(bx, by, bw, bh, false); break;
+    case 'in front of|box': box(bx, by, bw, bh, false); shadow(48, BASE + 3, 14); put(40, BASE + 4 - 16, 16); break;
+    case 'next to|box':   box(bx, by, bw, bh, false); shadow(bx - 11, BASE - 1, 12); put(bx - 18, BASE - E); break;
+    case 'between|boxes': box(14, BASE - 16, 20, 16, false); box(62, BASE - 16, 20, 16, false); shadow(48, BASE - 1, 12); put(41, BASE - E); break;
+    case 'on|table':      table(tx, ty, tw); put(41, ty - E); break;
+    case 'under|table':   table(tx, ty, tw); shadow(48, BASE - 1, 12); put(41, BASE - E); break;
+    case 'next to|table': table(tx, ty, tw); shadow(81, BASE - 1, 12); put(74, BASE - E); break;
+    case 'above|table':   table(tx, ty, tw); put(41, 4); break;
+  }
+}
+
+/* ============================================================
+   STUDIO (Hintergrund-Canvas, 320×180)
+   ============================================================ */
+const studio = $('#studio'), sg = studio.getContext('2d');
+const STARS = Array.from({length:60}, () => ({x:Math.floor(R()*320), y:Math.floor(R()*110), p:R()*6}));
+const HEADS = Array.from({length:54}, (_, i) => ({row:i < 27 ? 0 : 1, x:(i % 27) * 12 + (i < 27 ? 0 : 6), c:['#312E81','#3730A3','#4C1D95','#1E3A8A'][i % 4], p:R()*6}));
+function drawStudio(t){
+  const g = sg, W = 320, H = 180, psy = isPsy();
+  const hue = (t * 40) % 360;
+  for(let y = 0; y < 140; y += 4){
+    const k = y / 140;
+    g.fillStyle = psy ? `hsl(${(hue + y * 2) % 360},100%,${6 + k * 10}%)`
+                      : `rgb(${Math.round(20 + 40*k)},${Math.round(15 + 14*k)},${Math.round(58 + 70*k)})`;
+    g.fillRect(0, y, W, 4);
+  }
+  for(const s of STARS){
+    const on = Math.sin(t * 2 + s.p) > 0.2;
+    if(!on) continue;
+    g.fillStyle = psy ? `hsl(${(hue + s.p * 60) % 360},100%,70%)` : '#E0E7FF';
+    g.fillRect(s.x, s.y, 1, 1);
+  }
+  // Lichtring
+  const cx = 160, cy = 64;
+  for(const [r, col] of [[62, psy ? '#FF00FF' : '#1E1B4B'], [54, psy ? '#00FFFF' : '#312E81']]){
+    for(let a = 0; a < 360; a += 2){
+      const rad = a * Math.PI / 180;
+      g.fillStyle = col; g.fillRect(Math.round(cx + Math.cos(rad) * r), Math.round(cy + Math.sin(rad) * r * 0.62), 2, 2);
+    }
+  }
+  for(let i = 0; i < 36; i++){
+    const rad = i * 10 * Math.PI / 180;
+    const on = (i + Math.floor(t * 6)) % 3 === 0 || S.cheer > 0;
+    g.fillStyle = on ? (psy ? `hsl(${(hue + i*20) % 360},100%,60%)` : '#FACC15') : (psy ? '#330033' : '#7C2D12');
+    g.fillRect(Math.round(cx + Math.cos(rad) * 58) - 1, Math.round(cy + Math.sin(rad) * 58 * 0.62) - 1, 3, 3);
+  }
+  // Scheinwerfer
+  g.globalAlpha = psy ? 0.18 : 0.10;
+  for(const side of [0, 1]){
+    const sx = side ? 300 : 20, sw = Math.sin(t * 0.7 + side * 2) * 60;
+    g.fillStyle = psy ? `hsl(${(hue + side * 180) % 360},100%,60%)` : '#FEF3C7';
+    g.beginPath(); g.moveTo(sx, 0); g.lineTo(160 + sw - 30, 150); g.lineTo(160 + sw + 30, 150); g.closePath(); g.fill();
+  }
+  g.globalAlpha = 1;
+  // Boden
+  for(let y = 140; y < H; y += 4){
+    for(let x = 0; x < W; x += 16){
+      const odd = ((x / 16) + ((y - 140) / 4 >> 1)) % 2;
+      g.fillStyle = psy ? (odd ? `hsl(${(hue + x) % 360},100%,25%)` : '#000') : (odd ? '#312E81' : '#1E1B4B');
+      g.fillRect(x, y, 16, 4);
+    }
+  }
+  g.fillStyle = psy ? '#FF00FF' : '#FACC15'; g.fillRect(0, 140, W, 1);
+  // Publikum
+  for(const h of HEADS){
+    const jump = S.cheer > 0 ? Math.abs(Math.sin(t * 14 + h.p)) * 4 : (RM ? 0 : Math.max(0, Math.sin(t * 1.5 + h.p)) * 1);
+    const y = (h.row ? 172 : 162) - Math.round(jump);
+    g.fillStyle = psy ? `hsl(${(hue + h.x) % 360},80%,35%)` : h.c;
+    g.fillRect(h.x + 2, y, 6, 6); g.fillRect(h.x + 1, y + 1, 8, 4); g.fillRect(h.x, y + 6, 10, 12);
+  }
+}
+
+/* ============================================================
+   KONFETTI (gepoolt, max. 150)
+   ============================================================ */
+const fx = $('#fx'), fg = fx.getContext('2d');
+const PARTS = Array.from({length:150}, () => ({on:false}));
+const CONF_STD = ['#FACC15','#16A34A','#EC4899','#F97316','#9333EA','#2563EB'];
+const CONF_PSY = ['#FF00FF','#00FF41','#FFFF00','#00FFFF','#FF6600','#BF00FF'];
+function resizeFx(){ fx.width = innerWidth; fx.height = innerHeight; }
+addEventListener('resize', resizeFx); resizeFx();
+function confetti(x, y, n){
+  if(RM) n = Math.min(n, 20);
+  const cols = isPsy() ? CONF_PSY : CONF_STD;
+  for(const p of PARTS){
+    if(n <= 0) break; if(p.on) continue;
+    const a = R() * Math.PI * 2, sp = 250 + R() * 450;
+    Object.assign(p, {on:true, x, y, vx:Math.cos(a) * sp, vy:Math.sin(a) * sp - 350, life:1 + R(), age:0, c:pick(cols), s:6 + Math.floor(R()*3)*2, rot:R()*6, vr:(R()-.5)*12});
+    n--;
+  }
+}
+function confettiAt(el, n){ const r = el.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2, n); }
+function updateFx(dt){
+  fg.clearRect(0, 0, fx.width, fx.height);
+  for(const p of PARTS){
+    if(!p.on) continue;
+    p.age += dt; if(p.age > p.life){ p.on = false; continue; }
+    p.vy += 1100 * dt; p.vx *= (1 - 1.2 * dt); p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    fg.save(); fg.globalAlpha = Math.min(1, (p.life - p.age) * 2); fg.translate(p.x, p.y); fg.rotate(Math.round(p.rot * 4) / 4);
+    fg.fillStyle = p.c; fg.fillRect(-p.s/2, -p.s/2, p.s, p.s); fg.restore();
+  }
+}
+function floaty(text, el){
+  const r = el.getBoundingClientRect();
+  const d = document.createElement('div'); d.className = 'floaty pixel'; d.innerHTML = text;
+  d.style.left = (r.left + r.width / 2) + 'px'; d.style.top = (r.top) + 'px';
+  document.body.appendChild(d); setTimeout(() => d.remove(), 950);
+}
+
+/* ============================================================
+   GAME LOOP
+   ============================================================ */
+let lastT = performance.now(), rafId = 0, tickSec = -1;
+function loop(){
+  rafId = 0;
+  const now = performance.now();
+  const dt = Math.min(Math.max((now - lastT) / 1000, 0), 0.05);
+  lastT = now;
+  const t = now / 1000;
+  if(S.cheer > 0) S.cheer -= dt;
+  if(S.talkT > 0) S.talkT -= dt;
+  if(S.hostMoodT > 0){ S.hostMoodT -= dt; if(S.hostMoodT <= 0) S.hostMood = 'idle'; }
+  // Timer
+  if(S.screen === 'game' && timed() && (S.phase === 'question' || S.phase === 'selected') && !S.overlay){
+    S.timeLeft -= dt;
+    const sec = Math.ceil(S.timeLeft);
+    if(sec !== tickSec){ tickSec = sec; if(sec <= 5 && sec > 0) sfx.tick(); }
+    renderTimer();
+    if(S.timeLeft <= 0){ S.timeLeft = 0; timeUp(); }
+  }
+  if(S.phoneT > 0 && S.overlay){
+    S.phoneT -= dt; const el = $('#phoneCount'); if(el) el.textContent = Math.max(0, Math.ceil(S.phoneT));
+    if(S.phoneT <= 0 && el){ el.textContent = '0'; sfx.tick(); }
+  }
+  drawStudio(RM ? 0 : t);
+  if(S.screen === 'game') drawHost(t);
+  updateFx(dt);
+  if(!rafId) rafId = requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   SETUP-SCREEN
+   ============================================================ */
+function renderSetup(){
+  document.querySelectorAll('#lvlRow .opt').forEach(b => b.classList.toggle('on', b.dataset.lvl === settings.level));
+  document.querySelectorAll('#lenRow .opt').forEach(b => b.classList.toggle('on', +b.dataset.len === settings.len));
+  document.querySelectorAll('#teamCountRow .opt').forEach(b => b.classList.toggle('on', +b.dataset.tc === settings.tc));
+  document.querySelectorAll('#timerRow .opt').forEach(b => b.classList.toggle('on', +b.dataset.timer === settings.timer));
+  document.querySelectorAll('#topicRow .opt').forEach(b => b.classList.toggle('on', settings.topics.includes(b.dataset.topic)));
+  $('#allBtn').classList.toggle('on', settings.topics.length === TOPICS.length);
+  const tn = $('#teamNames'); tn.innerHTML = '';
+  for(let i = 0; i < settings.tc; i++){
+    const d = TEAM_DEFS[i];
+    const row = document.createElement('label'); row.className = 'tname px';
+    row.innerHTML = `<span class="sw" style="background:${d.color}"></span><span style="font-size:22px">${d.emoji}</span><input maxlength="18" aria-label="Teamname ${i+1}">`;
+    const inp = row.querySelector('input'); inp.value = settings.names[i] || d.name;
+    inp.addEventListener('input', () => { settings.names[i] = inp.value; saveSettings(); });
+    tn.appendChild(row);
+  }
+  $('#modeHint').textContent = settings.tc === 1
+    ? 'Solo: Original-Regeln – falsch = Game Over (Sicherheitsstufe bleibt), Aussteigen möglich.'
+    : 'Teams wechseln sich nach jeder Frage ab (richtig = 1 Stufe rauf). ⚔️ Je 2 Bonusspiele: schwere Frage in 10 s – richtig = ein Gegner fällt 1 Stufe zurück. Jackpot erreicht? Die Runde wird fertig gespielt, bei Gleichstand gibt es ein Stechen.';
+  $('#seenBtn').textContent = `🧠 Fragen-Gedächtnis löschen (${(SEEN[settings.level] || []).length} gesehen)`;
+  $('#startBtn').disabled = settings.topics.length === 0;
+  $('#hsub').textContent = `5. Klasse · ${settings.level === 'ahs' ? 'AHS' : 'Standard'}`;
+}
+function initSetup(){
+  const tr = $('#topicRow');
+  for(const t of TOPICS){
+    const b = document.createElement('button'); b.className = 'opt px chip'; b.dataset.topic = t.id;
+    b.innerHTML = `${emojiImg(t.e, '', 20)}<span>${t.label}<small>${t.sub}</small></span>`;
+    tr.appendChild(b);
+  }
+  document.querySelector('#setup').addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    audioInit(); sfx.click();
+    if(b.dataset.lvl) settings.level = b.dataset.lvl;
+    else if(b.dataset.len) settings.len = +b.dataset.len;
+    else if(b.dataset.tc) settings.tc = +b.dataset.tc;
+    else if(b.dataset.timer !== undefined) settings.timer = +b.dataset.timer;
+    else if(b.dataset.topic){
+      const i = settings.topics.indexOf(b.dataset.topic);
+      if(i >= 0) settings.topics.splice(i, 1); else settings.topics.push(b.dataset.topic);
+    }
+    else if(b.id === 'allBtn') settings.topics = settings.topics.length === TOPICS.length ? [] : TOPICS.map(t => t.id);
+    else if(b.id === 'startBtn'){ startGame(); return; }
+    else if(b.id === 'seenBtn'){ SEEN = {}; try { localStorage.removeItem('gm5-seen'); } catch(err){} }
+    saveSettings(); renderSetup();
+  });
+}
+
+/* ============================================================
+   SPIELABLAUF
+   ============================================================ */
+const solo = () => S.teams.length === 1;
+const team = () => S.teams[S.cur];
+const ladder = () => LADDERS[settings.len];
+const amountAt = stage => stage > 0 ? ladder()[stage - 1] : 0;
+function safeAmount(stage){ let a = 0; for(const s of SAFE[settings.len]) if(stage >= s) a = amountAt(s); return a; }
+const tierFor = stage => Math.min(2, Math.floor(stage * 3 / settings.len));
+
+function showScreen(id){
+  S.screen = id;
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  window.scrollTo(0, 0);
+}
+function say(txt){ $('#bubbleTxt').textContent = txt; S.talkT = Math.min(1.6, 0.4 + txt.length * 0.04); }
+function mood(m, sec){ S.hostMood = m; S.hostMoodT = sec || 1.6; }
+
+function startGame(){
+  if(!settings.topics.length) return;
+  S.pools = buildPools(settings.level);
+  S.used = new Set(); S.seen = seenSet(); S.topicCount = {}; S.lastTopic = null; S.lastType = {}; S.qCount = 0;
+  S.mode = 'normal'; S.finalRound = false; S.tie = null; S.target = null;
+  S.teams = [];
+  for(let i = 0; i < settings.tc; i++){
+    const d = TEAM_DEFS[i];
+    S.teams.push({ ...d, name:(settings.names[i] || d.name).trim() || d.name, stage:0, bonus:2, jokers:{f:true, a:true, t:true}, idx:i });
+  }
+  S.cur = 0;
+  showScreen('game');
+  $('#walkBtn').style.display = solo() ? '' : 'none';
+  renderLadder(); renderHeader();
+  if(solo()){ say(`Welcome, ${team().name}! Let's play!`); askQuestion(); }
+  else beginTurn(true);
+}
+
+const bonusTargets = () => S.teams.filter(t => t !== team() && t.stage > 0);
+function beginTurn(first){
+  const tm = team();
+  S.mode = 'normal'; S.phase = 'turn';
+  renderHeader(); renderLadder(); renderJokers();
+  sfx.turn();
+  const canBonus = tm.bonus > 0 && bonusTargets().length > 0;
+  say(`${tm.name} – it's your turn!`);
+  openOverlay(`
+    ${S.finalRound ? '<p class="pixel" style="font-size:12px;color:#DC2626;margin-bottom:16px">🏁 LETZTE RUNDE – JACKPOT IN SICHT!</p>' : ''}
+    <div class="bigemoji">${emojiImg(tm.emoji, '', 24)}</div>
+    <h2 class="pixel" style="color:${tm.color};text-shadow:3px 3px 0 #000">${esc(tm.name)}</h2>
+    <p>${first ? "You're first – good luck!" : "It's your turn!"}</p>
+    <p class="pixel" style="font-size:12px;margin-top:16px">STUFE ${tm.stage} / ${settings.len} · ${COIN} ${fmt(amountAt(tm.stage))}</p>
+    <div class="ovbtns">
+      <button class="ovbtn go pixel px" data-act="go">▶ FRAGE</button>
+      ${tm.bonus > 0 ? `<button class="ovbtn bonus pixel px" data-act="bonus" ${canBonus ? '' : 'disabled'}>⚔️ BONUSSPIEL (${tm.bonus})</button>` : ''}
+    </div>
+    ${tm.bonus > 0 ? `<p class="hint">${canBonus ? '⚔️ Schwere Frage, 10 Sekunden: Richtig = ein Gegner fällt 1 Stufe zurück. Danach kommt deine normale Frage.' : '⚔️ Bonusspiel geht erst, wenn ein Gegner über Stufe 0 ist.'}</p>` : ''}`,
+    { go(){ closeOverlay(); askQuestion(); }, bonus(){ if(canBonus) chooseTarget(); } });
+}
+function chooseTarget(){
+  const tm = team();
+  openOverlay(`<h2 class="pixel">⚔️ WEN GREIFST DU AN?</h2>
+    <p>${esc(tm.name)} – wähle ein Team. Richtige Antwort in 10 s = es fällt 1 Stufe zurück.</p>
+    <div class="ovbtns" style="flex-direction:column;align-items:center">
+      ${bonusTargets().map(t => `<button class="ovbtn pixel px" style="background:${t.color};color:#1F2937;min-width:280px" data-act="tgt" data-i="${t.idx}">${t.emoji} ${esc(t.name)} · STUFE ${t.stage}</button>`).join('')}
+    </div>
+    <div class="ovbtns"><button class="ovbtn no pixel px" data-act="back">◀ ZURÜCK</button></div>`,
+    { tgt(b){ closeOverlay(); startBonus(S.teams[+b.dataset.i]); }, back(){ beginTurn(false); } });
+}
+function startBonus(target){
+  const tm = team();
+  tm.bonus--;
+  S.mode = 'bonus'; S.target = target;
+  sfx.fanfare();
+  askQuestion();
+  say(`⚔️ Attack on ${target.name}! 10 seconds!`);
+}
+
+function drawQuestion(tier){
+  const P = S.pools;
+  let cands = settings.topics.filter(t => P[t]);
+  if(cands.length > 1) cands = cands.filter(t => t !== S.lastTopic);
+  const minC = Math.min(...cands.map(t => S.topicCount[t] || 0));
+  const topic = pick(cands.filter(t => (S.topicCount[t] || 0) === minC));
+  const order = tier === 0 ? [0,1,2] : tier === 1 ? [1,0,2] : [2,1,0];
+  const lt = S.lastType[topic];
+  const filters = [
+    x => !S.used.has(x.key) && !S.seen.has(x.key) && x.type !== lt,
+    x => !S.used.has(x.key) && !S.seen.has(x.key),
+    x => !S.used.has(x.key) && x.type !== lt,
+    x => !S.used.has(x.key),
+  ];
+  let q = null;
+  for(const tr of order){
+    for(const f of filters){ const list = P[topic][tr].filter(f); if(list.length){ q = pick(list); break; } }
+    if(q) break;
+  }
+  if(!q){ for(const tr of [0,1,2]) for(const x of P[topic][tr]) S.used.delete(x.key); q = pick(P[topic][order[0]].length ? P[topic][order[0]] : P[topic][order[1]]); }
+  S.used.add(q.key); markSeen(q.key);
+  S.topicCount[topic] = (S.topicCount[topic] || 0) + 1; S.lastTopic = topic; S.lastType[topic] = q.type;
+  return q;
+}
+
+const timed = () => S.mode !== 'normal' || !!settings.timer;
+function askQuestion(){
+  const tm = team();
+  const hard = S.mode !== 'normal';
+  S.q = drawQuestion(hard ? 2 : tierFor(tm.stage));
+  S.sel = -1; S.hidden = new Set(); S.phase = 'question'; S.qCount++;
+  S.timeMax = hard ? 10 : 30; S.timeLeft = S.timeMax; tickSec = -1;
+  renderHeader(); renderLadder(); renderJokers(); renderQuestion();
+  if(!hard) say(pick(LINES.intro));
+  else if(S.mode === 'tie') say(`🏁 ${tm.name}: tie-break question!`);
+  $('#actionBtn').hidden = true;
+}
+
+function renderQuestion(){
+  const q = S.q, tm = team();
+  const head = S.mode === 'bonus' ? `⚔️ BONUS GEGEN ${S.target.emoji} ${esc(S.target.name).toUpperCase()}`
+             : S.mode === 'tie'   ? `🏁 STECHEN · ${tm.emoji} ${esc(tm.name).toUpperCase()}`
+             : `FRAGE ${tm.stage + 1} · ${COIN} ${fmt(amountAt(tm.stage + 1))}`;
+  $('#qnum').innerHTML = head;
+  $('#card').classList.toggle('hard', S.mode !== 'normal');
+  $('#qtopic').textContent = TOPIC_NAME[q.topic].toUpperCase();
+  $('#qprompt').textContent = q.prompt;
+  const showDe = settings.level === 'std' && q.de;
+  $('#qde').textContent = showDe ? q.de : '';
+  $('#qde').style.display = showDe ? '' : 'none';
+  const vis = $('#qvis'); vis.innerHTML = '';
+  const v = q.vis;
+  if(v){
+    if(v.kind === 'emoji'){
+      let h = '';
+      if(v.left) h += `<div class="group">${v.left.map(e => emojiImg(e)).join('')}</div><span class="arrow pixel">▶</span>`;
+      h += `<div class="group">${v.right.map(e => emojiImg(e)).join('')}</div>`;
+      vis.innerHTML = h;
+    } else if(v.kind === 'big'){
+      vis.innerHTML = `<div class="bigword pixel px">${esc(v.text)}</div>`;
+    } else if(v.kind === 'de'){
+      vis.innerHTML = `<div class="desent px"><span class="flag pixel">🇦🇹 DEUTSCH</span>${v.html}</div>`;
+    } else if(v.kind === 'scene'){
+      const cv = document.createElement('canvas'); cv.className = 'scene px'; drawScene(cv, v); vis.appendChild(cv);
+    }
+  }
+  let qt = esc(q.text), gi = 0;
+  qt = qt.replace(/___/g, () => `<span class="gap" data-g="${gi++}">&nbsp;</span>`);
+  $('#qtext').innerHTML = q.text ? qt : '';
+  $('#qtext').style.display = q.text ? '' : 'none';
+  const tb = $('#tbar'); tb.classList.toggle('on', timed()); renderTimer();
+  const card = $('#card'); card.classList.remove('slidein', 'shake'); void card.offsetWidth; if(!RM) card.classList.add('slidein');
+  const A = $('#answers'); A.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const b = document.createElement('button'); b.className = 'ans px';
+    b.innerHTML = `<span class="k pixel">${'ABCD'[i]}:</span><span>${esc(o)}</span>`;
+    b.addEventListener('click', () => { audioInit(); selectAnswer(i); });
+    A.appendChild(b);
+    setTimeout(() => b.classList.add('in'), RM ? 0 : 120 + i * 110);
+  });
+}
+function renderTimer(){
+  if(!timed()) return;
+  const tb = $('#tbar'), f = Math.max(0, S.timeLeft / S.timeMax);
+  tb.querySelector('i').style.width = (f * 100) + '%';
+  tb.querySelector('span').textContent = Math.ceil(S.timeLeft) + ' s';
+  tb.classList.toggle('low', S.timeLeft <= Math.min(10, S.timeMax / 3));
+}
+function ansBtns(){ return [...document.querySelectorAll('#answers .ans')]; }
+
+function selectAnswer(i){
+  if(S.overlay || !(S.phase === 'question' || S.phase === 'selected')) return;
+  if(S.hidden.has(i)) return;
+  if(S.phase === 'selected' && S.sel === i){ confirmAnswer(); return; }
+  S.sel = i; S.phase = 'selected';
+  ansBtns().forEach((b, k) => b.classList.toggle('sel', k === i));
+  sfx.select(); say(pick(LINES.sel));
+  const ab = $('#actionBtn'); ab.hidden = false; ab.className = 'action pixel px'; ab.textContent = '🔒 FINAL ANSWER';
+  renderJokers();
+}
+function confirmAnswer(){
+  if(S.phase !== 'selected') return;
+  S.phase = 'locked';
+  $('#actionBtn').hidden = true;
+  const b = ansBtns()[S.sel]; b.classList.add('lock');
+  renderJokers();
+  const wait = RM ? 500 : (S.mode === 'normal' ? 1500 : 900);
+  sfx.drum(wait / 1000);
+  say('Let\'s see…');
+  setTimeout(() => reveal(false), wait);
+}
+function timeUp(){
+  if(!(S.phase === 'question' || S.phase === 'selected')) return;
+  S.phase = 'locked'; S.sel = -1;
+  ansBtns().forEach(b => b.classList.remove('sel'));
+  $('#actionBtn').hidden = true;
+  say(LINES.timeout[0]);
+  reveal(true);
+}
+function fillGaps(q){
+  const parts = q.opts[q.ans].replace(/\.$/, '').split(' … ');
+  document.querySelectorAll('#qtext .gap').forEach((g, i) => { g.textContent = parts.length > 1 ? (parts[i] || '') : parts[0]; g.classList.add('fill'); });
+}
+function showNext(){ const ab = $('#actionBtn'); ab.hidden = false; ab.className = 'action next pixel px'; ab.textContent = 'WEITER ▶'; renderJokers(); }
+function reveal(timeout){
+  const q = S.q, tm = team(), btns = ansBtns();
+  const correct = !timeout && S.sel === q.ans;
+  S.lastCorrect = correct; S.phase = 'reveal';
+  btns.forEach(b => { b.classList.remove('lock'); b.disabled = true; });
+  btns[q.ans].classList.remove('sel'); btns[q.ans].classList.add('ok');
+  fillGaps(q);
+  if(correct){
+    if(!RM) btns[q.ans].classList.add('bounce');
+    confettiAt(btns[q.ans], 40);
+    sfx.correct();
+    S.cheer = 1.4; mood('happy', 1.8);
+  } else {
+    if(S.sel >= 0) btns[S.sel].classList.add('bad');
+    const card = $('#card'); card.classList.remove('shake'); void card.offsetWidth; if(!RM) card.classList.add('shake');
+    sfx.wrong(); mood('sad', 2.2);
+  }
+
+  if(S.mode === 'bonus'){
+    if(correct){
+      S.target.stage--;
+      renderLadder(); renderHeader();
+      say(`⚔️ BOOM! ${S.target.name} drops to stage ${S.target.stage}!`);
+      const row = document.querySelector(`.lrow[data-stage="${S.target.stage}"]`);
+      if(row) floaty(`⚔️ −1 ${S.target.emoji}`, row);
+    } else say(timeout ? "Time's up – nothing happens." : 'Missed! Nothing happens.');
+    showNext(); return;
+  }
+  if(S.mode === 'tie'){
+    S.tieRes[S.tieIdx] = correct;
+    say(correct ? pick(LINES.ok) : (timeout ? "Time's up!" : pick(LINES.bad)));
+    showNext(); return;
+  }
+
+  if(correct){
+    tm.stage++;
+    sfx.coin(); say(pick(LINES.ok));
+    renderLadder(); renderHeader();
+    const row = document.querySelector(`.lrow[data-stage="${tm.stage}"]`);
+    if(row) floaty(`+${fmt(amountAt(tm.stage) - amountAt(tm.stage - 1))} ${COIN}`, row);
+    if(SAFE[settings.len].includes(tm.stage) || tm.stage === settings.len){
+      setTimeout(() => { sfx.fanfare(); confetti(innerWidth / 2, innerHeight / 3, 80); }, 450);
+      if(solo() && tm.stage < settings.len) setTimeout(() => { if(S.phase === 'reveal') say('SAFE! 🛡️ This money is yours!'); }, 900);
+    }
+    if(tm.stage === settings.len){
+      if(solo()){ setTimeout(() => endGame('win', tm), 1700); return; }
+      S.finalRound = true;
+      setTimeout(() => { if(S.phase === 'reveal') say(`JACKPOT! 🏆 The others get their last turn…`); }, 900);
+    }
+  } else if(!timeout) say(pick(LINES.bad));
+  showNext();
+}
+function afterReveal(){
+  if(S.phase !== 'reveal') return;
+  $('#actionBtn').hidden = true;
+  if(S.mode === 'bonus'){ S.mode = 'normal'; S.target = null; askQuestion(); return; }
+  if(S.mode === 'tie'){ nextTie(); return; }
+  if(solo()){ if(S.lastCorrect) askQuestion(); else endGame('lose'); return; }
+  nextTurn();
+}
+function nextTurn(){
+  const n = S.teams.length;
+  if(S.cur === n - 1 && S.finalRound){
+    const champs = S.teams.filter(t => t.stage === settings.len);
+    if(champs.length === 1){ endGame('win', champs[0]); return; }
+    if(champs.length > 1){ startTie(champs); return; }
+    S.finalRound = false;   // Jackpot per Bonusspiel wieder verloren → weiter
+  }
+  S.cur = (S.cur + 1) % n;
+  beginTurn(false);
+}
+
+/* ---------- Stechen ---------- */
+function startTie(champs){
+  S.mode = 'tie'; S.tie = champs; S.tieIdx = 0; S.tieRes = [];
+  S.phase = 'turn';
+  sfx.fanfare();
+  openOverlay(`<h2 class="pixel">🏁 STECHEN! 🏁</h2>
+    <p>${champs.map(t => `${t.emoji} ${esc(t.name)}`).join(' · ')} haben den Jackpot!</p>
+    <p>Jedes Team bekommt eine schwere Frage – 10 Sekunden, keine Joker. Hat genau ein Team richtig, gewinnt es.</p>
+    <div class="ovbtns"><button class="ovbtn go pixel px" data-act="go">▶ LOS</button></div>`,
+    { go(){ closeOverlay(); tieTurn(); } });
+}
+function tieTurn(){
+  const tm = S.tie[S.tieIdx];
+  S.cur = S.teams.indexOf(tm); S.mode = 'tie'; S.phase = 'turn';
+  renderHeader(); renderLadder(); renderJokers();
+  sfx.turn();
+  openOverlay(`<p class="pixel" style="font-size:12px;color:#DC2626">🏁 STECHFRAGE</p>
+    <div class="bigemoji">${emojiImg(tm.emoji, '', 24)}</div>
+    <h2 class="pixel" style="color:${tm.color};text-shadow:3px 3px 0 #000">${esc(tm.name)}</h2>
+    <div class="ovbtns"><button class="ovbtn go pixel px" data-act="go">▶ FRAGE (10 s)</button></div>`,
+    { go(){ closeOverlay(); askQuestion(); } });
+}
+function nextTie(){
+  S.tieIdx++;
+  if(S.tieIdx < S.tie.length){ tieTurn(); return; }
+  const winners = S.tie.filter((t, i) => S.tieRes[i]);
+  if(winners.length === 1){ endGame('win', winners[0]); return; }
+  if(winners.length > 1) S.tie = winners;
+  S.tieIdx = 0; S.tieRes = []; S.phase = 'turn';
+  openOverlay(`<h2 class="pixel">NOCH UNENTSCHIEDEN!</h2>
+    <p>${winners.length ? 'Mehrere Teams lagen richtig.' : 'Niemand lag richtig.'} Nächste Stechrunde: ${S.tie.map(t => `${t.emoji} ${esc(t.name)}`).join(' · ')}</p>
+    <div class="ovbtns"><button class="ovbtn go pixel px" data-act="go">▶ WEITER</button></div>`,
+    { go(){ closeOverlay(); tieTurn(); } });
+}
+
+function endGame(kind, winner){
+  S.phase = 'end'; S.mode = 'normal';
+  const tm = winner || team();
+  let html = '';
+  if(solo()){
+    let amount, title, txt;
+    if(kind === 'win'){ amount = amountAt(settings.len); title = '🏆 JACKPOT! 🏆'; txt = `${esc(tm.name)} knackt die ganze Leiter!`; }
+    else if(kind === 'walk'){ amount = amountAt(tm.stage); title = '💰 AUSGESTIEGEN'; txt = 'Clever! Du nimmst deine Münzen mit.'; }
+    else { amount = safeAmount(tm.stage); title = 'GAME OVER'; txt = amount ? 'Zum Glück gibt\'s die Sicherheitsstufe!' : 'Nächstes Mal klappt\'s – nochmal!'; }
+    html = `<h2 class="pixel">${title}</h2><p>${txt}</p>
+      <div class="bigword pixel px" style="display:inline-block;background:#FACC15;color:#1F2937;padding:16px 24px;margin:16px 0;font-size:clamp(18px,3vw,32px)">${COIN} ${fmt(amount)}</div>
+      <p class="pixel" style="font-size:11px">${tm.stage} von ${settings.len} Fragen richtig</p>`;
+  } else {
+    const order = [...S.teams].sort((a, b) => (b === tm) - (a === tm) || b.stage - a.stage);
+    html = `<h2 class="pixel">🏆 ${esc(tm.name)} GEWINNT! 🏆</h2><p>Jackpot geknackt – ${fmt(amountAt(settings.len))} ${COIN}!</p>
+      <ol class="rank">${order.map((t, i) => `<li class="px ${t === tm ? 'win' : ''}"><span class="p">${i + 1}.</span><img src="${emojiURL(t.emoji, 16)}" alt="" style="width:32px;height:32px;image-rendering:pixelated"><span>${esc(t.name)}</span><span class="m">${COIN} ${fmt(amountAt(t.stage))}</span></li>`).join('')}</ol>`;
+  }
+  html += `<div class="ovbtns"><button class="ovbtn go pixel px" data-act="again">🔁 NOCHMAL</button><button class="ovbtn pixel px" data-act="menu">🏠 MENÜ</button></div>`;
+  const win = kind === 'win';
+  if(win){ sfx.fanfare(); S.cheer = 4; mood('happy', 4); say('JACKPOT! 🏆'); }
+  else if(kind === 'lose'){ say('Game over… but great try!'); }
+  renderLadder(); renderHeader();
+  openOverlay(html, { again(){ closeOverlay(); startGame(); }, menu(){ closeOverlay(); toMenu(); } });
+  if(win){ let k = 0; const burst = () => { confetti(R() * innerWidth, innerHeight * 0.3, 50); if(++k < 5) setTimeout(burst, 350); }; burst(); }
+}
+function toMenu(){ S.phase = 'idle'; showScreen('setup'); renderSetup(); renderHeader(); }
+
+/* ---------- Joker ---------- */
+function canJoker(){ return S.mode === 'normal' && (S.phase === 'question' || S.phase === 'selected') && !S.overlay; }
+function renderJokers(){
+  const tm = team(); if(!tm) return;
+  const map = { j50:'f', jaud:'a', jtel:'t' };
+  for(const [id, k] of Object.entries(map)){
+    const b = $('#' + id);
+    b.disabled = !tm.jokers[k] || !canJoker();
+    b.classList.toggle('used', !tm.jokers[k]);
+  }
+  $('#walkBtn').disabled = !canJoker();
+}
+function joker50(){
+  const tm = team(); if(!tm.jokers.f || !canJoker()) return;
+  tm.jokers.f = false;
+  const wrong = shuffle([0,1,2,3].filter(i => i !== S.q.ans && i !== S.sel)).slice(0, 2);
+  if(wrong.length < 2){ const extra = [0,1,2,3].filter(i => i !== S.q.ans && !wrong.includes(i)); wrong.push(...extra.slice(0, 2 - wrong.length)); }
+  wrong.forEach(i => {
+    S.hidden.add(i);
+    const b = ansBtns()[i]; confettiAt(b, 12); b.classList.add('gone'); b.classList.remove('sel');
+    if(S.sel === i){ S.sel = -1; S.phase = 'question'; $('#actionBtn').hidden = true; }
+  });
+  sfx.poof(); say('Two wrong answers – gone! 💨');
+  renderJokers();
+}
+function jokerAudience(){
+  const tm = team(); if(!tm.jokers.a || !canJoker()) return;
+  tm.jokers.a = false; renderJokers();
+  sfx.turn(); say("Let's ask the class! 🙋");
+  const cnt = [0,0,0,0];
+  const cols = [0,1,2,3].map(i => `
+    <div class="col ${S.hidden.has(i) ? 'off' : ''}">
+      <div class="pct pixel" id="pct${i}"></div>
+      <div class="barwrap"><div class="b" id="bar${i}"></div></div>
+      <div class="lab pixel">${'ABCD'[i]}</div>
+      <div class="cnt pixel" id="cnt${i}">0</div>
+      <div class="pm"><button class="px" data-act="minus" data-i="${i}" aria-label="weniger">−</button><button class="px" data-act="plus" data-i="${i}" aria-label="mehr">+</button></div>
+    </div>`).join('');
+  openOverlay(`<h2 class="pixel">🙋 PUBLIKUMSJOKER</h2>
+    <p>Alle zeigen auf! Die Lehrkraft zählt die Hände für A, B, C und D.</p>
+    <div class="aud">${cols}</div>
+    <div class="ovbtns"><button class="ovbtn pixel px" data-act="show">📊 ZEIGEN</button><button class="ovbtn go pixel px" data-act="close">✔ FERTIG</button></div>`,
+  {
+    plus(b){ const i = +b.dataset.i; cnt[i]++; $('#cnt' + i).textContent = cnt[i]; sfx.click(); },
+    minus(b){ const i = +b.dataset.i; cnt[i] = Math.max(0, cnt[i] - 1); $('#cnt' + i).textContent = cnt[i]; sfx.click(); },
+    show(){
+      const sum = cnt.reduce((a, b) => a + b, 0) || 1;
+      cnt.forEach((c, i) => { $('#bar' + i).style.height = Math.round(c / sum * 100) + '%'; $('#pct' + i).textContent = Math.round(c / sum * 100) + '%'; });
+      [0,1,2,3].forEach(i => tone(400 + i * 120, 0.08, 'square', 0.15, i * 0.12));
+    },
+    close(){ closeOverlay(); }
+  });
+}
+function jokerPhone(){
+  const tm = team(); if(!tm.jokers.t || !canJoker()) return;
+  tm.jokers.t = false; renderJokers();
+  sfx.ring(); say('Ring ring! 📞');
+  S.phoneT = 30;
+  openOverlay(`<div class="bigemoji ringing">${emojiImg('📞', '', 24)}</div>
+    <h2 class="pixel">RING RING!</h2>
+    <p>Ask your teacher! 👩‍🏫 Die Lehrkraft gibt einen Tipp – aber nicht die Lösung.</p>
+    <div class="count pixel" id="phoneCount">30</div>
+    <div class="ovbtns"><button class="ovbtn go pixel px" data-act="close">✔ AUFLEGEN</button></div>`,
+  { close(){ S.phoneT = 0; closeOverlay(); } });
+}
+function walkAway(){
+  if(!solo() || !canJoker()) return;
+  const tm = team();
+  openOverlay(`<h2 class="pixel">💰 AUSSTEIGEN?</h2><p>Du nimmst <b>${COIN} ${fmt(amountAt(tm.stage))}</b> mit und beendest das Spiel.</p>
+    <div class="ovbtns"><button class="ovbtn no pixel px" data-act="no">WEITERSPIELEN</button><button class="ovbtn go pixel px" data-act="yes">AUSSTEIGEN</button></div>`,
+    { no(){ closeOverlay(); }, yes(){ closeOverlay(); endGame('walk'); } });
+}
+
+/* ---------- Overlay ---------- */
+let ovHandlers = {};
+function openOverlay(html, handlers){
+  ovHandlers = handlers || {};
+  $('#ovbox').innerHTML = html;
+  $('#ov').classList.add('on'); S.overlay = true;
+  const first = $('#ovbox [data-act="go"], #ovbox [data-act="close"], #ovbox [data-act="again"], #ovbox [data-act="no"]');
+  if(first) setTimeout(() => first.focus(), 50);
+  renderJokers();
+}
+function closeOverlay(){ $('#ov').classList.remove('on'); S.overlay = false; ovHandlers = {}; renderJokers(); }
+$('#ov').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  audioInit(); const h = ovHandlers[b.dataset.act];
+  if(b.dataset.act !== 'plus' && b.dataset.act !== 'minus') sfx.click();
+  if(h) h(b);
+});
+
+/* ---------- Header / Leiter ---------- */
+function renderHeader(){
+  if(S.screen !== 'game'){ $('#coins').innerHTML = COIN + ' 0'; $('#pbar').style.width = '0'; $('#plbl').textContent = 'BEREIT?'; return; }
+  const tm = team();
+  $('#hsub').textContent = `5. Klasse · ${settings.level === 'ahs' ? 'AHS' : 'Standard'} · ${solo() ? '' : tm.name + ' · '}Stufe ${tm.stage}/${settings.len}`;
+  $('#coins').innerHTML = COIN + ' ' + fmt(amountAt(tm.stage));
+  $('#pbar').style.width = (tm.stage / settings.len * 100) + '%';
+  $('#pbar').style.setProperty('--bar', solo() ? '#FACC15' : tm.color);
+  $('#plbl').textContent = `${solo() ? '' : tm.emoji + ' '}${tm.stage} / ${settings.len}`;
+  const tc = $('#turnchip');
+  if(solo()) tc.hidden = true;
+  else { tc.hidden = false; tc.textContent = `${tm.emoji} ${tm.name}`; tc.style.background = tm.color; }
+}
+function renderLadder(){
+  const L = ladder(), tm = team(), wrap = $('#lrows');
+  let h = '';
+  for(let s = L.length; s >= 0; s--){
+    const toks = '<span class="toks">' + S.teams.filter(t => t.stage === s).map(t => `<span class="tok ${t === tm ? 'now' : ''}" style="--c:${t.color}" title="${esc(t.name)}">${t.emoji}</span>`).join('') + '</span>';
+    if(s === 0){ h += `<div class="lrow start pixel" data-stage="0"><span class="n">▶</span><span class="a">START</span>${toks}</div>`; continue; }
+    const cls = ['lrow','pixel'];
+    if(solo() && SAFE[settings.len].includes(s)) cls.push('safe');
+    if(s === L.length) cls.push('top');
+    if(s === tm.stage + 1 && S.phase !== 'end') cls.push('cur');
+    if(s <= tm.stage) cls.push('done');
+    h += `<div class="${cls.join(' ')}" data-stage="${s}"><span class="n">${s}</span><span class="a">${fmt(L[s - 1])}${solo() && SAFE[settings.len].includes(s) ? ' 🛡️' : ''}</span>${toks}</div>`;
+  }
+  wrap.innerHTML = h;
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+$('#actionBtn').addEventListener('click', () => { audioInit(); if(S.phase === 'selected') confirmAnswer(); else if(S.phase === 'reveal') afterReveal(); });
+$('#j50').addEventListener('click', () => { audioInit(); joker50(); });
+$('#jaud').addEventListener('click', () => { audioInit(); jokerAudience(); });
+$('#jtel').addEventListener('click', () => { audioInit(); jokerPhone(); });
+$('#walkBtn').addEventListener('click', () => { audioInit(); sfx.click(); walkAway(); });
+$('#muteBtn').addEventListener('click', () => { audioInit(); setMuted(!SND.muted); });
+$('#psyBtn').addEventListener('click', () => {
+  audioInit();
+  const on = !isPsy();
+  document.documentElement.dataset.theme = on ? 'psychedelic' : 'standard';
+  document.body.classList.remove('warp'); void document.body.offsetWidth; if(!RM) document.body.classList.add('warp');
+  if(on){ tone(200, 0.4, 'sawtooth', 0.2, 0, 1600); } else sfx.click();
+  if(S.screen === 'game' && S.q && S.q.vis && S.q.vis.kind === 'scene'){ const cv = document.querySelector('#qvis canvas'); if(cv) drawScene(cv, S.q.vis); }
+});
+$('#backBtn').addEventListener('click', () => {
+  audioInit(); sfx.click();
+  if(S.screen === 'game' && S.phase !== 'end'){
+    openOverlay(`<h2 class="pixel">ZURÜCK ZUM MENÜ?</h2><p>Das laufende Spiel wird beendet.</p>
+      <div class="ovbtns"><button class="ovbtn no pixel px" data-act="no">WEITERSPIELEN</button><button class="ovbtn pixel px" data-act="yes">ZUM MENÜ</button></div>`,
+      { no(){ closeOverlay(); }, yes(){ closeOverlay(); toMenu(); } });
+  } else if(S.screen === 'game'){ closeOverlay(); toMenu(); }
+  else if(location.protocol !== 'file:') location.href = '../index.html';
+  else history.back();
+});
+document.addEventListener('keydown', e => {
+  if(e.target.tagName === 'INPUT') return;
+  const k = e.key.toLowerCase();
+  if(k === 'm'){ audioInit(); setMuted(!SND.muted); return; }
+  if(S.overlay){
+    if(k === 'enter' || k === ' '){ const b = $('#ovbox [data-act="go"], #ovbox [data-act="close"], #ovbox [data-act="again"]'); if(b){ e.preventDefault(); b.click(); } }
+    else if(k === 'escape'){ const b = $('#ovbox [data-act="no"], #ovbox [data-act="close"], #ovbox [data-act="back"]'); if(b) b.click(); }
+    return;
+  }
+  if(S.screen !== 'game') return;
+  const idx = 'abcd'.indexOf(k) >= 0 ? 'abcd'.indexOf(k) : '1234'.indexOf(k);
+  if(idx >= 0 && k.length === 1){ audioInit(); selectAnswer(idx); return; }
+  if(k === 'enter' || k === ' '){
+    e.preventDefault(); audioInit();
+    if(S.phase === 'selected') confirmAnswer(); else if(S.phase === 'reveal') afterReveal();
+  }
+  else if(k === 'f'){ audioInit(); joker50(); }
+  else if(k === 'p'){ audioInit(); jokerAudience(); }
+  else if(k === 't'){ audioInit(); jokerPhone(); }
+});
+
+/* ============================================================
+   START
+   ============================================================ */
+initCoin(); $('#lhead').innerHTML = COIN + ' LEITER';
+initSetup(); renderSetup(); renderHeader(); setMuted(SND.muted);
+rafId = requestAnimationFrame(loop);
+setTimeout(() => { $('#splash').classList.add('out'); setTimeout(() => $('#splash').remove(), 450); }, 1000);
+</script>
+<!-- lernspiele:stats-start -->
+<script>
+(function () {
+  var h = location.hostname;
+  if (location.protocol === "file:" || h === "localhost" || h === "127.0.0.1") return;
+  var CODE = "spor-tler";
+  var GAME = "grammar-millionaire-5";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://" + CODE + ".goatcounter.com/count");
+  document.head.appendChild(s);
+  // Spielzeit: sichtbare Sekunden zählen, bei Meilensteinen je 1 Event senden.
+  var MEILENSTEINE = [1, 3, 5, 10, 15, 20]; // Minuten
+  var sichtbar = 0, gesendet = 0;
+  setInterval(function () {
+    if (document.visibilityState !== "visible") return;
+    sichtbar += 10;
+    while (gesendet < MEILENSTEINE.length && sichtbar >= MEILENSTEINE[gesendet] * 60) {
+      var min = MEILENSTEINE[gesendet++];
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({
+          path: "zeit/" + GAME + "/" + min + "min",
+          title: "Spielzeit " + GAME + ": " + min + " min",
+          event: true
+        });
+      }
+    }
+  }, 10000);
+})();
+</script>
+<!-- lernspiele:stats-end -->
+</body>
+</html>
