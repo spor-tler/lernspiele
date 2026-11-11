@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="standard">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Wobble Rush – The Grammar Gauntlet</title>
+<meta name="lernspiel:titel" content="Wobble Rush">
+<meta name="lernspiel:thema" content="Grammatik-Mix 3. Klasse">
+<meta name="lernspiel:stufe" content="7. Schulstufe">
+<meta name="lernspiel:fach" content="Englisch (Grammatik)">
+<meta name="lernspiel:beschreibung" content="3D-Hindernisrennen gegen acht Wackel-Gegner: Present und Past Simple, Past Progressive, Time Linkers und Comparison – mit fünf Grammatik-Minispielen an den Checkpoints. Standard und AHS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="standard"]{
+  --blue:#2563EB;--yellow:#FACC15;--green:#16A34A;--red:#DC2626;--purple:#9333EA;
+  --bg:#FFF9F0;--card:#FFFFFF;--dark:#1E1B4B;--orange:#F97316;--pink:#EC4899;--teal:#0D9488;
+  --ok:#22C55E;--err:#EF4444;--text:#1F2937;--light:#F9FAFB;--border:#E5E7EB;
+  --sh:4px 4px 0 #1F2937;--shb:3px 3px 0 rgba(0,0,0,.3);--hud:rgba(255,249,240,.92);
+}
+:root[data-theme="psychedelic"]{
+  --blue:#00F0FF;--yellow:#F5FF00;--green:#39FF14;--red:#FF2079;--purple:#BF00FF;
+  --bg:#12002B;--card:#1B0B3A;--dark:#0A0018;--orange:#FF6B00;--pink:#FF00E5;--teal:#00FFC8;
+  --ok:#39FF14;--err:#FF2079;--text:#F9FAFB;--light:#F9FAFB;--border:#BF00FF;
+  --sh:4px 4px 0 #FF00E5;--shb:3px 3px 0 #00F0FF;--hud:rgba(18,0,43,.9);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;font-family:'Nunito',system-ui,sans-serif;font-weight:700;color:var(--text);font-style:normal}
+body{background:linear-gradient(#5ec8ff,#ffe3f3);touch-action:none;user-select:none;-webkit-user-select:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+:root[data-theme="psychedelic"] #cv{filter:saturate(1.7) hue-rotate(0deg);animation:hue 9s linear infinite}
+@keyframes hue{to{filter:saturate(1.7) hue-rotate(360deg)}}
+h1,h2,h3,.fred{font-family:'Fredoka One','Nunito',sans-serif;font-weight:400;margin:0}
+button{font-family:'Fredoka One','Nunito',sans-serif;cursor:pointer;border:3px solid var(--text);border-radius:16px;min-height:48px;padding:8px 24px;font-size:22px;color:var(--text);background:var(--yellow);box-shadow:var(--shb);transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .15s}
+button:hover{transform:scale(1.05);box-shadow:6px 6px 0 rgba(0,0,0,.4)}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,.3)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default;transform:none}
+
+/* splash */
+#splash{position:fixed;inset:0;z-index:100;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:opacity .4s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .star{font-size:72px;animation:pop .6s cubic-bezier(.34,1.56,.64,1)}
+#splash .nm{font-family:'Fredoka One',sans-serif;font-size:36px;color:#C084FC}
+#splash .tg{color:#F9FAFB;font-size:16px}
+@keyframes pop{from{transform:scale(0) rotate(-90deg)}to{transform:scale(1)}}
+
+/* hud */
+#hud{position:fixed;top:0;left:0;right:0;z-index:20;height:56px;display:none;align-items:center;gap:8px;padding:0 8px;background:var(--hud);border-bottom:3px solid var(--text)}
+#hud.show{display:flex}
+#hud button{min-height:40px;min-width:48px;padding:0 8px;font-size:20px;border-radius:12px;background:var(--card)}
+#hTitle{flex:1;min-width:0;font-family:'Fredoka One',sans-serif;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hTitle small{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;opacity:.8;margin-left:8px}
+.pill{font-family:'Fredoka One',sans-serif;font-size:20px;padding:4px 16px;border-radius:999px;border:3px solid var(--text);background:var(--card);white-space:nowrap}
+#hPos{background:var(--yellow);color:#1F2937}
+#hBoost{letter-spacing:2px}
+#foot{position:fixed;left:0;right:0;bottom:0;height:16px;z-index:20;background:rgba(31,41,55,.55);display:none}
+#foot.show{display:block}
+#footFill{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow),var(--green));border-right:3px solid var(--text);transition:width .3s}
+#foot i{position:absolute;top:0;bottom:0;width:3px;background:#fff;opacity:.8}
+
+/* banner */
+#banner{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:19;width:min(800px,calc(100% - 16px));background:var(--card);border:3px solid var(--text);border-radius:16px;box-shadow:var(--sh);padding:8px 16px;text-align:center;display:none;font-size:20px}
+#banner.show{display:block;animation:slideIn .3s cubic-bezier(.34,1.56,.64,1)}
+#banner.good{background:#DCFCE7;color:#14532D}#banner.bad{background:#FEE2E2;color:#7F1D1D}
+#banner .opts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+#banner .bar{height:8px;border-radius:8px;background:var(--border);margin-top:8px;overflow:hidden}
+#banner .bar b{display:block;height:100%;background:var(--orange);width:100%}
+@keyframes slideIn{from{transform:translate(-50%,-80px)}to{transform:translate(-50%,0)}}
+.opt{display:inline-block;padding:4px 16px;border-radius:12px;border:3px solid #1F2937;color:#1F2937;font-weight:900}
+.oA{background:#F9A8D4}.oB{background:#FDE047}.oC{background:#93C5FD}
+.gap{display:inline-block;min-width:72px;border-bottom:4px solid var(--orange);margin:0 4px}
+
+#big{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:'Fredoka One',sans-serif;font-size:min(22vw,180px);color:#fff;-webkit-text-stroke:6px #1F2937;text-shadow:8px 8px 0 rgba(0,0,0,.25)}
+#big span{animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+#toast{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:24;pointer-events:none;font-family:'Fredoka One',sans-serif;font-size:36px;color:#fff;-webkit-text-stroke:2px #1F2937;text-shadow:3px 3px 0 #1F2937;white-space:nowrap;opacity:0}
+#toast.go{animation:rise .9s ease-out}
+@keyframes rise{0%{opacity:0;transform:translate(-50%,24px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.1)}100%{opacity:0;transform:translate(-50%,-72px) scale(1)}}
+
+/* screens & cards */
+.screen{position:fixed;inset:0;z-index:30;display:none;overflow:auto;padding:16px;background:rgba(30,27,75,.55);-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.screen.show{display:flex;align-items:flex-start;justify-content:center}
+.box{width:min(800px,100%);margin:auto;background:var(--card);border:4px solid var(--text);border-radius:24px;box-shadow:var(--sh);padding:24px;text-align:center;animation:boxIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes boxIn{from{transform:translateY(40px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.box.shake{animation:shake .2s 3}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#logo{font-size:min(13vw,72px);line-height:1;color:var(--pink);-webkit-text-stroke:3px var(--text);text-shadow:5px 5px 0 var(--yellow);letter-spacing:1px}
+#logo span{display:inline-block;animation:wob 1.6s ease-in-out infinite}
+#logo span:nth-child(2n){animation-delay:-.4s}#logo span:nth-child(3n){animation-delay:-.8s}
+@keyframes wob{0%,100%{transform:rotate(-5deg) translateY(0)}50%{transform:rotate(5deg) translateY(-6px)}}
+.sub{font-size:20px;margin:8px 0 16px}
+.lbl{font-family:'Fredoka One',sans-serif;font-size:20px;margin:16px 0 8px;text-align:left}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.chip{font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;text-align:left;background:var(--bg);display:flex;align-items:center;gap:8px;padding:8px 16px}
+.chip .ck{margin-left:auto;font-size:22px;opacity:.25}
+.chip.on{background:#DCFCE7;border-color:var(--green);color:#14532D}.chip.on .ck{opacity:1}
+.lv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lv button{font-size:20px;background:var(--bg);opacity:.6}
+.lv button small{display:block;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px}
+#lvS.on{opacity:1;background:linear-gradient(135deg,#5EEAD4,#60A5FA);color:#1F2937}
+#lvA.on{opacity:1;background:linear-gradient(135deg,#FDBA74,#F87171);color:#1F2937}
+#startBtn{margin-top:24px;font-size:28px;padding:8px 48px;background:var(--pink);color:#fff;-webkit-text-stroke:1px #1F2937}
+.how{font-size:16px;margin-top:16px;opacity:.85}
+kbd{display:inline-block;border:2px solid var(--text);border-radius:8px;padding:0 8px;background:var(--bg);font-family:'Nunito',sans-serif;font-weight:900}
+#allBtn{font-size:18px;min-height:48px;background:var(--card);margin-top:8px}
+
+#cardT{font-size:28px;color:var(--purple);margin-bottom:8px}
+#cardB{font-size:20px;line-height:1.5}
+#cardB .sent{font-size:26px;font-weight:900;margin:16px 0;line-height:1.6}
+#cardB .tip{background:var(--bg);border:3px dashed var(--purple);border-radius:16px;padding:8px 16px;margin:16px 0 0;text-align:left;font-size:18px}
+#cardB .tip p{margin:8px 0}
+#cardB .hint{display:inline-block;background:var(--purple);color:#fff;border-radius:999px;padding:0 16px;font-size:16px}
+#cardBtn{margin-top:24px}
+.optrow{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0}
+.optrow .opt{font-size:22px;padding:8px 24px}
+.slots{min-height:64px;border:3px dashed var(--border);border-radius:16px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:16px 0 8px;background:var(--bg)}
+.pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:56px}
+.word{font-family:'Nunito',sans-serif;font-weight:900;font-size:22px;padding:4px 16px;background:var(--yellow);color:#1F2937;border-radius:12px}
+.slots .word{background:#93C5FD}
+.word.tok{background:var(--bg);color:var(--text)}
+.word.hitok{background:var(--ok);color:#052e16}.word.hitbad{background:var(--err);color:#fff}
+.punct{font-size:26px;font-weight:900}
+#cardB input{font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;width:min(280px,70vw);padding:8px 16px;border:3px solid var(--text);border-radius:12px;text-align:center;background:var(--bg);color:var(--text);user-select:text;-webkit-user-select:text}
+.fb{margin-top:16px;padding:8px 16px;border-radius:16px;font-size:20px}
+.fb.good{background:#DCFCE7;color:#14532D}.fb.bad{background:#FEE2E2;color:#7F1D1D}
+.fb b.fix{background:#FDE047;color:#1F2937;border-radius:8px;padding:0 8px}
+.fb small{display:block;font-size:17px;margin-top:8px}
+
+table{width:100%;border-collapse:collapse;font-size:17px;margin:8px 0}
+th,td{padding:8px;border-bottom:2px solid var(--border);text-align:left}
+th{font-family:'Fredoka One',sans-serif;font-weight:400}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.me{background:#FEF9C3;color:#1F2937}
+.medal{font-size:64px;line-height:1}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;text-align:left}
+.rev{text-align:left;font-size:17px;background:var(--bg);border-radius:16px;padding:8px 16px;margin-top:8px}
+.rev p{margin:8px 0;border-bottom:2px dashed var(--border);padding-bottom:8px}
+.rev p:last-child{border:0}
+.btnrow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+
+/* touch */
+#touch{display:none}
+body.touch.play #touch{display:block}
+#joy{position:fixed;left:24px;bottom:40px;width:144px;height:144px;border-radius:50%;background:rgba(255,255,255,.35);border:3px solid rgba(31,41,55,.6);z-index:21;touch-action:none}
+#knob{position:absolute;left:44px;top:44px;width:56px;height:56px;border-radius:50%;background:var(--pink);border:3px solid #1F2937}
+.tb{position:fixed;z-index:21;width:88px;height:88px;border-radius:50%;font-size:32px;padding:0;touch-action:none}
+#tJump{right:24px;bottom:40px;background:var(--yellow)}
+#tBoost{right:128px;bottom:40px;width:72px;height:72px;background:#67E8F9}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}:root[data-theme="psychedelic"] #cv{animation:none;filter:saturate(1.7) hue-rotate(200deg)}}
+@media (max-width:640px){#hTitle small{display:none}.pill{font-size:16px;padding:4px 8px}#cardB .sent{font-size:22px}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<div id="splash"><div class="star">🌟</div><div class="nm">School Games 🎓</div><div class="tg">Lernen macht Spaß!</div></div>
+
+<header id="hud">
+  <button id="backBtn" aria-label="Back to menu">←</button>
+  <div id="hTitle">Wobble Rush<small id="hSub"></small></div>
+  <div class="pill" id="hBoost" title="Turbo charges">⚡0</div>
+  <div class="pill" id="hPos">1st</div>
+  <div class="pill" id="hScore">⭐ 0</div>
+  <button id="sndBtn" aria-label="Sound on/off">🔊</button>
+  <button id="psyBtn" aria-label="Psychedelic mode">🌈</button>
+</header>
+<div id="banner"></div>
+<div id="big"></div>
+<div id="toast"></div>
+<footer id="foot"><div id="footFill"></div></footer>
+
+<div id="menu" class="screen">
+  <div class="box">
+    <h1 id="logo"><span>W</span><span>O</span><span>B</span><span>B</span><span>L</span><span>E</span> <span>R</span><span>U</span><span>S</span><span>H</span></h1>
+    <div class="sub">The Grammar Gauntlet · 3 courses · 6 checkpoints · 8 wobbly rivals</div>
+    <div class="lbl">1 · What do you want to practise?</div>
+    <div class="chips" id="chips"></div>
+    <button id="allBtn">🎲 All mixed</button>
+    <div class="lbl">2 · Choose your level</div>
+    <div class="lv">
+      <button id="lvS" class="on">Standard<small>7. Klasse · Standard</small></button>
+      <button id="lvA">AHS<small>7. Klasse · AHS</small></button>
+    </div>
+    <button id="startBtn">▶ START</button>
+    <div class="how">Run: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrows · Jump: <kbd>Space</kbd> · Dive: <kbd>Space</kbd> again in the air · Turbo: <kbd>Shift</kbd><br>Right answers give you ⚡ turbo. Wrong answers give you slime. Nobody is ever out!</div>
+  </div>
+</div>
+
+<div id="card" class="screen">
+  <div class="box" id="cardBox">
+    <h2 id="cardT"></h2>
+    <div id="cardB"></div>
+    <button id="cardBtn">OK</button>
+  </div>
+</div>
+
+<div id="results" class="screen"><div class="box" id="resBox"></div></div>
+
+<div id="touch">
+  <div id="joy"><div id="knob"></div></div>
+  <button class="tb" id="tBoost">⚡</button>
+  <button class="tb" id="tJump">⬆</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+'use strict';
+// #CONTENT-START
+// Levels: 1 = easy, 2 = medium, 3 = hard. Standard plays 1+2, AHS plays 2+3.
+// mc:    [lv, sentence with ___, correct, wrong, wrong, explanation]
+// order: [lv, sentence (tokens separated by spaces, last token = punctuation), hint, explanation]
+// type:  [lv, sentence with ___, [accepted answers], explanation]
+// slip:  [lv, sentence with the [wrong part] in brackets, fix, explanation]
+const TOPICS = {
+  ps: {
+    name: 'Present & Past Simple', icon: '⏰',
+    tip: ['Present simple: he / she / it + verb-<b>s</b>. Questions: <b>Do / Does</b> + base form. Negative: <b>don\'t / doesn\'t</b> + base form.',
+          'Past simple: verb-<b>ed</b> or irregular form (go → went). Questions: <b>Did</b> + base form. Negative: <b>didn\'t</b> + base form.'],
+    mc: [
+      [1, 'My brother ___ football every Saturday.', 'plays', 'play', 'playing', 'he / she / it + verb-s in the present simple.'],
+      [1, 'We ___ to Italy last summer.', 'went', 'go', 'goed', '"last summer" = past simple. go → went (irregular).'],
+      [1, '___ you like pizza?', 'Do', 'Does', 'Are', 'Questions with I / you / we / they: Do + base form.'],
+      [1, 'She ___ like spiders.', "doesn't", "don't", "isn't", "he / she / it: doesn't + base form."],
+      [1, 'I ___ my homework yesterday.', 'did', 'do', 'doed', '"yesterday" = past simple. do → did.'],
+      [1, '___ Tom live in Vienna?', 'Does', 'Do', 'Is', 'Questions with he / she / it: Does + base form.'],
+      [2, 'Where ___ your grandma live?', 'does', 'do', 'is', 'your grandma = she → does.'],
+      [2, 'They ___ watch TV last night.', "didn't", "don't", "weren't", "Past negative: didn't + base form."],
+      [2, 'Did she ___ the bus this morning?', 'catch', 'caught', 'catches', 'After did: always the base form.'],
+      [2, 'My dad never ___ breakfast.', 'eats', 'eat', 'eating', 'my dad = he → verb-s.'],
+      [2, 'We ___ the film two days ago.', 'saw', 'see', 'seen', '"ago" = past simple. see → saw.'],
+      [2, 'How often ___ Mia go swimming?', 'does', 'do', 'is', 'Mia = she → does + base form.'],
+      [3, 'What time ___ the film start yesterday?', 'did', 'does', 'was', '"yesterday" → Did + base form.'],
+      [3, 'Who ___ the window yesterday?', 'broke', 'did broke', 'breaked', 'Who is the subject here: no "did". break → broke.'],
+      [3, "She didn't ___ anything at the party.", 'eat', 'ate', 'eats', "After didn't: base form."],
+      [3, '___ your parents usually work on Saturdays?', 'Do', 'Does', 'Are', 'your parents = they → Do.'],
+      [3, "Tom ___ his keys, so he couldn't open the door.", 'lost', 'loses', "didn't lost", 'Past story: lose → lost.'],
+      [3, 'My sister ___ to school by bus, but yesterday she walked.', 'usually goes', 'usually went', 'is usually go', 'Habit = present simple; only yesterday is past.']
+    ],
+    order: [
+      [1, 'Do you play tennis ?', 'Question', 'Do + subject + base form.'],
+      [1, "She doesn't like fish .", 'Negative', "Subject + doesn't + base form."],
+      [1, 'We visited our grandma yesterday .', 'Past', 'Subject + past form + rest + time.'],
+      [2, 'Did they watch the match last night ?', 'Question', 'Did + subject + base form.'],
+      [2, 'Where does your cousin live ?', 'Question', 'Question word + does + subject + base form.'],
+      [2, "He didn't do his homework .", 'Negative', "Subject + didn't + base form."],
+      [3, 'What did you have for breakfast today ?', 'Question', 'Question word + did + subject + base form.'],
+      [3, "Why doesn't she come to our parties ?", 'Question', "Question word + doesn't + subject + base form."],
+      [3, 'How often do you tidy your room ?', 'Question', 'How often + do + subject + base form.']
+    ],
+    type: [
+      [1, 'Lisa ___ (watch) TV every evening.', ['watches'], 'she + verb-s. After -ch we add -es.'],
+      [1, 'We ___ (play) cards last night.', ['played'], '"last night" = past simple: play + ed.'],
+      [1, 'I ___ (not / like) carrots.', ["don't like", 'do not like'], "I + don't + base form."],
+      [2, 'He ___ (not / go) to school yesterday.', ["didn't go", 'did not go'], "Past negative: didn't + base form."],
+      [2, 'Tom ___ (buy) a new bike last week.', ['bought'], 'buy → bought (irregular).'],
+      [2, 'My mum ___ (not / drive) to work. She takes the bus.', ["doesn't drive", 'does not drive'], "she + doesn't + base form."],
+      [3, 'Where ___ (you / go) last weekend?', ['did you go'], 'Did + subject + base form.'],
+      [3, 'She ___ (teach) us English last year.', ['taught'], 'teach → taught (irregular).'],
+      [3, "Why ___ (he / not / eat) meat? He's a vegetarian.", ["doesn't he eat", 'does he not eat'], "doesn't + subject + base form."]
+    ],
+    slip: [
+      [1, "She [don't] like homework.", "doesn't", "she → doesn't."],
+      [1, 'He [play] the guitar every day.', 'plays', 'he + verb-s.'],
+      [1, 'We [goed] to the zoo yesterday.', 'went', 'go → went (irregular).'],
+      [2, 'Did you [saw] the new teacher?', 'see', 'After did: base form.'],
+      [2, '[Does] they live near the school?', 'Do', 'they → Do.'],
+      [2, "I didn't [went] to the party.", 'go', "After didn't: base form."],
+      [3, 'Where did she [lived] two years ago?', 'live', 'After did: base form.'],
+      [3, "My brother doesn't [likes] vegetables.", 'like', "After doesn't: base form, no -s."],
+      [3, "They [wasn't] at home last night.", "weren't", "they → weren't."]
+    ]
+  },
+  pp: {
+    name: 'Past Progressive or Past Simple', icon: '🎬',
+    tip: ['Past progressive (<b>was / were + -ing</b>): a long action in progress – the background.',
+          'Past simple: a short, finished action. <b>While</b> I <b>was sleeping</b>, the phone <b>rang</b>.'],
+    mc: [
+      [1, "I ___ TV at 8 o'clock last night.", 'was watching', 'were watching', 'am watching', 'I + was + -ing: in progress at that time.'],
+      [1, 'They ___ football when it started to rain.', 'were playing', 'was playing', 'are playing', 'they + were + -ing.'],
+      [1, 'While Mum was cooking, the phone ___.', 'rang', 'was ringing', 'rings', 'A short action interrupts → past simple.'],
+      [1, 'He ___ his leg last year.', 'broke', 'was breaking', 'were breaking', 'One short finished action → past simple.'],
+      [1, 'What ___ you doing at 5 pm yesterday?', 'were', 'was', 'did', 'you + were + -ing.'],
+      [1, "She wasn't ___ when I came in.", 'sleeping', 'slept', 'sleep', "wasn't + -ing form."],
+      [2, 'When I ___ home, my sister was doing her homework.', 'came', 'was coming', 'come', 'Arriving is the short action → past simple.'],
+      [2, 'While we ___ in the park, we saw a fox.', 'were walking', 'was walking', 'walk', 'while + long action: we were + -ing.'],
+      [2, 'Tom ___ his bike when he fell off.', 'was riding', 'rode', 'rides', 'Riding was in progress when he fell.'],
+      [2, 'The teacher ___ the room and everybody stopped talking.', 'entered', 'was entering', 'enter', 'Two short actions, one after the other → past simple.'],
+      [2, 'It ___ all day yesterday, so we stayed in.', 'was raining', 'were raining', 'rains', 'it + was + -ing: a long action.'],
+      [2, "I didn't hear you because I ___ to music.", 'was listening', 'listened', 'listen', 'Listening was in progress at that moment.'],
+      [3, 'The sun was shining and the birds ___ when we left.', 'were singing', 'sang', 'was singing', 'Background of a story: were + -ing.'],
+      [3, 'I ___ my keys while I was running for the bus.', 'dropped', 'was dropping', 'drop', 'Dropping is short → past simple.'],
+      [3, 'What were you doing when the lights ___ out?', 'went', 'were going', 'go', 'The lights went out: short action.'],
+      [3, 'First she ___ the door, then she switched on the light.', 'opened', 'was opening', 'were opening', 'Actions in a row → past simple.'],
+      [3, 'While Dad ___ the car, I was cleaning my bike.', 'was washing', 'washed', 'were washing', 'Two long actions at the same time: both progressive.'],
+      [3, 'We ___ dinner when suddenly someone knocked at the door.', 'were having', 'had', 'are having', 'Dinner was in progress when the knock came.']
+    ],
+    order: [
+      [1, 'I was reading a book .', 'Statement', 'Subject + was + -ing.'],
+      [1, 'Were you sleeping at ten ?', 'Question', 'Were + subject + -ing.'],
+      [1, "They weren't listening .", 'Negative', "Subject + weren't + -ing."],
+      [2, 'What were you doing last night ?', 'Question', 'Question word + were + subject + -ing.'],
+      [2, 'It was raining when we left .', 'Statement', 'Long action first, then when + short action.'],
+      [2, "She wasn't wearing a jacket .", 'Negative', "Subject + wasn't + -ing."],
+      [3, 'While I was cooking the phone rang .', 'Statement', 'While + long action, then the short action.'],
+      [3, 'Who were you talking to yesterday ?', 'Question', 'Who + were + subject + -ing + to.'],
+      [3, 'We were having lunch when he arrived .', 'Statement', 'Long action + when + short action.']
+    ],
+    type: [
+      [1, 'At 7 pm I ___ (do) my homework.', ['was doing'], 'I + was + -ing.'],
+      [1, 'The kids ___ (play) in the garden when I arrived.', ['were playing'], 'the kids = they → were + -ing.'],
+      [1, 'She ___ (fall) off her chair yesterday.', ['fell'], 'One short action → past simple: fall → fell.'],
+      [2, 'While he ___ (sleep), a burglar took his phone.', ['was sleeping'], 'while + long action: was + -ing.'],
+      [2, 'I was walking home when I ___ (see) a UFO.', ['saw'], 'Short action → past simple: see → saw.'],
+      [2, 'We ___ (not / watch) TV at nine. We were in bed.', ["weren't watching", 'were not watching'], "we + weren't + -ing."],
+      [3, 'What ___ (you / do) when the teacher came in?', ['were you doing'], 'were + subject + -ing.'],
+      [3, 'When she ___ (hear) the noise, she was brushing her teeth.', ['heard'], 'Short action → past simple: hear → heard.'],
+      [3, 'It ___ (not / rain) when we left the house.', ["wasn't raining", 'was not raining'], "it + wasn't + -ing."]
+    ],
+    slip: [
+      [1, 'They [was] playing football.', 'were', 'they → were.'],
+      [1, 'I [were] sleeping at midnight.', 'was', 'I → was.'],
+      [1, 'She was [cook] dinner at six.', 'cooking', 'was + -ing form.'],
+      [2, 'While I was running, I [was falling] over.', 'fell', 'Falling over is short → past simple.'],
+      [2, 'He [watched] TV when the phone rang.', 'was watching', 'Watching was in progress → was + -ing.'],
+      [2, 'What [did] you doing at eight?', 'were', 'Progressive question: were + subject + -ing.'],
+      [3, 'I [was breaking] a glass while I was washing up.', 'broke', 'Breaking is short → past simple.'],
+      [3, 'Were they [watch] a film when you called?', 'watching', 'were + subject + -ing.'],
+      [3, 'We were sitting in class when the fire alarm [was ringing].', 'rang', 'The alarm interrupts → past simple.']
+    ]
+  },
+  tl: {
+    name: 'Time Linkers', icon: '🔗',
+    tip: ['Order of events: <b>first – then – after that – finally</b>.',
+          '<b>while</b> + sentence (while I was eating) · <b>during</b> + noun (during the film) · <b>until</b> = up to that moment · <b>as soon as</b> = right after.'],
+    mc: [
+      [1, '___ I get up. Then I have breakfast.', 'First', 'Finally', 'While', 'The first step of a list: First.'],
+      [1, 'I brush my teeth ___ I go to bed.', 'before', 'after', 'finally', 'Teeth first, bed later → before.'],
+      [1, 'We ate cake. ___ we went home. What a great party!', 'Finally', 'First', 'While', 'The last step: Finally.'],
+      [1, 'She was singing ___ she was cooking.', 'while', 'then', 'first', 'Two actions at the same time → while.'],
+      [1, 'First we had soup, ___ we had pizza.', 'then', 'during', 'until', 'The next step: then.'],
+      [1, '___ the lesson, we go to the playground.', 'After', 'While', 'Then', 'after + noun: after the lesson.'],
+      [2, 'Wait here ___ I come back.', 'until', 'while', 'during', 'until = up to that moment.'],
+      [2, '___ the film, my phone rang twice.', 'During', 'While', 'Until', 'during + noun (the film).'],
+      [2, '___ I was doing my homework, my brother was playing games.', 'While', 'During', 'Until', 'while + sentence with a verb.'],
+      [2, 'Call me ___ you get home.', 'as soon as', 'during', 'then', 'as soon as = right after you get home.'],
+      [2, 'He put on his shoes. ___, he ran to the bus stop.', 'After that', 'While', 'During', 'The next step in a story: After that.'],
+      [2, 'We were walking home ___ it started to rain.', 'when', 'during', 'first', 'when + short action that interrupts.'],
+      [3, '___ arriving at the hotel, we went straight to the pool.', 'After', 'During', 'As soon as', 'after + -ing form.'],
+      [3, 'I waited ___ the bus came.', 'until', 'during', 'while', 'until = up to the moment the bus came.'],
+      [3, 'She had a shower. ___, her brother made breakfast.', 'Meanwhile', 'Until', 'As soon as', 'Meanwhile = at the same time, in a new sentence.'],
+      [3, '___ we were on holiday, we visited three museums.', 'While', 'During', 'Until', 'while + sentence (we were …).'],
+      [3, '___ the holidays, we visited three museums.', 'During', 'While', 'As soon as', 'during + noun (the holidays).'],
+      [3, 'At first I was nervous, but ___ I won the race.', 'in the end', 'at the end', 'meanwhile', 'in the end = finally. "at the end" needs "of …".']
+    ],
+    order: [
+      [1, 'Then we went to the park .', 'Story', 'Linker first, then subject + verb.'],
+      [1, 'They wash their hands before lunch .', 'Routine', 'Subject + verb + object + before + noun.'],
+      [1, 'After school we play football .', 'Routine', 'After + noun, then subject + verb.'],
+      [2, 'While she was reading he fell asleep .', 'Story', 'While + long action, then the short action.'],
+      [2, 'We waited until the rain stopped .', 'Story', 'Main action + until + what ends it.'],
+      [2, 'Call me as soon as you arrive .', 'Request', 'Main action + as soon as + subject + verb.'],
+      [3, 'During the match it started to snow .', 'Story', 'During + noun, then subject + verb.'],
+      [3, 'Finally we found the keys under the sofa .', 'Story', 'Linker first, then subject + verb.'],
+      [3, 'As soon as he saw us he ran away .', 'Story', 'As soon as + first action, then the second action.']
+    ],
+    type: [
+      [1, 'Wash your hands ___ you eat. (before / after)', ['before'], 'Clean hands first → before.'],
+      [1, 'First we sang, ___ we danced. (then / while)', ['then'], 'The next step: then.'],
+      [1, 'She listens to music ___ she does her homework. (while / until)', ['while'], 'At the same time → while.'],
+      [2, 'Stay in bed ___ you feel better. (until / during)', ['until'], 'until = up to that moment.'],
+      [2, 'Nobody spoke ___ the test. (during / while)', ['during'], 'during + noun.'],
+      [2, '___ I opened the door, the dog ran out. (As soon as / During)', ['as soon as'], 'as soon as = right after.'],
+      [3, 'We looked everywhere. F___, we found the cat in the wardrobe.', ['finally'], 'The last step of the story: Finally.'],
+      [3, 'Dad was cooking. M___, the kids laid the table.', ['meanwhile'], 'Meanwhile = at the same time.'],
+      [3, "I'll wait here u___ you come back.", ['until'], 'until = up to that moment.']
+    ],
+    slip: [
+      [1, 'First we ate, [while] we went home.', 'then', 'One action after the other → then.'],
+      [1, 'I always wash my hands [after] I eat. Clean hands first!', 'before', 'Clean hands first → before.'],
+      [1, 'She was dancing [then] she was singing – at the same time!', 'while', 'At the same time → while.'],
+      [2, '[While] the lesson, Tim fell asleep.', 'During', 'during + noun.'],
+      [2, 'Wait here [during] I get the tickets.', 'while', 'while + sentence with a verb.'],
+      [2, 'We stayed outside [as soon as] it got dark.', 'until', 'until = up to that moment.'],
+      [3, '[During] we were eating, the lights went out.', 'While', 'while + sentence (we were eating).'],
+      [3, 'We missed the bus, but [at the end] we arrived on time.', 'in the end', 'in the end = finally.'],
+      [3, 'He read a comic [while] the break.', 'during', 'during + noun (the break).']
+    ]
+  },
+  ca: {
+    name: 'Comparison of Adjectives', icon: '📏',
+    tip: ['Short adjectives: tall – tall<b>er</b> – the tall<b>est</b>. Long ones: <b>more</b> boring – the <b>most</b> boring.',
+          'Irregular: good – better – best · bad – worse – worst. Compare with <b>than</b>; same level: <b>as … as</b>.'],
+    mc: [
+      [1, 'An elephant is ___ than a mouse.', 'bigger', 'biger', 'more big', 'Short adjective + er; double the g: bigger.'],
+      [1, 'This is the ___ day of my life!', 'best', 'goodest', 'most good', 'good – better – best (irregular).'],
+      [1, 'Maths is ___ than art.', 'more difficult', 'difficulter', 'most difficult', 'Long adjective: more + adjective + than.'],
+      [1, 'My bag is ___ than yours.', 'heavier', 'heavyer', 'more heavy', 'Consonant + y → ier: heavier.'],
+      [1, 'Tom is the ___ boy in our class.', 'tallest', 'taller', 'most tall', 'the + short adjective + est.'],
+      [1, 'A plane is faster ___ a car.', 'than', 'then', 'as', 'Comparative + than.'],
+      [2, 'My marks are ___ than last year. Oh no!', 'worse', 'badder', 'worst', 'bad – worse – worst.'],
+      [2, 'She is as tall ___ her brother.', 'as', 'than', 'like', 'Same level: as + adjective + as.'],
+      [2, 'This is the ___ film I have ever seen.', 'most boring', 'boringest', 'more boring', 'Long adjective: the most + adjective.'],
+      [2, 'The blue T-shirt is ___ than the red one.', 'cheaper', 'more cheap', 'cheapest', 'Short adjective + er + than.'],
+      [2, "It's the ___ joke in the world.", 'funniest', 'funnyest', 'most funny', 'y → iest: funniest.'],
+      [2, 'Who is ___ at maths, you or Ben?', 'better', 'gooder', 'best', 'Two people → comparative: better.'],
+      [3, "The test wasn't as hard ___ I expected.", 'as', 'than', 'that', 'not as + adjective + as.'],
+      [3, "This phone is ___ expensive than mine – it's cheaper.", 'less', 'fewer', 'least', 'less + adjective + than = not as.'],
+      [3, 'Graz is ___ from here than Linz.', 'further', 'farer', 'more far', 'far – further – furthest.'],
+      [3, 'It was the ___ day of the holiday – rain all day.', 'worst', 'baddest', 'worse', 'the + superlative: worst.'],
+      [3, 'The more you practise, the ___ you get.', 'better', 'best', 'good', 'the + comparative, the + comparative.'],
+      [3, "My room is ___ than my sister's.", 'tidier', 'more tidier', 'tidyer', 'y → ier. Never "more" and "-er" together.']
+    ],
+    order: [
+      [1, 'My dog is faster than your cat .', 'Comparative', 'A + is + comparative + than + B.'],
+      [1, 'She is the tallest girl in class .', 'Superlative', 'the + superlative + noun.'],
+      [1, 'Cats are quieter than dogs .', 'Comparative', 'A + are + comparative + than + B.'],
+      [2, 'This is the best pizza in town .', 'Superlative', 'the + best + noun.'],
+      [2, 'He is as old as my sister .', 'Same level', 'as + adjective + as.'],
+      [2, 'English is more interesting than maths .', 'Comparative', 'more + long adjective + than.'],
+      [3, 'It was the most exciting game ever .', 'Superlative', 'the most + long adjective + noun.'],
+      [3, "My phone isn't as new as yours .", 'Not the same', "isn't as + adjective + as."],
+      [3, 'This is the worst film of the year .', 'Superlative', 'the + worst + noun.']
+    ],
+    type: [
+      [1, 'A cheetah is ___ (fast) than a lion.', ['faster'], 'Short adjective + er.'],
+      [1, 'This is the ___ (small) room in the house.', ['smallest'], 'the + short adjective + est.'],
+      [1, 'Today is ___ (hot) than yesterday.', ['hotter'], 'Double the t: hotter.'],
+      [2, 'My pizza is ___ (good) than yours.', ['better'], 'good → better.'],
+      [2, "It's the ___ (beautiful) beach in Italy.", ['most beautiful'], 'Long adjective: the most + adjective.'],
+      [2, 'Your joke was ___ (funny) than mine.', ['funnier'], 'y → ier.'],
+      [3, 'That was the ___ (bad) goal of the season.', ['worst'], 'bad – worse – worst.'],
+      [3, 'This exercise is ___ (difficult) than the last one.', ['more difficult'], 'Long adjective: more + adjective.'],
+      [3, 'The station is ___ (far) than I thought.', ['further', 'farther'], 'far → further (or farther).']
+    ],
+    slip: [
+      [1, 'My brother is [more tall] than me.', 'taller', 'Short adjective + er, no "more".'],
+      [1, 'This is the [goodest] cake ever.', 'best', 'good – better – best.'],
+      [1, 'A car is faster [then] a bike.', 'than', 'Compare with than, not then.'],
+      [2, 'She is the [most happy] girl in class.', 'happiest', 'y → iest.'],
+      [2, 'He is as strong [than] his dad.', 'as', 'as + adjective + as.'],
+      [2, 'It was the [baddest] day of the week.', 'worst', 'bad – worse – worst.'],
+      [3, 'This game is [more better] than the old one.', 'better', 'Never "more" with better.'],
+      [3, "It's the [most funniest] film ever.", 'funniest', 'Never "most" and "-est" together.'],
+      [3, 'Skiing is [dangerouser] than swimming.', 'more dangerous', 'Long adjective: more + adjective.']
+    ]
+  }
+};
+const MINI = {
+  doors: { name: 'Door Dash', icon: '🚪', how: 'Read the sentence, then run through the door with the right answer. Wrong doors go BONK.' },
+  tiles: { name: 'Tile Drop', icon: '🧊', how: 'Stand on the tile with the right answer. Wrong tiles drop into the slime!' },
+  order: { name: 'Sentence Bridge', icon: '🧩', how: 'Tap the words in the right order to build the sentence.' },
+  type:  { name: 'Cannon Typer', icon: '💥', how: 'Type the missing words to fire the cannon at the wall.' },
+  slip:  { name: 'Spot the Slip', icon: '🔨', how: 'One part of the sentence is wrong. Find it and smash it!' }
+};
+const PRAISE = ['Boom! Nailed it!', 'Grammar ninja!', 'Smooth as butter!', 'Big brain energy!', 'Wobble-tastic!', 'Your teacher would cry happy tears!'];
+const OOPS = ['Splat! Almost!', 'Oopsie-noodle!', 'The slime says no!', 'So close!', 'Bonk! Try to remember this one:'];
+// #CONTENT-END
+// ===================================================================
+// ENGINE — helpers
+// ===================================================================
+const $ = id => document.getElementById(id);
+const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const ord = n => n + (['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : n % 10] || 'th');
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+// CONFIG (units: metres, seconds)
+const MOVE = 7.5, JUMP = 11.5, GRAV = 30, DIVE = 12.5;
+const SEC_PTS = [100, 85, 72, 60, 50, 42, 35, 30, 25];
+const Q_PTS = 60;
+const DOORC = [0xEC4899, 0xFACC15, 0x3B82F6];
+const CONF = [0xFACC15, 0x16A34A, 0xEC4899, 0xF97316, 0x9333EA, 0x2563EB];
+const SLIME = [0x84CC16, 0x65A30D, 0xA3E635];
+const THEMES = [
+  { name: 'Candy Meadow', sky: 'linear-gradient(#49b8ff 0%,#a6e3ff 45%,#ffe3f3 100%)', fog: 0xffe3f3, pal: [0xFF7EB6, 0xFFD166, 0x7AE7C7, 0x6ECBFF, 0xB28DFF] },
+  { name: 'Sunset Slide', sky: 'linear-gradient(#7b5cff 0%,#ff8fb1 45%,#ffe29a 100%)', fog: 0xffe2b0, pal: [0xFF9F5A, 0xFF6F91, 0xFFC75F, 0x9D7BFF, 0x4FD1C5] },
+  { name: 'Disco Night', sky: 'linear-gradient(#1b1464 0%,#6a2fb5 50%,#ff6ac1 100%)', fog: 0xb05ac0, pal: [0x00E5FF, 0xFF4FD8, 0xB6FF3B, 0xFFE14D, 0x8C7BFF] }
+];
+const BOTS = [
+  ['Sir Wobbelot', 0x60A5FA, 3], ['Pudding', 0xFDBA74, 1], ['Captain Oops', 0xF87171, 8], ['Noodle', 0xFDE047, 4],
+  ['Bonk', 0xA78BFA, 5], ['Schnitzel', 0xD6A56C, 7], ['Fluffy', 0xF9A8D4, 6], ['Zoom-Zoom', 0x5EEAD4, 2]
+];
+
+// ===================================================================
+// SOUND (procedural, < 500 ms)
+// ===================================================================
+let psy = false;
+const snd = (() => {
+  let ac = null, on = true;
+  function init() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } if (ac && ac.state === 'suspended') ac.resume(); }
+  function tone(f, d, o) {
+    o = o || {}; if (!ac || !on) return;
+    const t = ac.currentTime + (o.at || 0), os = ac.createOscillator(), g = ac.createGain();
+    os.type = psy ? (o.type === 'square' ? 'square' : 'sawtooth') : (o.type || 'triangle');
+    os.frequency.setValueAtTime(f, t); if (o.to) os.frequency.exponentialRampToValueAtTime(o.to, t + d);
+    g.gain.setValueAtTime((o.v || 0.14) * (psy ? 0.7 : 1), t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+    os.connect(g); g.connect(ac.destination); os.start(t); os.stop(t + d + 0.03);
+  }
+  return {
+    init, toggle() { on = !on; return on; },
+    jump: () => tone(330, 0.14, { to: 660, v: 0.08 }),
+    dive: () => tone(520, 0.18, { to: 260, v: 0.08 }),
+    land: () => tone(140, 0.07, { to: 90, v: 0.06, type: 'sine' }),
+    bonk: () => tone(170, 0.24, { to: 60, type: 'square', v: 0.12 }),
+    boing: () => tone(180, 0.3, { to: 520, type: 'sine', v: 0.16 }),
+    ok: () => [523, 659, 784].forEach((f, i) => tone(f, 0.16, { at: i * 0.08 })),
+    bad: () => tone(210, 0.32, { to: 80, type: 'sawtooth', v: 0.12 }),
+    boost: () => tone(300, 0.4, { to: 1300, v: 0.1 }),
+    tick: () => tone(880, 0.07, { v: 0.1 }),
+    go: () => tone(1046, 0.35, { v: 0.16 }),
+    fall: () => tone(900, 0.45, { to: 140, type: 'sine', v: 0.1 }),
+    pop: () => tone(700, 0.08, { to: 1100, v: 0.1 }),
+    click: () => tone(600, 0.05, { v: 0.08 }),
+    splat: () => tone(120, 0.2, { to: 50, type: 'sawtooth', v: 0.1 }),
+    fanfare: () => [523, 659, 784, 659, 1046].forEach((f, i) => tone(f, 0.18, { at: i * 0.1, v: 0.15 }))
+  };
+})();
+
+// ===================================================================
+// THREE setup
+// ===================================================================
+const renderer = new THREE.WebGLRenderer({ canvas: $('cv'), antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xffe3f3, 70, 230);
+const cam = new THREE.PerspectiveCamera(58, 1, 0.1, 500);
+cam.position.set(0, 6, 14);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xffb6d9, 0.95));
+const sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(6, 12, 8); scene.add(sun);
+function resize() { renderer.setSize(window.innerWidth, window.innerHeight, false); cam.aspect = window.innerWidth / window.innerHeight; cam.updateProjectionMatrix(); }
+window.addEventListener('resize', resize); resize();
+
+const GEO = {
+  box: new THREE.BoxGeometry(1, 1, 1), sph: new THREE.SphereGeometry(1, 20, 14), cyl: new THREE.CylinderGeometry(1, 1, 1, 20),
+  cone: new THREE.ConeGeometry(1, 1, 16), plane: new THREE.PlaneGeometry(1, 1), circ: new THREE.CircleGeometry(1, 20),
+  tor: new THREE.TorusGeometry(1, 0.12, 8, 24, Math.PI)
+};
+const toon = c => new THREE.MeshToonMaterial({ color: c });
+const lam = c => new THREE.MeshLambertMaterial({ color: c });
+function shade(c, f) { const r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255; const m = v => Math.round(clamp(f <= 1 ? v * f : v + (255 - v) * (f - 1), 0, 255)); return (m(r) << 16) | (m(g) << 8) | m(b); }
+function mesh(geo, mat, sx, sy, sz, x, y, z, parent) { const m = new THREE.Mesh(geo, mat); m.scale.set(sx, sy, sz); m.position.set(x || 0, y || 0, z || 0); if (parent) parent.add(m); return m; }
+
+const texCache = {};
+function patTex(col, kind) {
+  const k = col + kind; if (texCache[k]) return texCache[k];
+  const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d');
+  x.fillStyle = '#' + col.toString(16).padStart(6, '0'); x.fillRect(0, 0, 64, 64);
+  const light = ((col >> 16) & 255) + ((col >> 8) & 255) + (col & 255) > 690;
+  x.fillStyle = light ? 'rgba(244,114,182,.55)' : 'rgba(255,255,255,.3)';
+  if (kind === 'stripe') { x.beginPath(); x.moveTo(0, 32); x.lineTo(32, 0); x.lineTo(64, 0); x.lineTo(0, 64); x.fill(); x.beginPath(); x.moveTo(32, 64); x.lineTo(64, 32); x.lineTo(64, 64); x.fill(); }
+  else if (kind === 'dots') { x.beginPath(); x.arc(16, 16, 9, 0, 7); x.fill(); x.beginPath(); x.arc(48, 48, 9, 0, 7); x.fill(); }
+  else if (kind === 'check') { x.fillRect(0, 0, 32, 32); x.fillRect(32, 32, 32, 32); }
+  else if (kind === 'arrow') { x.beginPath(); x.moveTo(8, 12); x.lineTo(32, 32); x.lineTo(8, 52); x.lineTo(20, 52); x.lineTo(44, 32); x.lineTo(20, 12); x.fill(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return texCache[k] = t;
+}
+
+// text label on a plane (canvas texture, auto-fit, up to 3 lines)
+function makeLabel(w, h, px) {
+  const cv = document.createElement('canvas'); cv.width = px || 512; cv.height = Math.max(32, Math.round(cv.width * h / w));
+  const tex = new THREE.CanvasTexture(cv); tex.__own = true;
+  const m = new THREE.Mesh(GEO.plane, new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  m.scale.set(w, h, 1);
+  m.set = (text, bg, fg) => {
+    const c = cv.getContext('2d'), W = cv.width, H = cv.height; c.clearRect(0, 0, W, H);
+    if (bg) { c.fillStyle = bg; c.strokeStyle = '#1F2937'; c.lineWidth = W * 0.02; const r = H * 0.18, p = W * 0.015; c.beginPath(); c.moveTo(p + r, p); c.arcTo(W - p, p, W - p, H - p, r); c.arcTo(W - p, H - p, p, H - p, r); c.arcTo(p, H - p, p, p, r); c.arcTo(p, p, W - p, p, r); c.closePath(); c.fill(); c.stroke(); }
+    c.fillStyle = fg || '#1F2937'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    const words = String(text).split(' '); let size = H * 0.56, lines = [];
+    for (; size > 12; size *= 0.9) {
+      c.font = '900 ' + size + 'px Nunito, Arial, sans-serif'; lines = []; let cur = '';
+      for (const wd of words) { const t = cur ? cur + ' ' + wd : wd; if (c.measureText(t).width > W * 0.88 && cur) { lines.push(cur); cur = wd; } else cur = t; }
+      lines.push(cur);
+      if (lines.length <= 3 && lines.length * size * 1.12 <= H * 0.86 && lines.every(l => c.measureText(l).width <= W * 0.9)) break;
+    }
+    lines.forEach((l, i) => c.fillText(l, W / 2, H / 2 + (i - (lines.length - 1) / 2) * size * 1.12));
+    tex.needsUpdate = true;
+  };
+  return m;
+}
+
+// ===================================================================
+// WORLD state
+// ===================================================================
+let world = new THREE.Group(); scene.add(world);
+let plats = [], walls = [], obst = [], way = [], safes = [], spinny = [];
+let B = null; // course builder cursor
+const G = { active: false, paused: false, t: 0, state: 'menu', waiters: [], shake: 0, score: 0, ahs: false, topics: [] };
+
+function clearWorld() {
+  world.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.map && m.map.__own) m.map.dispose(); m.dispose(); }); });
+  scene.remove(world); world = new THREE.Group(); scene.add(world);
+  plats = []; walls = []; obst = []; way = []; safes = []; spinny = [];
+}
+
+function addPlat(x, top, z, w, d, o) {
+  o = o || {}; const h = o.h || 1.4;
+  const col = o.col !== undefined ? o.col : B.pal[(B.pi++) % B.pal.length];
+  const p = { x, y: top, z, hw: w / 2, hd: d / 2, h, bx: x, by: top, bz: z, vx: 0, vz: 0, move: o.move || null, conv: o.conv || 0, bounce: o.bounce || 0, safe: !!o.safe, gone: false, col };
+  const tt = patTex(col, o.pat || (o.conv ? 'arrow' : 'stripe')).clone(); tt.needsUpdate = true; tt.__own = true;
+  tt.repeat.set(Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(d / 3)));
+  if (o.conv < 0) tt.repeat.x *= -1;
+  const side = lam(shade(col, 0.72)), topM = new THREE.MeshLambertMaterial({ map: tt });
+  const m = new THREE.Mesh(GEO.box, [side, side, topM, side, side, side]); m.scale.set(w, h, d); m.position.set(x, top - h / 2, z); world.add(m);
+  mesh(GEO.box, lam(shade(col, 0.5)), 0.84, 0.9 / h, 0.84, 0, -0.5 - 0.45 / h, 0, m);
+  p.mesh = m; p.tex = tt; plats.push(p);
+  if (!o.noWay) { if (d > 8) { way.push({ p, oz: p.hd - 1.5 }); way.push({ p, oz: -(p.hd - 1.5) }); } else way.push({ p, oz: 0 }); }
+  if (p.safe) safes.push(p);
+  return p;
+}
+// forward = -z. slab() lays a platform from the cursor forward.
+function slab(len, w, o) { o = o || {}; const p = addPlat(o.x || 0, B.y, B.z - len / 2, w, len, o); B.z -= len; return p; }
+function addWall(x, z, w, d, y0, hgt, col, o) {
+  o = o || {}; const wl = { x, z, hw: w / 2, hd: d / 2, y0, y1: y0 + hgt, gone: false, onTouch: null };
+  wl.mesh = mesh(GEO.box, lam(col), w, hgt, d, x, y0 + hgt / 2, z, world);
+  if (!o.plain) mesh(GEO.box, lam(shade(col, 1.45)), 0.9, 0.12, 1.04, 0, 0.3, 0, wl.mesh);
+  walls.push(wl); return wl;
+}
+function groundAt(x, z, feetY, m) {
+  let best = null;
+  for (let i = 0; i < plats.length; i++) {
+    const p = plats[i]; if (p.gone) continue;
+    if (Math.abs(x - p.x) <= p.hw + m && Math.abs(z - p.z) <= p.hd + m && p.y <= feetY + 0.4 && (!best || p.y > best.y)) best = p;
+  }
+  return best;
+}
+
+// ===================================================================
+// PARTICLES (pooled)
+// ===================================================================
+const PN = 150, parts = [];
+for (let i = 0; i < PN; i++) { const m = new THREE.Mesh(GEO.box, new THREE.MeshBasicMaterial({ color: 0xffffff })); m.visible = false; scene.add(m); parts.push({ m, life: 0, vx: 0, vy: 0, vz: 0, s: 0.2, g: 20 }); }
+let pIdx = 0;
+function burst(x, y, z, n, cols, sp, up, size) {
+  if (RM) n = Math.ceil(n / 3);
+  for (let i = 0; i < n; i++) {
+    const p = parts[pIdx = (pIdx + 1) % PN], a = Math.random() * 6.283, r = Math.random() * sp;
+    p.m.position.set(x, y, z); p.vx = Math.cos(a) * r; p.vz = Math.sin(a) * r; p.vy = (up || 6) * (0.5 + Math.random());
+    p.s = (size || 0.22) * (0.6 + Math.random() * 0.8); p.life = 0.9 + Math.random() * 0.8; p.g = 20;
+    p.m.material.color.setHex(pick(cols)); p.m.visible = true; p.m.rotation.set(a, r, a);
+  }
+}
+function updParts(dt) {
+  for (let i = 0; i < PN; i++) {
+    const p = parts[i]; if (p.life <= 0) continue;
+    p.life -= dt; if (p.life <= 0) { p.m.visible = false; continue; }
+    p.vy -= p.g * dt; p.m.position.x += p.vx * dt; p.m.position.y += p.vy * dt; p.m.position.z += p.vz * dt;
+    p.m.rotation.x += dt * 7; p.m.rotation.z += dt * 5; const s = p.s * Math.min(1, p.life * 2); p.m.scale.set(s, s, s);
+  }
+}
+
+// ===================================================================
+// CHARACTERS
+// ===================================================================
+function hat(kind, parent) {
+  const y = 0.52;
+  if (kind === 0) { mesh(GEO.cyl, toon(0x1F2937), 0.26, 0.14, 0.26, 0, y, 0, parent); const b = mesh(GEO.box, toon(0x1F2937), 0.78, 0.06, 0.78, 0, y + 0.1, 0, parent); b.rotation.y = 0.5; mesh(GEO.sph, toon(0xFACC15), 0.07, 0.07, 0.07, 0.3, y + 0.06, 0.25, parent); }
+  else if (kind === 1) { mesh(GEO.cone, toon(0xEC4899), 0.24, 0.55, 0.24, 0, y + 0.22, 0, parent); mesh(GEO.sph, toon(0xFACC15), 0.08, 0.08, 0.08, 0, y + 0.52, 0, parent); }
+  else if (kind === 2) { mesh(GEO.cyl, toon(0xEF4444), 0.05, 0.3, 0.05, 0, y + 0.1, 0, parent); const p = mesh(GEO.box, toon(0xFACC15), 0.8, 0.04, 0.14, 0, y + 0.27, 0, parent); spinnyChars.push(p); }
+  else if (kind === 3) { mesh(GEO.cyl, toon(0xFACC15), 0.3, 0.2, 0.3, 0, y + 0.02, 0, parent); for (let i = 0; i < 5; i++) mesh(GEO.cone, toon(0xFACC15), 0.07, 0.18, 0.07, Math.cos(i * 1.257) * 0.26, y + 0.2, Math.sin(i * 1.257) * 0.26, parent); }
+  else if (kind === 4) { mesh(GEO.cyl, toon(0x1F2937), 0.03, 0.4, 0.03, 0, y + 0.15, 0, parent); mesh(GEO.sph, toon(0xEF4444), 0.11, 0.11, 0.11, 0, y + 0.4, 0, parent); }
+  else if (kind === 5) { [-1, 1].forEach(s => { const c = mesh(GEO.cone, toon(0xF9FAFB), 0.1, 0.34, 0.1, s * 0.26, y + 0.02, 0, parent); c.rotation.z = -s * 0.5; }); }
+  else if (kind === 6) { [-1, 1].forEach(s => mesh(GEO.sph, toon(0xDB2777), 0.16, 0.12, 0.08, s * 0.16, y + 0.02, 0.05, parent)); mesh(GEO.sph, toon(0xFACC15), 0.07, 0.07, 0.07, 0, y + 0.02, 0.08, parent); }
+  else if (kind === 7) { mesh(GEO.cyl, toon(0xF9FAFB), 0.24, 0.26, 0.24, 0, y + 0.08, 0, parent); mesh(GEO.sph, toon(0xF9FAFB), 0.32, 0.2, 0.32, 0, y + 0.3, 0, parent); }
+  else { mesh(GEO.cyl, toon(0x1F2937), 0.42, 0.04, 0.42, 0, y - 0.04, 0, parent); mesh(GEO.cyl, toon(0x1F2937), 0.25, 0.4, 0.25, 0, y + 0.16, 0, parent); mesh(GEO.cyl, toon(0xEF4444), 0.255, 0.08, 0.255, 0, y + 0.04, 0, parent); }
+}
+const spinnyChars = [];
+function nameTag(text, bg) {
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 64; const c = cv.getContext('2d');
+  c.font = '900 34px Nunito, Arial, sans-serif'; const w = Math.min(248, c.measureText(text).width + 36);
+  c.fillStyle = bg; c.strokeStyle = '#1F2937'; c.lineWidth = 5; const x0 = 128 - w / 2;
+  c.beginPath(); c.moveTo(x0 + 24, 6); c.arcTo(x0 + w, 6, x0 + w, 58, 24); c.arcTo(x0 + w, 58, x0, 58, 24); c.arcTo(x0, 58, x0, 6, 24); c.arcTo(x0, 6, x0 + w, 6, 24); c.closePath(); c.fill(); c.stroke();
+  c.fillStyle = '#1F2937'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 128, 34, 230);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthTest: false })); s.scale.set(2.2, 0.55, 1); s.renderOrder = 5; return s;
+}
+function makeChar(col, hatKind, name, isPlayer) {
+  const g = new THREE.Group(), inner = new THREE.Group(); inner.position.y = 0.62; g.add(inner);
+  const dark = shade(col, 0.7);
+  mesh(GEO.sph, toon(col), 0.5, 0.58, 0.48, 0, 0, 0, inner);
+  mesh(GEO.sph, toon(shade(col, 1.55)), 0.34, 0.36, 0.2, 0, -0.1, 0.32, inner);
+  [-1, 1].forEach(s => { mesh(GEO.sph, toon(0xffffff), 0.14, 0.16, 0.1, s * 0.17, 0.22, 0.4, inner); mesh(GEO.sph, toon(0x1F2937), 0.07, 0.08, 0.05, s * 0.17, 0.22, 0.48, inner); });
+  const mo = mesh(GEO.tor, toon(0x1F2937), 0.1, 0.1, 0.1, 0, 0.06, 0.47, inner); mo.rotation.z = Math.PI;
+  const feet = [-1, 1].map(s => mesh(GEO.sph, toon(dark), 0.17, 0.12, 0.24, s * 0.2, -0.52, 0.05, inner));
+  const arms = [-1, 1].map(s => mesh(GEO.sph, toon(dark), 0.12, 0.16, 0.12, s * 0.54, -0.02, 0, inner));
+  hat(hatKind, inner);
+  const tag = nameTag(name, isPlayer ? '#FACC15' : '#FFFFFF'); tag.position.y = 1.9; g.add(tag);
+  if (isPlayer) { const ar = mesh(GEO.cone, new THREE.MeshBasicMaterial({ color: 0xFACC15 }), 0.2, 0.34, 0.2, 0, 2.45, 0, g); ar.rotation.x = Math.PI; g.arrow = ar; }
+  const sh = mesh(GEO.circ, new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28, depthWrite: false }), 0.5, 0.5, 0.5); sh.rotation.x = -Math.PI / 2; scene.add(sh);
+  scene.add(g); g.visible = false; sh.visible = false;
+  return { g, inner, feet, arms, sh };
+}
+function makeEnt(name, col, hatKind, isPlayer) {
+  return {
+    name, isPlayer, c: makeChar(col, hatKind, name, isPlayer), x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, r: 0.45, h: 1.2,
+    onGround: false, ground: null, stun: 0, inv: 0, diveT: 0, dived: false, coy: 0, jbuf: 0, face: Math.PI, ph: Math.random() * 6, tum: 0, sq: 0,
+    spd: 1, boostT: 0, slimeT: 0, charges: 0, frozen: true, respawn: null, score: 0, col,
+    ai: isPlayer ? null : { mode: 'race', wi: 0, lane: rnd(-1, 1), skill: rnd(0.5, 0.85), brain: rnd(0.45, 0.8), jcd: 0, dodgeT: 0, dodge: 0, bestZ: 0, stuckT: 0, falls: 0, arrived: 0, t: 0, tg: null, zone: null }
+  };
+}
+let ents = [], player = null, bots = [];
+function initEnts() {
+  if (ents.length) return;
+  player = makeEnt('YOU', 0x34D399, 0, true);
+  bots = BOTS.map(b => makeEnt(b[0], b[1], b[2], false));
+  bots.forEach((b, i) => b.spd = 0.84 + 0.016 * i + rnd(0, 0.02));
+  ents = [player].concat(bots);
+}
+
+function knock(e, vx, vy, vz, stun) {
+  e.vx = vx; e.vy = vy; e.vz = vz; e.onGround = false; e.stun = stun; e.inv = 0.6; e.diveT = 0; e.sq = 1;
+  if (e.isPlayer) { snd.bonk(); G.shake = 0.25; }
+  burst(e.x, e.y + 0.8, e.z, 6, [0xffffff, 0xFACC15], 4, 4, 0.16);
+}
+function respawn(e) {
+  const r = e.respawn; if (!r) return;
+  e.x = r.x + rnd(-1.6, 1.6); e.z = r.z + rnd(-0.8, 0.8); e.y = r.y + 3.5; e.vx = e.vy = e.vz = 0; e.stun = 0; e.diveT = 0; e.inv = 1.2; e.onGround = false;
+  if (e.isPlayer) { snd.pop(); camSnap = true; } else e.ai.falls++;
+}
+
+function stepEntity(e, inp, dt) {
+  e.stun -= dt; e.inv -= dt; e.boostT -= dt; e.slimeT -= dt;
+  const ctl = e.stun <= 0 && e.diveT <= 0;
+  const sp = MOVE * e.spd * (e.boostT > 0 ? 1.55 : 1) * (e.slimeT > 0 ? 0.45 : 1);
+  if (ctl || e.onGround) {
+    const tx = ctl ? inp.x * sp : 0, tz = ctl ? inp.z * sp : 0;
+    const acc = (e.onGround ? (ctl ? 55 : 9) : 22) * dt;
+    let dx = tx - e.vx, dz = tz - e.vz; const l = Math.hypot(dx, dz);
+    if (l > acc) { dx *= acc / l; dz *= acc / l; } e.vx += dx; e.vz += dz;
+  }
+  if (e.onGround) { e.coy = 0.1; if (e.diveT > 0) e.diveT -= dt; } else e.coy -= dt;
+  if (inp.jump) e.jbuf = 0.13; else e.jbuf -= dt;
+  if (ctl && e.jbuf > 0 && e.coy > 0) {
+    e.vy = JUMP; e.onGround = false; e.coy = 0; e.jbuf = 0; e.sq = -0.8; if (e.isPlayer) snd.jump();
+  } else if (inp.jump && ctl && !e.onGround && e.coy <= 0 && !e.dived) {
+    const g = groundAt(e.x, e.z, e.y, 0);
+    if (!g || e.y - g.y > 0.7) { e.dived = true; e.diveT = 0.45; e.jbuf = 0; e.vx = Math.sin(e.face) * DIVE; e.vz = Math.cos(e.face) * DIVE; e.vy = Math.max(e.vy, 3.5); if (e.isPlayer) snd.dive(); }
+  }
+  if (inp.boost && e.charges > 0 && e.boostT <= 0) { e.charges--; e.boostT = 2.4; if (e.isPlayer) snd.boost(); }
+  e.vy -= GRAV * dt; if (e.vy < -40) e.vy = -40;
+  const g0 = e.ground;
+  if (e.onGround && g0) { e.x += (g0.vx + g0.conv) * dt; e.z += g0.vz * dt; }
+  const py = e.y;
+  e.x += e.vx * dt; e.z += e.vz * dt; e.y += e.vy * dt;
+  const p = groundAt(e.x, e.z, py, 0.18);
+  e.onGround = false;
+  if (p && e.vy <= 0 && e.y <= p.y) {
+    e.y = p.y;
+    if (p.bounce) { e.vy = p.bounce; e.sq = -1; e.dived = false; e.diveT = 0; if (e.isPlayer) snd.boing(); burst(e.x, e.y, e.z, 5, [0xffffff], 3, 3, 0.14); }
+    else {
+      if (e.vy < -9) { e.sq = 1; if (e.isPlayer) snd.land(); }
+      e.vy = 0; e.onGround = true; e.ground = p; e.dived = false;
+      if (p.safe && e.respawn !== p) { e.respawn = p; if (e.ai) e.ai.falls = 0; }
+    }
+  }
+  // sides of platforms
+  for (let i = 0; i < plats.length; i++) {
+    const q = plats[i]; if (q.gone || e.y >= q.y - 0.4 || e.y + e.h <= q.y - q.h) continue;
+    const dx = e.x - q.x, dz = e.z - q.z, px = q.hw + e.r - Math.abs(dx), pz = q.hd + e.r - Math.abs(dz);
+    if (px > 0 && pz > 0) { if (px < pz) { e.x += (dx < 0 ? -1 : 1) * px; e.vx = 0; } else { e.z += (dz < 0 ? -1 : 1) * pz; e.vz = 0; } }
+  }
+  for (let i = 0; i < walls.length; i++) {
+    const w = walls[i]; if (w.gone || e.y >= w.y1 || e.y + e.h <= w.y0) continue;
+    const dx = e.x - w.x, dz = e.z - w.z, px = w.hw + e.r - Math.abs(dx), pz = w.hd + e.r - Math.abs(dz);
+    if (px > 0 && pz > 0) {
+      if (px < pz) { e.x += (dx < 0 ? -1 : 1) * px; e.vx = 0; } else { e.z += (dz < 0 ? -1 : 1) * pz; e.vz = 0; }
+      if (w.onTouch && e.isPlayer) w.onTouch(w);
+    }
+  }
+  if (e.inv <= 0) for (let i = 0; i < obst.length; i++) if (obst[i].hit(e)) break;
+  if (e.respawn && e.y < e.respawn.y - 9) { if (e.isPlayer) snd.fall(); respawn(e); }
+}
+
+function lerpAng(a, b, t) { let d = b - a; while (d > Math.PI) d -= 6.2832; while (d < -Math.PI) d += 6.2832; return a + d * t; }
+function animChar(e, dt) {
+  const c = e.c, sp = Math.hypot(e.vx, e.vz);
+  if (sp > 0.6 && e.stun <= 0 && e.diveT <= 0) e.face = lerpAng(e.face, Math.atan2(e.vx, e.vz), Math.min(1, dt * 12));
+  c.g.position.set(e.x, e.y, e.z); c.g.rotation.y = e.face;
+  e.ph += dt * (sp * 1.9 + (e.onGround ? 0 : 3));
+  const run = e.onGround ? Math.min(1, sp / 6) : 0.5, s = Math.sin(e.ph), co = Math.cos(e.ph);
+  c.feet[0].position.z = 0.05 + s * 0.3 * run; c.feet[0].position.y = -0.52 + Math.max(0, co) * 0.2 * run;
+  c.feet[1].position.z = 0.05 - s * 0.3 * run; c.feet[1].position.y = -0.52 + Math.max(0, -co) * 0.2 * run;
+  const up = e.onGround ? 0 : 0.35;
+  c.arms[0].position.set(-0.54, -0.02 + up, -s * 0.2 * run); c.arms[1].position.set(0.54, -0.02 + up, s * 0.2 * run);
+  if (e.stun > 0) { e.tum += dt * 12; c.inner.rotation.x = e.tum; c.inner.rotation.z = 0; }
+  else if (e.diveT > 0 || (e.dived && !e.onGround)) { c.inner.rotation.x += (1.3 - c.inner.rotation.x) * Math.min(1, dt * 14); c.inner.rotation.z = 0; }
+  else { e.tum = 0; c.inner.rotation.x += ((e.onGround ? run * 0.2 : -0.15) - c.inner.rotation.x) * Math.min(1, dt * 12); c.inner.rotation.z = s * 0.1 * run; }
+  e.sq += (0 - e.sq) * Math.min(1, dt * 9);
+  const q = e.sq * 0.28; c.inner.scale.set(1 + q, 1 - q, 1 + q);
+  c.inner.position.y = 0.62 - (e.diveT > 0 && e.onGround ? 0.25 : 0) - Math.max(0, q) * 0.3 + (e.onGround ? Math.abs(s) * 0.06 * run : 0);
+  if (c.g.arrow) c.g.arrow.position.y = 2.45 + Math.sin(G.t * 5) * 0.1;
+  const gp = groundAt(e.x, e.z, e.y + 0.2, 0);
+  if (gp && c.g.visible) { c.sh.visible = true; const k = clamp(1 - (e.y - gp.y) / 7, 0.3, 1); c.sh.position.set(e.x, gp.y + 0.03, e.z); c.sh.scale.set(0.55 * k, 0.55 * k, 1); } else c.sh.visible = false;
+}
+
+// ===================================================================
+// OBSTACLES
+// ===================================================================
+function addSpinner(x, y, z, L, sp, arms) {
+  const g = new THREE.Group(); g.position.set(x, y, z); world.add(g);
+  mesh(GEO.cyl, lam(0xF9FAFB), 0.7, 1.0, 0.7, 0, 0.5, 0, g);
+  mesh(GEO.sph, lam(0xEF4444), 0.72, 0.4, 0.72, 0, 1.0, 0, g);
+  const rot = new THREE.Group(); g.add(rot);
+  for (let k = 0; k < arms; k++) {
+    const bar = new THREE.Group(); bar.rotation.y = k * Math.PI / arms; rot.add(bar);
+    for (let s = 0; s < 6; s++) { const seg = mesh(GEO.cyl, lam(s % 2 ? 0xF9FAFB : 0xEF4444), 0.3, L / 3, 0.3, -L + L / 6 + s * L / 3, 0.5, 0, bar); seg.rotation.z = Math.PI / 2; }
+    [-1, 1].forEach(s => mesh(GEO.sph, lam(0xFACC15), 0.36, 0.36, 0.36, s * L, 0.5, 0, bar));
+  }
+  const o = {
+    kind: 'spin', x, y, z, L, a: Math.random() * 3, sp, arms,
+    upd(t, dt) { this.a += this.sp * dt; rot.rotation.y = this.a; },
+    dist(e) {
+      let best = 99; const rx = e.x - x, rz = e.z - z;
+      for (let k = 0; k < arms; k++) { const an = this.a + k * Math.PI / arms, dx = Math.cos(an), dz = -Math.sin(an); const t = clamp(rx * dx + rz * dz, -L, L); best = Math.min(best, Math.hypot(rx - dx * t, rz - dz * t)); }
+      return best;
+    },
+    hit(e) {
+      const rx = e.x - x, rz = e.z - z, rr = Math.hypot(rx, rz);
+      if (rr < 0.7 + e.r && e.y < y + 1.2) { const n = rr || 1; e.x = x + rx / n * (0.7 + e.r); e.z = z + rz / n * (0.7 + e.r); return false; }
+      if (e.y > y + 0.8 || e.y + e.h < y + 0.2 || rr > L + 1) return false;
+      if (this.dist(e) > e.r + 0.3) return false;
+      let vx = this.sp * rz, vz = -this.sp * rx; const n = Math.hypot(vx, vz) || 1;
+      knock(e, vx / n * 10, 7, vz / n * 10, 0.6); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addPendulum(x, y, z, sp, ph) {
+  const L = 5, R = 1.0, top = y + L + 1.3, A = 1.0;
+  [-1, 1].forEach(s => { mesh(GEO.cyl, lam(0xF9FAFB), 0.22, top - y + 2, 0.22, x + s * 5.6, (top + y - 2) / 2, z, world); mesh(GEO.sph, lam(0xFACC15), 0.4, 0.4, 0.4, x + s * 5.6, top, z, world); });
+  const beam = mesh(GEO.cyl, lam(0xF9FAFB), 0.2, 11.2, 0.2, x, top, z, world); beam.rotation.z = Math.PI / 2;
+  const arm = new THREE.Group(); arm.position.set(x, top, z); world.add(arm);
+  mesh(GEO.cyl, lam(0x1F2937), 0.07, L, 0.07, 0, -L / 2, 0, arm);
+  mesh(GEO.sph, lam(0x9333EA), R, R, R, 0, -L, 0, arm);
+  mesh(GEO.sph, lam(0xFACC15), R * 1.02, R * 0.22, R * 1.02, 0, -L, 0, arm);
+  const o = {
+    kind: 'pend', th: 0, dir: 1,
+    upd(t) { this.th = A * Math.sin(t * sp + ph); this.dir = Math.cos(t * sp + ph) >= 0 ? 1 : -1; arm.rotation.z = this.th; },
+    hit(e) {
+      const bx = x + L * Math.sin(this.th), by = top - L * Math.cos(this.th);
+      const dx = e.x - bx, dy = e.y + 0.6 - by, dz = e.z - z;
+      if (dx * dx + dy * dy + dz * dz > (R + e.r) * (R + e.r)) return false;
+      knock(e, this.dir * 11, 6, dz * 2, 0.6); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addBumper(x, y, z) {
+  const m = mesh(GEO.cyl, lam(0xF9FAFB), 0.7, 1.3, 0.7, x, y + 0.65, z, world);
+  mesh(GEO.cyl, lam(0xEC4899), 1.06, 0.2, 1.06, 0, 0.1, 0, m); mesh(GEO.sph, lam(0x22D3EE), 1.0, 0.3, 1.0, 0, 0.5, 0, m);
+  const o = {
+    kind: 'bump', sq: 0,
+    upd(t, dt) { this.sq += (0 - this.sq) * Math.min(1, dt * 10); const s = 0.7 * (1 + this.sq * 0.4); m.scale.set(s, 1.3, s); },
+    hit(e) {
+      const dx = e.x - x, dz = e.z - z, d = Math.hypot(dx, dz);
+      if (d > 0.7 + e.r || e.y > y + 1.3) return false;
+      const n = d || 1; this.sq = 1; knock(e, dx / n * 10, 5, dz / n * 10, 0.28); if (e.isPlayer) snd.boing(); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addBall(p, k, n, v) {
+  const R = 1.1, len = p.hd * 2 + 2, far = p.z - p.hd + 0.5;
+  const m = mesh(GEO.sph, lam(pick([0xEF4444, 0x3B82F6, 0xF97316])), R, R, R, 0, p.y + R, far, world);
+  const band = mesh(GEO.sph, lam(0xF9FAFB), 1.02, 1.02, 0.3, 0, 0, 0, m);
+  const sh = mesh(GEO.circ, new THREE.MeshBasicMaterial({ color: 0, transparent: true, opacity: 0.25, depthWrite: false }), R, R, R, 0, p.y + 0.03, far, world); sh.rotation.x = -Math.PI / 2;
+  const o = {
+    kind: 'ball', x: 0, z: far, R,
+    upd(t) {
+      const u = t * v + k * len / n, cyc = Math.floor(u / len);
+      this.z = far + (u - cyc * len);
+      this.x = p.x + (((Math.sin((cyc + 1) * 12.9898 * (k + 1)) * 43758.5453) % 1 + 1) % 1 - 0.5) * (p.hw * 2 - 2.6);
+      m.position.set(this.x, p.y + R, this.z); m.rotation.x = u / R; sh.position.set(this.x, p.y + 0.03, this.z);
+      const edge = Math.min(1, (this.z - far) * 2, (far + len - this.z) * 2); const s = R * clamp(edge, 0.01, 1); m.scale.set(s, s, s); band.visible = true;
+    },
+    hit(e) {
+      const dx = e.x - this.x, dy = e.y + 0.6 - (p.y + R), dz = e.z - this.z;
+      if (dx * dx + dy * dy + dz * dz > (R + e.r) * (R + e.r)) return false;
+      knock(e, dx * 4, 7, 11, 0.6); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addPiston(p, z, side, sp, ph) {
+  const hw = 1.3, hd = 1.0, travel = p.hw * 2 - 1.4;
+  const m = mesh(GEO.box, lam(0xF97316), hw * 2, 1.7, hd * 2, 0, p.y + 0.95, z, world);
+  mesh(GEO.box, lam(0xFACC15), 0.12, 0.8, 0.8, -side * 0.5, 0, 0, m);
+  const rod = mesh(GEO.cyl, lam(0x9CA3AF), 0.25, 8, 0.25, side * (p.hw + 6), p.y + 0.95, z, world); rod.rotation.z = Math.PI / 2;
+  mesh(GEO.box, lam(0x6B7280), 1.2, 2.4, 2.4, p.x + side * (p.hw + 3.6), p.y + 0.95, z, world);
+  const o = {
+    kind: 'pist', bx: 0, moving: 0,
+    upd(t) {
+      const s = Math.sin(t * sp + ph), ext = clamp(s * 1.5 - 0.2, 0, 1);
+      this.moving = (s > 0.13 && s < 0.8 && Math.cos(t * sp + ph) > 0) ? 1 : 0;
+      this.bx = p.x + side * (p.hw + hw + 0.1) - side * ext * travel; m.position.x = this.bx; rod.position.x = this.bx + side * 5.2;
+    },
+    hit(e) {
+      if (e.y > p.y + 1.8 || Math.abs(e.z - z) > hd + e.r || Math.abs(e.x - this.bx) > hw + e.r) return false;
+      if (this.moving) { knock(e, -side * 11, 5, 0, 0.5); return true; }
+      const dx = e.x - this.bx; if (Math.abs(e.z - z) < hd) e.x = this.bx + (dx < 0 ? -1 : 1) * (hw + e.r); else e.z = z + (e.z < z ? -1 : 1) * (hd + e.r);
+      return false;
+    }
+  };
+  obst.push(o); return o;
+}
+
+// ===================================================================
+// COURSE BUILDER
+// ===================================================================
+function arch(z, y, w, text, col, H) {
+  H = H || 5.8; const n = Math.round(H / 1.16), g = new THREE.Group(); world.add(g);
+  [-1, 1].forEach(s => { for (let i = 0; i < n; i++) mesh(GEO.cyl, lam(i % 2 ? 0xF9FAFB : col), 0.42, H / n, 0.42, s * (w / 2 - 0.5), y + (i + 0.5) * H / n, z, g); });
+  const beam = mesh(GEO.cyl, lam(col), 0.5, w - 0.2, 0.5, 0, y + H, z, g); beam.rotation.z = Math.PI / 2;
+  const l = makeLabel(Math.min(w - 2.4, 8), 1.5, 512); l.set(text, '#FFFFFF'); l.position.set(0, y + H, z + 0.56); g.add(l);
+  return g;
+}
+function flag(x, y, z, col) { mesh(GEO.cyl, lam(0xF9FAFB), 0.06, 2.4, 0.06, x, y + 1.2, z, world); const f = mesh(GEO.cone, lam(col), 0.32, 0.8, 0.06, x + 0.42, y + 2.05, z, world); f.rotation.z = -Math.PI / 2; }
+function decor(zEnd) {
+  const cm = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.92 });
+  for (let i = 0; i < 26; i++) {
+    const s = Math.random() < 0.5 ? -1 : 1, cx = s * rnd(16, 60), cy = rnd(-14, 22), cz = rnd(zEnd - 60, 30), k = rnd(1.5, 4);
+    for (let j = 0; j < 4; j++) mesh(GEO.sph, cm, k * rnd(0.7, 1.2), k * rnd(0.5, 0.8), k * rnd(0.7, 1.1), cx + (j - 1.5) * k * 0.9, cy + rnd(-0.3, 0.3) * k, cz + rnd(-1, 1), world);
+  }
+  for (let i = 0; i < 16; i++) {
+    const s = i % 2 ? -1 : 1, bx = s * rnd(9, 20), by = rnd(2, 12), bz = rnd(zEnd, 0), col = pick(CONF);
+    mesh(GEO.sph, lam(col), 0.9, 1.1, 0.9, bx, by, bz, world); mesh(GEO.cyl, lam(0xF9FAFB), 0.03, 2.5, 0.03, bx, by - 2.3, bz, world);
+  }
+  [0xEF4444, 0xFACC15, 0x22C55E, 0x3B82F6].forEach((c, i) => { const r = mesh(GEO.tor, new THREE.MeshBasicMaterial({ color: c }), 70 - i * 5, 70 - i * 5, 30, 0, -20, zEnd - 90, world); r.material.fog = false; });
+}
+function doorWall(z, y) {
+  const row = { z, doors: [] };
+  const pw = 0.525, dw = 3.3; let x = -6;
+  for (let i = 0; i < 4; i++) {
+    addWall(x + pw / 2, z, pw, 0.7, y, 4.3, 0xF9FAFB); x += pw;
+    if (i < 3) {
+      const wl = addWall(x + dw / 2, z, dw, 0.5, y, 3.5, DOORC[i]);
+      const lb = makeLabel(3.0, 1.9, 512); lb.position.set(x + dw / 2, y + 1.95, z + 0.27); lb.set('?', '#FFFFFF'); world.add(lb);
+      row.doors.push({ wall: wl, label: lb, opt: -1, dead: false, k: i }); x += dw;
+    }
+  }
+  mesh(GEO.box, lam(0x9333EA), 12, 0.8, 0.8, 0, y + 3.9, z, world);
+  return row;
+}
+function barrier(z, y, w) {
+  const out = [];
+  for (let i = 0; i < 3; i++) {
+    const wl = addWall((i - 1) * w / 3, z, w / 3 - 0.06, 1.2, y, 3.2, [0xEC4899, 0xFACC15, 0x3B82F6][i]);
+    const lb = makeLabel(2.2, 2.2, 256); lb.set('🔒'); lb.position.set((i - 1) * w / 3, y + 1.6, z + 0.62); world.add(lb); wl.label = lb; out.push(wl);
+  }
+  return out;
+}
+function arena(type) {
+  const th = THEMES[B.ci % 3], cp = { type };
+  cp.entry = slab(12, 14, { safe: true, col: 0xFFF4E0, pat: 'check' });
+  cp.arch = arch(cp.entry.z + cp.entry.hd - 0.6, B.y, 14, 'CHECKPOINT', 0x9333EA, 8.4);
+  cp.goalZ = cp.entry.z + cp.entry.hd - 3;
+  if (type === 'doors') {
+    const cor = slab(34, 12, { noWay: true, col: th.pal[3], pat: 'check' }); cp.rows = [];
+    for (let i = 0; i < 3; i++) cp.rows.push(doorWall(cor.z + cor.hd - 9 - i * 10, B.y));
+    cp.exit = slab(10, 12, { safe: true, col: 0xFFF4E0, pat: 'check' });
+  } else if (type === 'tiles') {
+    B.z -= 0.15; cp.tiles = [];
+    for (let i = 0; i < 3; i++) {
+      const t = addPlat((i - 1) * 4.3, B.y, B.z - 2.1, 4.0, 4.2, { noWay: true, col: DOORC[i], pat: 'dots', h: 0.7 });
+      t.label = makeLabel(3.6, 2.6, 512); t.label.rotation.x = -Math.PI / 2; t.label.position.set(t.x, t.y + 0.04, t.z); t.label.set('?', '#FFFFFF'); world.add(t.label); cp.tiles.push(t);
+    }
+    const sl = mesh(GEO.box, new THREE.MeshLambertMaterial({ color: 0x84CC16, emissive: 0x2a4a00 }), 15, 0.6, 6.5, 0, B.y - 7, B.z - 2.1, world);
+    B.z -= 4.35;
+    cp.exit = slab(10, 14, { safe: true, col: 0xFFF4E0, pat: 'check' });
+    cp.barrier = barrier(cp.exit.z + cp.exit.hd - 0.8, B.y, 14);
+  } else {
+    cp.barrier = barrier(cp.entry.z - cp.entry.hd + 0.8, B.y, 14);
+    cp.exit = slab(10, 12, { safe: true, col: 0xFFF4E0, pat: 'check' });
+    const cg = new THREE.Group(); cg.position.set(-4.6, B.y, cp.entry.z + 0.5); world.add(cg);
+    const br = mesh(GEO.cyl, lam(0x1F2937), 0.5, 2.4, 0.5, 0, 1.0, -0.5, cg); br.rotation.x = -1.15;
+    mesh(GEO.cyl, lam(0xEF4444), 0.56, 0.3, 0.56, 0, 1.45, -1.5, cg).rotation.x = -1.15;
+    [-1, 1].forEach(s => { const w = mesh(GEO.cyl, lam(0xD97706), 0.6, 0.25, 0.6, s * 0.7, 0.6, 0, cg); w.rotation.z = Math.PI / 2; });
+    cp.cannon = cg;
+  }
+  return cp;
+}
+const SEGS = {
+  gaps(D) {
+    const n = 3 + D;
+    for (let i = 0; i < n; i++) { B.z -= 2.3 + 0.4 * D + rnd(0, 0.4); slab(rnd(5, 6.5), rnd(5, 6.5), { x: (i % 2 ? 1 : -1) * rnd(0.5, 2.2), conv: (D > 0 && i === 1) ? pick([-2.5, 2.5]) : 0 }); }
+    B.z -= 2.4;
+  },
+  spin(D) { const p = slab(26, 9), n = D > 0 ? 3 : 2; for (let i = 0; i < n; i++) addSpinner(0, p.y, p.z + p.hd - (i + 1) * 26 / (n + 1), 4.1, (1.5 + 0.35 * D) * (i % 2 ? -1 : 1), (D === 2 && i === 1) ? 2 : 1); },
+  bump(D) { const p = slab(22, 10, { pat: 'dots' }); for (let r = 0; r < 4; r++) (r % 2 ? [-2.5, 2.5] : [-4, 0, 4]).forEach(x => addBumper(x + rnd(-0.4, 0.4), p.y, p.z + p.hd - 4 - r * 4.6)); },
+  move(D) { slab(4, 8); const n = D > 1 ? 3 : 2; for (let i = 0; i < n; i++) { B.z -= 1.6; const m = slab(4.6, 4.6, { move: { amp: 3, sp: 0.9 + 0.25 * D, ph: i * 1.9 }, pat: 'dots' }); m.dyn = true; } B.z -= 1.6; slab(4, 8); },
+  pend(D) { const p = slab(26, 3.8, { pat: 'check' }); for (let i = 0; i < 3; i++) addPendulum(0, p.y, p.z + p.hd - 5.5 - i * 7.5, 1.7 + 0.3 * D, i * 1.3); },
+  bounce(D) { slab(6, 8); slab(3, 4, { bounce: 16, col: 0xEF4444, pat: 'dots', h: 0.8 }); B.z -= 1.2; B.y += 2.6; slab(13, 8, { safe: true }); },
+  balls(D) { const p = slab(30, 8, { pat: 'arrow' }), n = 3 + D; for (let k = 0; k < n; k++) addBall(p, k, n, 6 + 1.5 * D); mesh(GEO.box, lam(0x9333EA), 9, 3.2, 1.2, 0, p.y + 4.4, p.z - p.hd + 0.6, world); [-1, 1].forEach(s => mesh(GEO.box, lam(0x9333EA), 0.8, 2.8, 1.2, s * 4.1, p.y + 1.4, p.z - p.hd + 0.6, world)); },
+  pist(D) { const p = slab(24, 6.5); for (let i = 0; i < 4; i++) addPiston(p, p.z + p.hd - 4 - i * 5.3, i % 2 ? 1 : -1, 1.4 + 0.3 * D, i * 1.4); }
+};
+function buildCourse(ci) {
+  clearWorld();
+  const th = THEMES[ci % 3]; document.body.style.background = th.sky; scene.fog.color.setHex(th.fog);
+  B = { z: 5, y: 0, pal: th.pal, pi: ci, ci };
+  const start = slab(10, 12, { safe: true, col: 0xFFF4E0, pat: 'check' });
+  arch(-4.4, 0, 12, 'COURSE ' + (ci + 1) + ' · ' + th.name.toUpperCase(), 0xEC4899);
+  const order = shuffle(Object.keys(SEGS)), split = [3, 3, 2]; let k = 0;
+  G.secs = []; G.startPlat = start;
+  for (let si = 0; si < 3; si++) {
+    for (let j = 0; j < split[si]; j++) {
+      const pad = slab(5, 9, { safe: true }); flag(-4, B.y, pad.z, pick(CONF)); flag(4, B.y, pad.z, pick(CONF));
+      SEGS[order[k++]](ci);
+    }
+    if (si < 2) { const cp = arena(G.cpTypes[ci * 2 + si]); G.secs.push({ goalZ: cp.goalZ, goalPlat: cp.entry, cp }); }
+    else {
+      const fin = slab(14, 14, { safe: true, col: 0xFFF4E0, pat: 'check' });
+      arch(fin.z + fin.hd - 0.6, B.y, 14, 'FINISH', 0x16A34A, 8.4);
+      G.secs.push({ goalZ: fin.z + fin.hd - 3, goalPlat: fin, cp: null });
+    }
+  }
+  G.endZ = B.z; decor(B.z);
+}
+// ===================================================================
+// INPUT
+// ===================================================================
+const keys = {}; let jumpEdge = false, boostEdge = false; const joy = { x: 0, z: 0, id: null };
+let cardEnter = null;
+window.addEventListener('keydown', e => {
+  snd.init();
+  if (e.target && e.target.tagName === 'INPUT') { if (e.key === 'Enter' && cardEnter) { e.preventDefault(); cardEnter(); } return; }
+  if (e.key === 'Enter' && cardEnter) { e.preventDefault(); cardEnter(); return; }
+  if (!G.active) return;
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+  if (e.repeat) return;
+  keys[e.code] = true;
+  if (e.code === 'Space') jumpEdge = true;
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyE') boostEdge = true;
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+window.addEventListener('pointerdown', () => snd.init());
+window.addEventListener('touchstart', () => document.body.classList.add('touch'), { passive: true });
+(() => {
+  const j = $('joy'), k = $('knob');
+  const mv = e => { const r = j.getBoundingClientRect(); let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); const l = Math.hypot(dx, dy), m = 50; if (l > m) { dx *= m / l; dy *= m / l; } joy.x = dx / m; joy.z = dy / m; k.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; };
+  j.addEventListener('pointerdown', e => { joy.id = e.pointerId; j.setPointerCapture(e.pointerId); mv(e); e.preventDefault(); });
+  j.addEventListener('pointermove', e => { if (e.pointerId === joy.id) mv(e); });
+  const up = e => { if (e.pointerId === joy.id) { joy.id = null; joy.x = joy.z = 0; k.style.transform = ''; } };
+  j.addEventListener('pointerup', up); j.addEventListener('pointercancel', up);
+  $('tJump').addEventListener('pointerdown', e => { jumpEdge = true; e.preventDefault(); });
+  $('tBoost').addEventListener('pointerdown', e => { boostEdge = true; e.preventDefault(); });
+})();
+function playerInput() {
+  let x = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + joy.x;
+  let z = (keys.KeyS || keys.ArrowDown ? 1 : 0) - (keys.KeyW || keys.ArrowUp ? 1 : 0) + joy.z;
+  const l = Math.hypot(x, z); if (l > 1) { x /= l; z /= l; }
+  const out = { x, z, jump: jumpEdge, boost: boostEdge }; jumpEdge = boostEdge = false;
+  if (G.noInput) { out.x = out.z = 0; out.jump = out.boost = false; }
+  return out;
+}
+
+// ===================================================================
+// BOT AI — linear steering towards waypoints, jumps gaps, sometimes fails
+// ===================================================================
+function botInput(e, dt) {
+  const a = e.ai, out = { x: 0, z: 0, jump: false, boost: false };
+  a.jcd -= dt; a.dodgeT -= dt;
+  if (a.mode === 'idle') {
+    const p = a.zone; a.t -= dt;
+    if (!a.tg || a.t <= 0) { a.tg = { x: p.x + rnd(-p.hw + 1.5, p.hw - 1.5), z: p.z + rnd(-p.hd + 2.6, p.hd - 3.2) }; a.t = rnd(1.5, 4); }
+    const dx = a.tg.x - e.x, dz = a.tg.z - e.z, l = Math.hypot(dx, dz);
+    if (l > 0.7) { out.x = dx / l * 0.4; out.z = dz / l * 0.4; }
+    if (e.onGround && Math.random() < dt * 0.45) out.jump = true;
+    return out;
+  }
+  while (a.wi < way.length - 1 && e.z < way[a.wi].p.z + way[a.wi].oz + 0.8) a.wi++;
+  const w = way[a.wi], p = w.p;
+  let tx = p.x + (p.move ? 0 : a.lane * p.hw * 0.55) + (a.dodgeT > 0 ? a.dodge : 0);
+  tx = clamp(tx, p.x - p.hw + 0.7, p.x + p.hw - 0.7);
+  const tz = p.z + w.oz;
+  let dx = tx - e.x, dz = tz - e.z; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l;
+  if (tz > e.z - 0.3) { dx *= 0.5; dz = -1; }
+  out.x = dx; out.z = dz;
+  if (e.onGround) {
+    const g1 = groundAt(e.x + dx, e.z + dz, e.y, 0);
+    if (!g1) {
+      const sp = Math.hypot(e.vx, e.vz), reach = 2.0 + sp * 0.34; let ok = false;
+      for (let d = 1.6; d <= reach; d += 0.35) { if (groundAt(e.x + dx * d, e.z + dz * d, e.y + 0.3, -0.35)) { ok = true; break; } }
+      if (ok) out.jump = true; else { out.x = 0; out.z = 0; }
+    }
+    for (let i = 0; i < obst.length; i++) {
+      const o = obst[i];
+      if (o.kind === 'spin' && a.jcd <= 0 && Math.abs(e.y - o.y) < 0.5) { if (o.dist(e) < 1.5) { a.jcd = 0.55; if (Math.random() < a.skill) out.jump = true; } }
+      else if (o.kind === 'ball' && a.dodgeT <= 0 && o.z < e.z && e.z - o.z < 9 && Math.abs(o.x - e.x) < 1.9 && Math.random() < a.skill) { a.dodge = (e.x >= o.x ? 1 : -1) * 2.6; a.dodgeT = 0.6; }
+    }
+  }
+  if (e.z < a.bestZ - 0.5) { a.bestZ = e.z; a.stuckT = 0; } else a.stuckT += dt;
+  if (a.stuckT > 7 || a.falls >= 3) {
+    let nx = null; for (const s of safes) if (s.z < e.z - 2 && s.z >= G.goalPlat.z - 0.1 && (!nx || s.z > nx.z)) nx = s;
+    if (nx) { e.respawn = nx; respawn(e); a.falls = 0; burst(e.x, e.y, e.z, 6, [0xffffff], 3, 3); }
+    a.stuckT = 0; a.bestZ = e.z;
+  }
+  return out;
+}
+
+// ===================================================================
+// ASYNC helpers (game-clock based)
+// ===================================================================
+const sleep = s => { const end = G.t + s; return waitFor(() => G.t >= end); };
+function waitFor(cond) { return new Promise(res => G.waiters.push({ cond, res })); }
+
+// ===================================================================
+// HUD / UI helpers
+// ===================================================================
+function setBanner(html, cls) { const b = $('banner'); if (!html) { b.className = ''; return; } b.innerHTML = html; b.className = 'show ' + (cls || ''); }
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
+function big(t) { $('big').innerHTML = t ? '<span>' + t + '</span>' : ''; }
+function addScore(n) { player.score += n; }
+let hudT = 0;
+function updHud(dt) {
+  hudT -= dt; if (hudT > 0) return; hudT = 0.15;
+  $('hScore').textContent = '⭐ ' + player.score;
+  $('hBoost').textContent = '⚡' + player.charges;
+  if (G.state === 'run') { let r = 1; for (const b of bots) if (b.ai.mode === 'idle' || b.z < player.z) r++; G.livePos = r; }
+  $('hPos').textContent = ord(G.livePos || 1) + ' / 9';
+  const frac = clamp((5 - player.z) / (5 - G.endZ), 0, 1);
+  $('footFill').style.width = ((G.ci + frac) / 3 * 100).toFixed(1) + '%';
+}
+function leaderboard() { return ents.slice().sort((a, b) => b.score - a.score); }
+function lbHTML() {
+  return '<table><tr><th>#</th><th>Racer</th><th class="n">Points</th></tr>' + leaderboard().map((e, i) =>
+    '<tr class="' + (e.isPlayer ? 'me' : '') + '"><td>' + (i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1) + '</td><td>' + esc(e.name) + '</td><td class="n">' + e.score + '</td></tr>').join('') + '</table>';
+}
+
+let cardDone = null;
+function hideCard() { $('card').classList.remove('show'); cardEnter = null; cardDone = null; }
+function openCard(title, html, btn) {
+  G.paused = true; $('cardT').innerHTML = title; $('cardB').innerHTML = html;
+  const b = $('cardBtn'); b.textContent = btn || 'OK'; b.style.display = btn === null ? 'none' : ''; b.disabled = false;
+  $('cardBox').classList.remove('shake'); $('card').classList.add('show'); $('card').scrollTop = 0;
+}
+function card(title, html, btn) {
+  return new Promise(res => {
+    openCard(title, html, btn || 'OK');
+    const done = () => { snd.click(); hideCard(); G.paused = false; res(); };
+    $('cardBtn').onclick = done; cardEnter = done;
+  });
+}
+
+// ===================================================================
+// TASKS
+// ===================================================================
+function drawTasks(topic, type, n) {
+  const pool = (type === 'doors' || type === 'tiles') ? 'mc' : type, key = topic + pool;
+  if (!G.decks[key]) { const lv = G.ahs ? [2, 3] : [1, 2]; const items = shuffle(TOPICS[topic][pool].filter(it => lv.includes(it[0]))); items.sort((a, b) => a[0] - b[0]); G.decks[key] = { items, i: 0 }; }
+  const d = G.decks[key], out = []; for (let k = 0; k < n; k++) { out.push(d.items[d.i % d.items.length]); d.i++; } return out;
+}
+const gapHTML = q => esc(q).replace('___', '<span class="gap">&nbsp;</span>');
+const fullHTML = (q, a) => esc(q).replace('___', '<b class="fix">' + esc(a) + '</b>');
+const norm = s => s.toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+function typeOK(task, val) {
+  const v = norm(val), q = task[1], i = q.indexOf('___'), pre = i > 0 && /[A-Za-z]/.test(q[i - 1]) ? q[i - 1].toLowerCase() : '';
+  return task[2].some(a => { const n = norm(a); return v === n || v.replace(/'/g, '') === n.replace(/'/g, '') || (pre && pre + v === n); });
+}
+function parseSlip(s) {
+  const m = s.match(/^(.*)\[(.+?)\](.*)$/), toks = [];
+  m[1].trim().split(' ').filter(Boolean).forEach(w => toks.push({ w, bad: false }));
+  m[2].split(' ').forEach(w => toks.push({ w, bad: true }));
+  m[3].trim().split(' ').filter(Boolean).forEach(w => { if (/^[.,!?–-]+$/.test(w) || /^[.,!?]/.test(w)) toks[toks.length - 1].w += (/^[–-]/.test(w) ? ' ' : '') + w; else toks.push({ w, bad: false }); });
+  return { toks, pre: m[1], bad: m[2], post: m[3] };
+}
+function good(rec) {
+  rec.res.push(true); rec.pts += Q_PTS; addScore(Q_PTS); player.charges = Math.min(3, player.charges + 1); G.correct++;
+  snd.ok(); burst(player.x, player.y + 1.5, player.z, 26, CONF, 6, 9); toast('+' + Q_PTS + ' ⚡ ' + pick(PRAISE)); player.sq = -1;
+}
+function bad(rec, review) {
+  rec.res.push(false); G.slimeDebt = Math.min(3.6, G.slimeDebt + 1.2); G.mistakes.push(review);
+  snd.bad(); snd.splat(); G.shake = 0.25; burst(player.x, player.y + 1.6, player.z, 18, SLIME, 4, 5, 0.26);
+}
+function fbHTML(ok, sentenceHTML, ex) { return '<div class="fb ' + (ok ? 'good' : 'bad') + '">' + (ok ? '✔ ' + pick(PRAISE) : '✘ ' + pick(OOPS)) + '<br><b>' + sentenceHTML + '</b><small>💡 ' + esc(ex) + '</small></div>'; }
+
+// overlay tasks: resolve(true/false) after the player has read the feedback
+function taskCard(kind, task, i, rec) {
+  return new Promise(res => {
+    const title = MINI[kind].icon + ' ' + MINI[kind].name + ' · ' + (i + 1) + '/3';
+    const finish = (ok, sentHTML, review) => {
+      $('cardB').insertAdjacentHTML('beforeend', fbHTML(ok, sentHTML, task[3]));
+      if (!ok) { $('cardBox').classList.add('shake'); snd.bad(); } else snd.ok();
+      const b = $('cardBtn'); b.style.display = ''; b.disabled = false; b.textContent = 'Continue ▶';
+      const done = () => { snd.click(); hideCard(); G.paused = false; res({ ok, review }); };
+      b.onclick = done; cardEnter = done; setTimeout(() => b.focus(), 30);
+    };
+    if (kind === 'order') {
+      const toks = task[1].split(' '), punct = toks.pop(), target = toks.join(' ');
+      let pool = shuffle(toks.map((w, k) => ({ w, k }))); if (pool.map(o => o.w).join(' ') === target && pool.length > 1) pool.reverse();
+      let slots = [], locked = false;
+      openCard(title, '<span class="hint">' + esc(task[2]) + '</span><div>Tap the words in the right order.</div><div class="slots" id="slots"></div><div class="pool" id="pool"></div>', 'Check ✔');
+      const draw = () => {
+        $('slots').innerHTML = slots.map((o, n) => '<button class="word" data-s="' + n + '">' + esc(o.w) + '</button>').join('') + '<span class="punct">' + esc(punct) + '</span>';
+        $('pool').innerHTML = pool.map((o, n) => '<button class="word" data-p="' + n + '">' + esc(o.w) + '</button>').join('');
+        $('cardBtn').disabled = pool.length > 0;
+      };
+      $('cardB').onclick = e => {
+        const t = e.target.closest('.word'); if (!t || locked) return; snd.click();
+        if (t.dataset.p !== undefined) slots.push(pool.splice(+t.dataset.p, 1)[0]); else pool.push(slots.splice(+t.dataset.s, 1)[0]);
+        draw();
+      };
+      draw();
+      const check = () => {
+        if (pool.length || locked) return; locked = true; $('cardB').onclick = null;
+        const mine = slots.map(o => o.w).join(' '), ok = mine.toLowerCase() === target.toLowerCase();
+        const sent = esc(target + punct);
+        finish(ok, sent, { q: 'Word order (' + task[2] + ')', yours: mine + punct, right: target + punct, ex: task[3] });
+      };
+      $('cardBtn').onclick = check; cardEnter = check;
+    } else if (kind === 'type') {
+      openCard(title, '<div>Type the missing word(s).</div><div class="sent">' + esc(task[1]).replace('___', '<input id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">') + '</div>', 'Fire! 💥');
+      const inp = $('ans'); setTimeout(() => inp.focus(), 60); let locked = false;
+      const check = () => {
+        if (locked || !inp.value.trim()) return; locked = true; inp.disabled = true;
+        const ok = typeOK(task, inp.value);
+        finish(ok, fullHTML(task[1], task[2][0]), { q: task[1], yours: inp.value.trim(), right: task[1].replace('___', task[2][0]), ex: task[3] });
+      };
+      $('cardBtn').onclick = check; cardEnter = check;
+    } else {
+      const ps = parseSlip(task[1]); let locked = false;
+      openCard(title, '<div>One part is wrong. Smash it! 🔨</div><div class="sent pool">' + ps.toks.map((t, n) => '<button class="word tok" data-t="' + n + '">' + esc(t.w) + '</button>').join('') + '</div>', null);
+      cardEnter = null;
+      $('cardB').onclick = e => {
+        const t = e.target.closest('.word'); if (!t || locked) return; locked = true; $('cardB').onclick = null;
+        const tk = ps.toks[+t.dataset.t], ok = tk.bad;
+        $('cardB').querySelectorAll('.word').forEach((b, n) => { if (ps.toks[n].bad) b.classList.add('hitok'); else if (b === t) b.classList.add('hitbad'); b.disabled = true; });
+        const right = ps.pre + ps.bad.replace(/.*/, task[2]) + ps.post;
+        finish(ok, esc(ps.pre) + '<b class="fix">' + esc(task[2]) + '</b>' + esc(ps.post), { q: task[1].replace(/[\[\]]/g, ''), yours: 'You smashed "' + tk.w + '"', right, ex: task[3] });
+      };
+    }
+  });
+}
+function mcCard(type, i, t, opts) {
+  const L = ['A', 'B', 'C'];
+  return card(MINI[type].icon + ' ' + MINI[type].name + ' · ' + (i + 1) + '/3',
+    '<div class="sent">' + gapHTML(t[1]) + '</div><div class="optrow">' + opts.map((o, k) => '<span class="opt o' + L[k] + '">' + esc(t[2 + o]) + '</span>').join('') + '</div><div>' +
+    (type === 'doors' ? 'Take your time. Then run through the right door!' : 'Take your time. Then stand on the right tile – you have 12 seconds.') + '</div>', type === 'doors' ? 'Run! 🏃' : 'Go! 🏃');
+}
+const mcBanner = (t, opts) => gapHTML(t[1]) + '<div class="opts">' + opts.map((o, k) => '<span class="opt o' + 'ABC'[k] + '">' + esc(t[2 + o]) + '</span>').join('') + '</div>';
+
+async function playDoors(cp, tasks, rec) {
+  for (let i = 0; i < 3; i++) {
+    const row = cp.rows[i], t = tasks[i], opts = shuffle([0, 1, 2]);
+    row.doors.forEach((d, k) => { d.opt = opts[k]; d.label.set(t[2 + opts[k]], '#FFFFFF'); });
+    await waitFor(() => player.z < row.z + 8.5 && player.onGround);
+    await mcCard('doors', i, t, opts);
+    setBanner(mcBanner(t, opts));
+    let wrong = false;
+    await new Promise(res => row.doors.forEach(d => {
+      d.wall.onTouch = () => {
+        if (d.dead || d.wall.gone) return;
+        if (d.opt === 0) {
+          d.wall.gone = true; d.wall.mesh.visible = false; d.label.visible = false;
+          burst(d.wall.x, d.wall.y0 + 1.6, d.wall.z, 28, [DOORC[d.k], 0xffffff], 7, 7, 0.34); snd.pop();
+          if (!wrong) good(rec); res();
+        } else {
+          d.dead = true; d.wall.mesh.material.color.setHex(0x7F1D1D); d.label.set('✖ ' + t[2 + d.opt], '#FECACA');
+          knock(player, 0, 6, 9, 0.45);
+          if (!wrong) { wrong = true; bad(rec, { q: t[1], yours: t[2 + d.opt], right: t[1].replace('___', t[2]), ex: t[5] }); }
+          row.doors.forEach(o => { if (o.opt === 0) o.wall.mesh.material.emissive.setHex(0x2f7a2f); });
+          setBanner('✘ ' + pick(OOPS) + ' <b>' + fullHTML(t[1], t[2]) + '</b><br><small>💡 ' + esc(t[5]) + ' → Now take the glowing door!</small>', 'bad');
+        }
+      };
+    }));
+    if (!wrong) setBanner('✔ <b>' + fullHTML(t[1], t[2]) + '</b>', 'good');
+    await sleep(wrong ? 0.4 : 1.3); setBanner('');
+  }
+  await sleep(0.7);
+}
+async function playTiles(cp, tasks, rec) {
+  const tiles = cp.tiles, under = () => { for (let k = 0; k < 3; k++) { const t = tiles[k]; if (Math.abs(player.x - t.x) <= t.hw + 0.15 && Math.abs(player.z - t.z) <= t.hd + 0.15 && player.y > t.y - 1.5) return k; } return -1; };
+  for (let i = 0; i < 3; i++) {
+    const t = tasks[i], opts = shuffle([0, 1, 2]);
+    tiles.forEach((tl, k) => tl.label.set(t[2 + opts[k]], '#FFFFFF'));
+    G.dbgTile = opts.indexOf(0);
+    await waitFor(() => player.onGround);
+    await mcCard('tiles', i, t, opts);
+    setBanner(mcBanner(t, opts) + '<div class="bar"><b id="tbar"></b></div>');
+    let T = 12, stand = 0, last = -1, chosen = -1, lastTick = 99;
+    await waitFor(dt => {
+      T -= dt; const c = under();
+      if (c >= 0 && c === last && player.onGround) stand += dt; else stand = 0; last = c;
+      const el = $('tbar'); if (el) { el.style.width = (T / 12 * 100) + '%'; el.style.background = stand > 0.4 ? '#22C55E' : ''; }
+      if (T < 3.05 && Math.ceil(T) < lastTick) { lastTick = Math.ceil(T); snd.tick(); }
+      if (stand >= 2.2 || T <= 0) { chosen = c; return true; }
+    });
+    const ok = chosen >= 0 && opts[chosen] === 0;
+    if (ok) { good(rec); setBanner('✔ <b>' + fullHTML(t[1], t[2]) + '</b>', 'good'); }
+    else { bad(rec, { q: t[1], yours: chosen < 0 ? '(no tile)' : t[2 + opts[chosen]], right: t[1].replace('___', t[2]), ex: t[5] }); setBanner('✘ ' + pick(OOPS) + ' <b>' + fullHTML(t[1], t[2]) + '</b><br><small>💡 ' + esc(t[5]) + '</small>', 'bad'); }
+    let ph = 0;
+    await waitFor(dt => {
+      ph += dt;
+      tiles.forEach((tl, k) => {
+        if (opts[k] === 0) return;
+        let off = 0; if (ph < 0.5) tl.mesh.position.x = tl.x + Math.sin(ph * 60) * 0.06; else { tl.mesh.position.x = tl.x; off = ph < 1.1 ? (ph - 0.5) / 0.6 : ph < 3.0 ? 1 : Math.max(0, 1 - (ph - 3.0) / 0.8); }
+        tl.y = tl.by - off * off * 8; tl.mesh.position.y = tl.y - tl.h / 2; tl.label.position.y = tl.y + 0.04;
+      });
+      return ph > (ok ? 3.8 : 4.6);
+    });
+    setBanner('');
+  }
+  cp.barrier.forEach(b => { b.gone = true; b.mesh.visible = false; b.label.visible = false; burst(b.x, b.y0 + 1.6, b.z, 16, CONF, 6, 7, 0.3); });
+  snd.pop(); await sleep(0.6);
+}
+async function playOverlay(cp, tasks, rec, kind) {
+  G.noInput = true;
+  const ball = mesh(GEO.sph, new THREE.MeshBasicMaterial({ color: 0x1F2937 }), 0.4, 0.4, 0.4, 0, -99, 0, world);
+  for (let i = 0; i < 3; i++) {
+    const r = await taskCard(kind, tasks[i], i, rec), b = cp.barrier[i];
+    const sx = cp.cannon.position.x, sy = cp.cannon.position.y + 2, sz = cp.cannon.position.z - 1.8; let ph = 0;
+    snd.bonk(); burst(sx, sy, sz, 8, [0xffffff, 0x9CA3AF], 3, 3, 0.2);
+    await waitFor(dt => { ph += dt / 0.4; const u = Math.min(1, ph); ball.position.set(sx + (b.x - sx) * u, sy + (b.y0 + 1.6 - sy) * u + Math.sin(u * Math.PI) * 1.5, sz + (b.z - sz) * u); return ph >= 1; });
+    ball.position.y = -99; b.gone = true; b.mesh.visible = false; b.label.visible = false; snd.pop();
+    if (r.ok) { burst(b.x, b.y0 + 1.6, b.z, 22, CONF, 7, 8, 0.32); good(rec); }
+    else { burst(b.x, b.y0 + 1.6, b.z, 22, SLIME, 7, 8, 0.32); bad(rec, r.review); knock(player, 0, 5, 3, 0.4); }
+    await sleep(1.1);
+  }
+  G.noInput = false;
+}
+
+// ===================================================================
+// RACE FLOW
+// ===================================================================
+function lineup(plat) {
+  const spots = []; for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) if (!(r === 1 && c === 1)) spots.push([c, r]);
+  shuffle(spots); let k = 0;
+  ents.forEach(e => {
+    const s = e.isPlayer ? [1, 1] : spots[k++];
+    e.x = plat.x + (s[0] - 1) * 2.7; e.z = plat.z + plat.hd - 2 - s[1] * 1.8; e.y = plat.y; e.vx = e.vy = e.vz = 0;
+    e.stun = 0; e.diveT = 0; e.dived = false; e.frozen = true; e.respawn = plat; e.face = Math.PI; e.onGround = true; e.ground = plat; e.boostT = 0; e.slimeT = 0;
+    e.c.g.visible = true; e.c.inner.rotation.set(0, 0, 0);
+    if (e.ai) { e.ai.mode = 'race'; e.ai.arrived = 0; e.ai.bestZ = e.z; e.ai.stuckT = 0; e.ai.falls = 0; e.ai.lane = rnd(-1, 1); }
+  });
+  camSnap = true;
+}
+async function countdown() {
+  G.state = 'count';
+  for (const n of ['3', '2', '1']) { big(n); snd.tick(); await sleep(0.7); }
+  big('GO!'); snd.go(); ents.forEach(e => e.frozen = false);
+  if (G.slimeDebt > 0) { player.slimeT = G.slimeDebt; G.slimeDebt = 0; toast('🟢 Slimy start!'); }
+  G.state = 'run'; setTimeout(() => big(''), 600);
+}
+function rankSection() {
+  const sec = G.secs[G.si], arrived = bots.filter(b => b.ai.arrived).sort((a, b) => a.ai.arrived - b.ai.arrived);
+  const rest = bots.filter(b => !b.ai.arrived).sort((a, b) => a.z - b.z), orderd = arrived.concat([player], rest);
+  orderd.forEach((e, i) => e.score += SEC_PTS[i]);
+  const rank = arrived.length + 1; G.livePos = rank; G.secLog.push({ ci: G.ci, si: G.si, rank, pts: SEC_PTS[rank - 1] });
+  rest.forEach(b => { const p = sec.goalPlat; b.x = p.x + rnd(-p.hw + 1.5, p.hw - 1.5); b.z = p.z + rnd(-p.hd + 2.6, p.hd - 3.4); b.y = p.y; b.vx = b.vy = b.vz = 0; b.stun = 0; b.respawn = p; b.ai.mode = 'idle'; b.ai.zone = p; b.ai.tg = null; burst(b.x, b.y + 0.6, b.z, 5, [0xffffff], 3, 3); });
+  toast(ord(rank) + ' place! +' + SEC_PTS[rank - 1]); if (rank <= 3) snd.fanfare(); else snd.ok();
+  burst(player.x, player.y + 1.5, player.z, rank <= 3 ? 30 : 10, CONF, 6, 9);
+}
+async function onGoal() {
+  G.state = 'cp'; rankSection();
+  const sec = G.secs[G.si];
+  await sleep(0.9);
+  if (sec.cp) {
+    await checkpoint(sec.cp);
+    G.si++; setGoal(); lineup(sec.cp.exit); await countdown();
+  } else {
+    snd.fanfare();
+    const last = G.ci === 2;
+    await card('🏁 Course ' + (G.ci + 1) + ' complete!', lbHTML(), last ? 'See my results 🏆' : 'Next course ▶');
+    if (last) return showResults();
+    startCourse(G.ci + 1);
+  }
+}
+function setGoal() { const s = G.secs[G.si]; G.goalZ = s.goalZ; G.goalPlat = s.goalPlat; }
+async function checkpoint(cp) {
+  const n = G.cpN++, topic = G.cpTopics[n], type = cp.type, T = TOPICS[topic], tasks = drawTasks(topic, type, 3);
+  const rec = { n: n + 1, type, topic, res: [], pts: 0 }; G.cpLog.push(rec);
+  cp.arch.visible = false;
+  $('hSub').textContent = 'Checkpoint ' + (n + 1) + '/6 · ' + T.name;
+  await card('🚩 Checkpoint ' + (n + 1) + ' of 6',
+    '<div class="fred" style="font-size:26px">' + MINI[type].icon + ' ' + MINI[type].name + '</div><div>' + MINI[type].how + '</div>' +
+    '<div class="tip"><b>' + T.icon + ' ' + T.name + '</b>' + T.tip.map(t => '<p>' + t + '</p>').join('') + '</div>', "Let's go!");
+  if (type === 'doors') await playDoors(cp, tasks, rec);
+  else if (type === 'tiles') await playTiles(cp, tasks, rec);
+  else await playOverlay(cp, tasks, rec, type);
+  bots.forEach(b => { for (let i = 0; i < 3; i++) if (Math.random() < b.ai.brain) b.score += Q_PTS; });
+  const c = rec.res.filter(Boolean).length; toast(c + '/3 correct' + (c === 3 ? ' – perfect!' : '')); if (c === 3) snd.fanfare();
+  setSub(); await sleep(0.8);
+}
+function setSub() { $('hSub').textContent = 'Course ' + (G.ci + 1) + '/3 · ' + (G.ahs ? 'AHS' : 'Standard'); }
+async function startCourse(ci) {
+  G.ci = ci; G.si = 0; G.waiters = []; G.t = 0; setBanner('');
+  buildCourse(ci); setGoal(); setSub();
+  bots.forEach(b => { b.ai.wi = 0; });
+  lineup(G.startPlat);
+  toast(THEMES[ci % 3].name + '!');
+  await countdown();
+}
+function startGame() {
+  initEnts();
+  G.ahs = $('lvA').classList.contains('on');
+  G.topics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.t);
+  const tp = shuffle(G.topics.slice()); G.cpTopics = []; for (let i = 0; i < 6; i++) G.cpTopics.push(tp[i % tp.length]);
+  const ty = shuffle(['doors', 'tiles', 'order', 'type', 'slip']); ty.push(pick(ty.slice(0, 4))); G.cpTypes = ty;
+  G.decks = {}; G.cpLog = []; G.secLog = []; G.mistakes = []; G.cpN = 0; G.correct = 0; G.slimeDebt = 0; G.noInput = false; G.livePos = 1;
+  ents.forEach(e => { e.score = 0; e.charges = 0; });
+  ['menu', 'results', 'card'].forEach(id => $(id).classList.remove('show'));
+  $('hud').classList.add('show'); $('foot').classList.add('show'); document.body.classList.add('play');
+  G.active = true; G.paused = false;
+  startCourse(0);
+}
+function toMenu() {
+  G.active = false; G.paused = false; G.waiters = []; G.state = 'menu'; hideCard(); setBanner(''); big('');
+  ents.forEach(e => { e.c.g.visible = false; e.c.sh.visible = false; });
+  ['results', 'card'].forEach(id => $(id).classList.remove('show')); $('menu').classList.add('show');
+  $('hud').classList.remove('show'); $('foot').classList.remove('show'); document.body.classList.remove('play');
+}
+function showResults() {
+  G.active = false; G.state = 'results'; setBanner('');
+  $('hud').classList.remove('show'); $('foot').classList.remove('show'); document.body.classList.remove('play');
+  const lb = leaderboard(), pos = lb.indexOf(player) + 1, pct = Math.round(G.correct / 18 * 100);
+  const verdict = pct >= 90 ? 'Grammar legend!' : pct >= 70 ? 'Strong grammar!' : pct >= 50 ? 'Good start – one more run!' : 'Keep wobbling – read the review below!';
+  let h = '<div class="medal">' + (pos === 1 ? '👑' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '🎉') + '</div><h1 class="fred" style="font-size:36px;color:var(--purple)">You finished ' + ord(pos) + ' of 9!</h1>' +
+    '<div class="sub">⭐ ' + player.score + ' points · Grammar: <b>' + G.correct + ' / 18</b> correct (' + pct + '%) · ' + verdict + '<br>' + (G.ahs ? 'AHS' : 'Standard') + ' · ' + G.topics.map(t => TOPICS[t].name).join(' · ') + '</div>';
+  h += '<div class="grid2"><div><div class="lbl">🚩 Checkpoints</div><table><tr><th>#</th><th>Minigame</th><th>Topic</th><th class="n">Right</th><th class="n">Pts</th></tr>' +
+    G.cpLog.map(r => '<tr><td>' + r.n + '</td><td>' + MINI[r.type].icon + ' ' + MINI[r.type].name + '</td><td>' + TOPICS[r.topic].name + '</td><td class="n">' + r.res.map(x => x ? '✔' : '✘').join(' ') + '</td><td class="n">' + r.pts + '</td></tr>').join('') + '</table>' +
+    '<div class="lbl">🏃 Race sections</div><table><tr><th>Course</th><th>Section</th><th class="n">Place</th><th class="n">Pts</th></tr>' +
+    G.secLog.map(s => '<tr><td>' + (s.ci + 1) + '</td><td>' + (s.si + 1) + '</td><td class="n">' + ord(s.rank) + '</td><td class="n">' + s.pts + '</td></tr>').join('') + '</table></div>' +
+    '<div><div class="lbl">🏆 Leaderboard</div>' + lbHTML() + '</div></div>';
+  if (G.mistakes.length) h += '<div class="lbl">🔎 Review your slips</div><div class="rev">' + G.mistakes.map(m => '<p>✘ ' + esc(m.q) + ' → <b>' + esc(m.yours) + '</b><br>✔ <b>' + esc(m.right) + '</b><br>💡 ' + esc(m.ex) + '</p>').join('') + '</div>';
+  else h += '<div class="rev"><p>🌟 No slips at all. Perfect grammar run!</p></div>';
+  h += '<div class="btnrow"><button id="againBtn" style="background:var(--pink);color:#fff">▶ Play again</button><button id="menuBtn">☰ Menu</button></div>';
+  $('resBox').innerHTML = h; $('results').classList.add('show'); $('results').scrollTop = 0;
+  $('againBtn').onclick = () => { snd.click(); startGame(); }; $('menuBtn').onclick = () => { snd.click(); toMenu(); };
+  snd.fanfare();
+}
+
+// ===================================================================
+// MAIN LOOP
+// ===================================================================
+let camSnap = true; const camT = new THREE.Vector3(), camL = new THREE.Vector3(0, 1, -4); let camY = 0;
+function updCam(dt) {
+  const gy = player.onGround ? player.y : Math.min(player.y, camY + 0.0) > camY ? camY : Math.min(player.y, camY);
+  camY += ((player.onGround ? player.y : Math.max(gy, player.y - 2.5)) - camY) * Math.min(1, dt * 4);
+  if (camSnap) camY = player.respawn ? player.respawn.y : player.y;
+  const portrait = cam.aspect < 1, back = portrait ? 13 : 9.5, up = portrait ? 7.5 : 5.6;
+  camT.set(player.x * 0.6, camY + up, player.z + back);
+  const k = camSnap ? 1 : Math.min(1, dt * 6); cam.position.lerp(camT, k);
+  camL.x += (player.x * 0.85 - camL.x) * k; camL.y += (camY + 1.2 - camL.y) * k; camL.z += (player.z - 4.5 - camL.z) * k;
+  if (G.shake > 0 && !RM) { G.shake -= dt; const s = G.shake * 0.6; cam.position.x += rnd(-s, s); cam.position.y += rnd(-s, s); }
+  cam.lookAt(camL); camSnap = false;
+}
+const ZERO = { x: 0, z: 0, jump: false, boost: false };
+function update(dt) {
+  G.t += dt;
+  for (let i = 0; i < plats.length; i++) {
+    const p = plats[i];
+    if (p.move) { const m = p.move, a = G.t * m.sp + m.ph; p.x = p.bx + Math.sin(a) * m.amp; p.vx = Math.cos(a) * m.sp * m.amp; p.mesh.position.x = p.x; }
+    if (p.conv) p.tex.offset.x -= Math.abs(p.conv) * dt / 3;
+  }
+  for (let i = 0; i < obst.length; i++) obst[i].upd(G.t, dt);
+  for (const s of spinnyChars) s.rotation.y += dt * 14;
+  const pin = playerInput();
+  for (let i = 0; i < ents.length; i++) {
+    const e = ents[i];
+    if (!e.frozen) {
+      let inp = e.isPlayer ? pin : botInput(e, dt);
+      if (e.ai) { const d = e.z - player.z; e.spdMul = d < -25 ? 0.86 : d > 25 ? 1.12 : 1; e.spd0 = e.spd0 || e.spd; e.spd = e.spd0 * e.spdMul; }
+      const h = dt / 2; stepEntity(e, inp, h); stepEntity(e, e.isPlayer ? { x: inp.x, z: inp.z, jump: false, boost: false } : { x: inp.x, z: inp.z, jump: false, boost: false }, h);
+      if (e.ai && e.ai.mode === 'race' && e.z <= G.goalZ && e.onGround && G.state === 'run') { e.ai.arrived = G.t; e.ai.mode = 'idle'; e.ai.zone = G.goalPlat; e.ai.tg = null; e.respawn = G.goalPlat; }
+      if (e.boostT > 0 && Math.random() < 0.5) burst(e.x, e.y + 0.4, e.z, 1, [0x67E8F9, 0xffffff], 1, 2, 0.16);
+      if (e.slimeT > 0 && Math.random() < 0.3) burst(e.x, e.y + 0.3, e.z, 1, SLIME, 1, 2, 0.16);
+    }
+  }
+  for (let i = 0; i < ents.length; i++) for (let j = i + 1; j < ents.length; j++) {
+    const a = ents[i], b = ents[j]; if (a.frozen || b.frozen) continue;
+    const dx = b.x - a.x, dz = b.z - a.z, d = Math.hypot(dx, dz);
+    if (d < 0.9 && d > 0.001 && Math.abs(a.y - b.y) < 1) { const push = (0.9 - d) / d, wa = a.isPlayer ? 0.25 : 0.5, wb = b.isPlayer ? 0.25 : (a.isPlayer ? 0.75 : 0.5); a.x -= dx * push * wa; a.z -= dz * push * wa; b.x += dx * push * wb; b.z += dz * push * wb; }
+  }
+  for (let i = 0; i < ents.length; i++) animChar(ents[i], dt);
+  if (G.state === 'run' && player.z <= G.goalZ && player.onGround) onGoal();
+  if (G.waiters.length) { const ws = G.waiters; G.waiters = []; for (const w of ws) { if (w.cond(dt)) w.res(); else G.waiters.push(w); } }
+  updParts(dt); updCam(dt); updHud(dt);
+}
+let lastNow = performance.now();
+function frame() {
+  requestAnimationFrame(frame);
+  const now = performance.now(); let dt = (now - lastNow) / 1000; lastNow = now; dt = clamp(dt, 0, 0.05);
+  if (G.active && !G.paused) update(dt);
+  else if (!G.active) { const t = now / 1000; cam.position.set(Math.sin(t * 0.15) * 14, 9, 16); cam.lookAt(0, 1, -24); for (let i = 0; i < obst.length; i++) obst[i].upd(t, dt); }
+  renderer.render(scene, cam);
+}
+
+// ===================================================================
+// MENU wiring
+// ===================================================================
+$('chips').innerHTML = Object.keys(TOPICS).map(k => '<button class="chip on" data-t="' + k + '"><span>' + TOPICS[k].icon + '</span><span>' + TOPICS[k].name + '</span><span class="ck">✔</span></button>').join('');
+function chk() { $('startBtn').disabled = !document.querySelector('.chip.on'); }
+document.querySelectorAll('.chip').forEach(c => c.onclick = () => { snd.click(); c.classList.toggle('on'); chk(); });
+$('allBtn').onclick = () => { snd.click(); document.querySelectorAll('.chip').forEach(c => c.classList.add('on')); chk(); };
+$('lvS').onclick = () => { snd.click(); $('lvS').classList.add('on'); $('lvA').classList.remove('on'); };
+$('lvA').onclick = () => { snd.click(); $('lvA').classList.add('on'); $('lvS').classList.remove('on'); };
+$('startBtn').onclick = () => { snd.init(); snd.go(); startGame(); };
+$('backBtn').onclick = () => { snd.click(); toMenu(); };
+$('sndBtn').onclick = () => { $('sndBtn').textContent = snd.toggle() ? '🔊' : '🔇'; };
+$('psyBtn').onclick = () => { psy = !psy; document.documentElement.dataset.theme = psy ? 'psychedelic' : 'standard'; snd.boost(); };
+
+// menu backdrop: a little showcase course
+G.cpTypes = ['doors', 'tiles', 'order', 'type', 'slip', 'doors']; buildCourse(0);
+$('menu').classList.add('show');
+setTimeout(() => $('splash').classList.add('hide'), 1000);
+window.WR = { G, get player() { return player; }, get bots() { return bots; }, get plats() { return plats; }, TOPICS };
+frame();
+</script>
+<!-- lernspiele:stats-start -->
+<script>
+(function () {
+  var h = location.hostname;
+  if (location.protocol === "file:" || h === "localhost" || h === "127.0.0.1") return;
+  var CODE = "spor-tler";
+  var GAME = "wobble-rush";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", "https://" + CODE + ".goatcounter.com/count");
+  document.head.appendChild(s);
+  // Spielzeit: sichtbare Sekunden zählen, bei Meilensteinen je 1 Event senden.
+  var MEILENSTEINE = [1, 3, 5, 10, 15, 20]; // Minuten
+  var sichtbar = 0, gesendet = 0;
+  setInterval(function () {
+    if (document.visibilityState !== "visible") return;
+    sichtbar += 10;
+    while (gesendet < MEILENSTEINE.length && sichtbar >= MEILENSTEINE[gesendet] * 60) {
+      var min = MEILENSTEINE[gesendet++];
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({
+          path: "zeit/" + GAME + "/" + min + "min",
+          title: "Spielzeit " + GAME + ": " + min + " min",
+          event: true
+        });
+      }
+    }
+  }, 10000);
+})();
+</script>
+<!-- lernspiele:stats-end -->
+</body>
+</html>
