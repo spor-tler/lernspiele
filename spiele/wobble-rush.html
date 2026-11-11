@@ -8,7 +8,7 @@
 <meta name="lernspiel:thema" content="Grammatik-Mix 3. Klasse">
 <meta name="lernspiel:stufe" content="7. Schulstufe">
 <meta name="lernspiel:fach" content="Englisch (Grammatik)">
-<meta name="lernspiel:beschreibung" content="3D-Hindernisrennen gegen acht Wackel-Gegner: Present und Past Simple, Past Progressive, Time Linkers und Comparison – mit fünf Grammatik-Minispielen an den Checkpoints. Standard und AHS.">
+<meta name="lernspiel:beschreibung" content="3D-Hindernisrennen durch sechs Welten gegen acht Wackel-Gegner: Present und Past Simple, Past Progressive, Time Linkers und Comparison – mit fünf Grammatik-Minispielen an den Checkpoints. Standard und AHS.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -172,7 +172,7 @@ body.touch.play #touch{display:block}
 <div id="menu" class="screen">
   <div class="box">
     <h1 id="logo"><span>W</span><span>O</span><span>B</span><span>B</span><span>L</span><span>E</span> <span>R</span><span>U</span><span>S</span><span>H</span></h1>
-    <div class="sub">The Grammar Gauntlet · 3 courses · 6 checkpoints · 8 wobbly rivals</div>
+    <div class="sub">The Grammar Gauntlet · 6 levels · 12 checkpoints · 8 wobbly rivals</div>
     <div class="lbl">1 · What do you want to practise?</div>
     <div class="chips" id="chips"></div>
     <button id="allBtn">🎲 All mixed</button>
@@ -234,7 +234,16 @@ const TOPICS = {
       [3, "She didn't ___ anything at the party.", 'eat', 'ate', 'eats', "After didn't: base form."],
       [3, '___ your parents usually work on Saturdays?', 'Do', 'Does', 'Are', 'your parents = they → Do.'],
       [3, "Tom ___ his keys, so he couldn't open the door.", 'lost', 'loses', "didn't lost", 'Past story: lose → lost.'],
-      [3, 'My sister ___ to school by bus, but yesterday she walked.', 'usually goes', 'usually went', 'is usually go', 'Habit = present simple; only yesterday is past.']
+      [3, 'My sister ___ to school by bus, but yesterday she walked.', 'usually goes', 'usually went', 'is usually go', 'Habit = present simple; only yesterday is past.'],
+      [1, 'Anna ___ her teeth every morning.', 'brushes', 'brush', 'brushing', 'he / she / it + verb-s. After -sh we add -es.'],
+      [1, 'My parents ___ in a small house.', 'live', 'lives', 'living', 'my parents = they → base form, no -s.'],
+      [1, 'We ___ a maths test yesterday.', 'had', 'have', 'haved', '"yesterday" = past simple. have → had.'],
+      [2, 'Our teacher ___ give us homework last Friday.', "didn't", "doesn't", "don't", "\"last Friday\" = past: didn't + base form."],
+      [2, 'Mum ___ me a text an hour ago.', 'sent', 'send', 'sended', '"ago" = past simple. send → sent.'],
+      [2, '___ your dog sleep in your bed every night?', 'Does', 'Do', 'Is', 'your dog = it → Does. "Every night" = present.'],
+      [3, 'Who ___ my pencil case yesterday?', 'took', 'taked', 'taken', 'Who is the subject here: no "did". take → took.'],
+      [3, 'Why ___ you late for school yesterday?', 'were', 'did', 'was', 'Past of "be": no "did". you → were.'],
+      [3, 'Years ago my grandpa had a car, but now he ___ one.', "doesn't have", "didn't have", "don't have", "now = present; he → doesn't + base form."]
     ],
     order: [
       [1, 'Do you play tennis ?', 'Question', 'Do + subject + base form.'],
@@ -245,7 +254,13 @@ const TOPICS = {
       [2, "He didn't do his homework .", 'Negative', "Subject + didn't + base form."],
       [3, 'What did you have for breakfast today ?', 'Question', 'Question word + did + subject + base form.'],
       [3, "Why doesn't she come to our parties ?", 'Question', "Question word + doesn't + subject + base form."],
-      [3, 'How often do you tidy your room ?', 'Question', 'How often + do + subject + base form.']
+      [3, 'How often do you tidy your room ?', 'Question', 'How often + do + subject + base form.'],
+      [1, 'My mum cooks dinner every evening .', 'Statement', 'Subject + verb-s + object + time.'],
+      [1, 'Does your brother like football ?', 'Question', 'Does + subject + base form.'],
+      [2, "They didn't win the game .", 'Negative', "Subject + didn't + base form."],
+      [2, 'When did your dad buy his new phone ?', 'Question', 'Question word + did + subject + base form.'],
+      [3, 'Why did your friends leave the party early ?', 'Question', 'Question word + did + subject + base form.'],
+      [3, 'Who ate all the chocolate yesterday ?', 'Subject question', 'Who is the subject: Who + past form, no did.']
     ],
     type: [
       [1, 'Lisa ___ (watch) TV every evening.', ['watches'], 'she + verb-s. After -ch we add -es.'],
@@ -256,7 +271,13 @@ const TOPICS = {
       [2, 'My mum ___ (not / drive) to work. She takes the bus.', ["doesn't drive", 'does not drive'], "she + doesn't + base form."],
       [3, 'Where ___ (you / go) last weekend?', ['did you go'], 'Did + subject + base form.'],
       [3, 'She ___ (teach) us English last year.', ['taught'], 'teach → taught (irregular).'],
-      [3, "Why ___ (he / not / eat) meat? He's a vegetarian.", ["doesn't he eat", 'does he not eat'], "doesn't + subject + base form."]
+      [3, "Why ___ (he / not / eat) meat? He's a vegetarian.", ["doesn't he eat", 'does he not eat'], "doesn't + subject + base form."],
+      [1, 'My dad ___ (work) in a bank.', ['works'], 'he + verb-s.'],
+      [1, 'We ___ (visit) our cousins last Sunday.', ['visited'], '"last Sunday" = past simple: visit + ed.'],
+      [2, 'I ___ (not / eat) breakfast yesterday morning.', ["didn't eat", 'did not eat'], "Past negative: didn't + base form."],
+      [2, 'We ___ (swim) in the lake last summer.', ['swam'], 'swim → swam (irregular).'],
+      [3, 'How ___ (your cousin / get) to school every day?', ['does your cousin get'], 'Question word + does + subject + base form.'],
+      [3, 'Who ___ (draw) this funny picture on the board?', ['drew'], 'Who is the subject: no "did". draw → drew.']
     ],
     slip: [
       [1, "She [don't] like homework.", "doesn't", "she → doesn't."],
@@ -267,7 +288,13 @@ const TOPICS = {
       [2, "I didn't [went] to the party.", 'go', "After didn't: base form."],
       [3, 'Where did she [lived] two years ago?', 'live', 'After did: base form.'],
       [3, "My brother doesn't [likes] vegetables.", 'like', "After doesn't: base form, no -s."],
-      [3, "They [wasn't] at home last night.", "weren't", "they → weren't."]
+      [3, "They [wasn't] at home last night.", "weren't", "they → weren't."],
+      [1, 'My friends [plays] football after school.', 'play', 'they → base form, no -s.'],
+      [1, 'Yesterday we [eat] pizza.', 'ate', '"yesterday" = past simple. eat → ate.'],
+      [2, 'Where [do] you go last summer?', 'did', '"last summer" = past: Did + base form.'],
+      [2, 'My dad [maked] pancakes yesterday.', 'made', 'make → made (irregular).'],
+      [3, 'We usually walk to school, but yesterday we [take] the bus.', 'took', '"yesterday" = past simple. take → took.'],
+      [3, 'Why [you were] so quiet at lunch yesterday?', 'were you', 'Question: were + subject.']
     ]
   },
   pp: {
@@ -292,7 +319,16 @@ const TOPICS = {
       [3, 'What were you doing when the lights ___ out?', 'went', 'were going', 'go', 'The lights went out: short action.'],
       [3, 'First she ___ the door, then she switched on the light.', 'opened', 'was opening', 'were opening', 'Actions in a row → past simple.'],
       [3, 'While Dad ___ the car, I was cleaning my bike.', 'was washing', 'washed', 'were washing', 'Two long actions at the same time: both progressive.'],
-      [3, 'We ___ dinner when suddenly someone knocked at the door.', 'were having', 'had', 'are having', 'Dinner was in progress when the knock came.']
+      [3, 'We ___ dinner when suddenly someone knocked at the door.', 'were having', 'had', 'are having', 'Dinner was in progress when the knock came.'],
+      [1, 'At midnight my parents ___.', 'were sleeping', 'was sleeping', 'are sleeping', 'they + were + -ing.'],
+      [1, 'The film ___ at eight o\'clock last night.', 'started', 'was starting', 'were starting', 'One short event → past simple.'],
+      [1, '___ it raining when you got up?', 'Was', 'Were', 'Did', 'it + was + -ing.'],
+      [2, 'We ___ a loud bang while we were having dinner.', 'heard', 'were hearing', 'hear', 'The bang is a short action → past simple.'],
+      [2, 'Where ___ the kids playing when it started to rain?', 'were', 'was', 'did', 'the kids = they → were + -ing.'],
+      [2, 'Mum ___ when the doorbell rang.', 'was sleeping', 'slept', 'sleeps', 'Sleeping was in progress when the bell rang.'],
+      [3, 'She grabbed her bag, ___ out of the room and slammed the door.', 'ran', 'was running', 'were running', 'Actions in a row → past simple.'],
+      [3, 'Why ___ Anna crying when you found her?', 'was', 'were', 'did', 'Anna = she → was + -ing.'],
+      [3, 'My sister ___ on the phone when I got home, so I waited.', 'was talking', 'talked', 'were talking', 'Her talking was in progress when I arrived.']
     ],
     order: [
       [1, 'I was reading a book .', 'Statement', 'Subject + was + -ing.'],
@@ -303,7 +339,13 @@ const TOPICS = {
       [2, "She wasn't wearing a jacket .", 'Negative', "Subject + wasn't + -ing."],
       [3, 'While I was cooking the phone rang .', 'Statement', 'While + long action, then the short action.'],
       [3, 'Who were you talking to yesterday ?', 'Question', 'Who + were + subject + -ing + to.'],
-      [3, 'We were having lunch when he arrived .', 'Statement', 'Long action + when + short action.']
+      [3, 'We were having lunch when he arrived .', 'Statement', 'Long action + when + short action.'],
+      [1, 'We were walking to school .', 'Statement', 'Subject + were + -ing.'],
+      [1, 'Was he sleeping in class ?', 'Question', 'Was + subject + -ing.'],
+      [2, 'Where were they going ?', 'Question', 'Question word + were + subject + -ing.'],
+      [2, 'The baby was crying when we arrived .', 'Statement', 'Long action + when + short action.'],
+      [3, 'Everybody was dancing when the music stopped .', 'Statement', 'Long action + when + short action.'],
+      [3, 'What was your brother doing when you called ?', 'Question', 'What + was + subject + -ing + when + short action.']
     ],
     type: [
       [1, 'At 7 pm I ___ (do) my homework.', ['was doing'], 'I + was + -ing.'],
@@ -314,7 +356,13 @@ const TOPICS = {
       [2, 'We ___ (not / watch) TV at nine. We were in bed.', ["weren't watching", 'were not watching'], "we + weren't + -ing."],
       [3, 'What ___ (you / do) when the teacher came in?', ['were you doing'], 'were + subject + -ing.'],
       [3, 'When she ___ (hear) the noise, she was brushing her teeth.', ['heard'], 'Short action → past simple: hear → heard.'],
-      [3, 'It ___ (not / rain) when we left the house.', ["wasn't raining", 'was not raining'], "it + wasn't + -ing."]
+      [3, 'It ___ (not / rain) when we left the house.', ["wasn't raining", 'was not raining'], "it + wasn't + -ing."],
+      [1, 'At that moment the cat ___ (sleep) on the sofa.', ['was sleeping'], 'the cat = it → was + -ing.'],
+      [1, 'Our team ___ (win) the match yesterday.', ['won'], 'One finished action → past simple: win → won.'],
+      [2, 'Max ___ (open) the door and saw a big spider.', ['opened'], 'Two short actions in a row → past simple.'],
+      [2, "At six o'clock the kids ___ (swim) in the lake.", ['were swimming'], 'the kids = they → were + -ing.'],
+      [3, 'Where ___ (they / go) when their car broke down?', ['were they going'], 'were + subject + -ing.'],
+      [3, "I ___ (not / listen) when the teacher gave us the homework. I was dreaming.", ["wasn't listening", 'was not listening'], "I + wasn't + -ing."]
     ],
     slip: [
       [1, 'They [was] playing football.', 'were', 'they → were.'],
@@ -325,7 +373,13 @@ const TOPICS = {
       [2, 'What [did] you doing at eight?', 'were', 'Progressive question: were + subject + -ing.'],
       [3, 'I [was breaking] a glass while I was washing up.', 'broke', 'Breaking is short → past simple.'],
       [3, 'Were they [watch] a film when you called?', 'watching', 'were + subject + -ing.'],
-      [3, 'We were sitting in class when the fire alarm [was ringing].', 'rang', 'The alarm interrupts → past simple.']
+      [3, 'We were sitting in class when the fire alarm [was ringing].', 'rang', 'The alarm interrupts → past simple.'],
+      [1, '[Was] you playing outside?', 'Were', 'you → were.'],
+      [1, 'The dog [were] barking loudly.', 'was', 'the dog = it → was.'],
+      [2, "I [didn't] sleeping when the phone rang.", "wasn't", "Progressive negative: wasn't + -ing."],
+      [2, 'Suddenly the lights [were going] out.', 'went', 'A sudden short event → past simple.'],
+      [3, 'The baby was sleeping when we [were arriving].', 'arrived', 'Arriving is the short action → past simple.'],
+      [3, "Mum [didn't cooking] dinner at six. She was still at work.", "wasn't cooking", "Progressive negative: wasn't + -ing."]
     ]
   },
   tl: {
@@ -350,7 +404,16 @@ const TOPICS = {
       [3, 'She had a shower. ___, her brother made breakfast.', 'Meanwhile', 'Until', 'As soon as', 'Meanwhile = at the same time, in a new sentence.'],
       [3, '___ we were on holiday, we visited three museums.', 'While', 'During', 'Until', 'while + sentence (we were …).'],
       [3, '___ the holidays, we visited three museums.', 'During', 'While', 'As soon as', 'during + noun (the holidays).'],
-      [3, 'At first I was nervous, but ___ I won the race.', 'in the end', 'at the end', 'meanwhile', 'in the end = finally. "at the end" needs "of …".']
+      [3, 'At first I was nervous, but ___ I won the race.', 'in the end', 'at the end', 'meanwhile', 'in the end = finally. "at the end" needs "of …".'],
+      [1, 'I do my homework and eat dinner. ___ I go to bed.', 'Then', 'While', 'Until', 'The next step in a row: Then.'],
+      [1, 'We play games ___ we wait for the bus.', 'while', 'until', 'finally', 'Two things at the same time → while.'],
+      [1, 'I put on my coat ___ I leave the house.', 'before', 'after', 'during', 'Coat first, leaving later → before.'],
+      [2, 'The baby slept ___ the whole car trip.', 'during', 'while', 'until', 'during + noun (the trip).'],
+      [2, 'I will text you ___ I arrive.', 'as soon as', 'during', 'then', 'as soon as = right after I arrive.'],
+      [2, 'Keep walking ___ you see the red house.', 'until', 'while', 'during', 'until = up to that moment.'],
+      [3, 'Everybody clapped ___ of the concert.', 'at the end', 'in the end', 'finally', '"at the end" is followed by "of …".'],
+      [3, 'The kids ran into the sea ___ they got to the beach.', 'as soon as', 'during', 'meanwhile', 'as soon as + sentence = right after.'],
+      [3, 'We watched a film. ___ we had pizza.', 'Afterwards', 'After', 'During', 'Afterwards = later, in a new sentence.']
     ],
     order: [
       [1, 'Then we went to the park .', 'Story', 'Linker first, then subject + verb.'],
@@ -361,7 +424,13 @@ const TOPICS = {
       [2, 'Call me as soon as you arrive .', 'Request', 'Main action + as soon as + subject + verb.'],
       [3, 'During the match it started to snow .', 'Story', 'During + noun, then subject + verb.'],
       [3, 'Finally we found the keys under the sofa .', 'Story', 'Linker first, then subject + verb.'],
-      [3, 'As soon as he saw us he ran away .', 'Story', 'As soon as + first action, then the second action.']
+      [3, 'As soon as he saw us he ran away .', 'Story', 'As soon as + first action, then the second action.'],
+      [1, 'We eat pizza after the game .', 'Routine', 'Subject + verb + object + after + noun.'],
+      [1, 'First we pack our bags .', 'Story', 'Linker first, then subject + verb.'],
+      [2, "Don't move until the music stops .", 'Request', 'Main action + until + what ends it.'],
+      [2, 'We sang during the long trip .', 'Story', 'Subject + verb + during + noun.'],
+      [3, 'In the end we won the game .', 'Story', 'In the end = finally, then subject + verb.'],
+      [3, 'Meanwhile the kids laid the table .', 'Story', 'Meanwhile = at the same time, then subject + verb.']
     ],
     type: [
       [1, 'Wash your hands ___ you eat. (before / after)', ['before'], 'Clean hands first → before.'],
@@ -372,7 +441,13 @@ const TOPICS = {
       [2, '___ I opened the door, the dog ran out. (As soon as / During)', ['as soon as'], 'as soon as = right after.'],
       [3, 'We looked everywhere. F___, we found the cat in the wardrobe.', ['finally'], 'The last step of the story: Finally.'],
       [3, 'Dad was cooking. M___, the kids laid the table.', ['meanwhile'], 'Meanwhile = at the same time.'],
-      [3, "I'll wait here u___ you come back.", ['until'], 'until = up to that moment.']
+      [3, "I'll wait here u___ you come back.", ['until'], 'until = up to that moment.'],
+      [1, 'We ate dinner. ___ we watched a film. (Then / Until)', ['then'], 'The next step: Then.'],
+      [1, 'He puts on his shoes ___ he goes out. (before / while)', ['before'], 'Shoes first, going out later → before.'],
+      [2, 'Be quiet ___ the baby is sleeping. (while / during)', ['while'], 'while + sentence with a verb.'],
+      [2, 'I fell asleep ___ the long film. (during / while)', ['during'], 'during + noun.'],
+      [3, "I can't go out ___ I finish my homework. (until / during)", ['until'], 'until = up to that moment.'],
+      [3, 'At f___ the game was boring, but then it got exciting.', ['first'], 'at first = in the beginning.']
     ],
     slip: [
       [1, 'First we ate, [while] we went home.', 'then', 'One action after the other → then.'],
@@ -383,7 +458,13 @@ const TOPICS = {
       [2, 'We stayed outside [as soon as] it got dark.', 'until', 'until = up to that moment.'],
       [3, '[During] we were eating, the lights went out.', 'While', 'while + sentence (we were eating).'],
       [3, 'We missed the bus, but [at the end] we arrived on time.', 'in the end', 'in the end = finally.'],
-      [3, 'He read a comic [while] the break.', 'during', 'during + noun (the break).']
+      [3, 'He read a comic [while] the break.', 'during', 'during + noun (the break).'],
+      [1, 'He eats his breakfast [then] he reads a comic – at the same time!', 'while', 'At the same time → while.'],
+      [1, 'Put on your helmet [after] you ride your bike. Safety first!', 'before', 'Helmet first → before.'],
+      [2, 'Tell me [during] you find the answer.', 'as soon as', 'as soon as = right after.'],
+      [2, 'I was tired, so I slept [while] the whole film.', 'during', 'during + noun (the film).'],
+      [3, 'I finished my homework. [Until] that, I played games.', 'After', 'After that = the next step in a story.'],
+      [3, 'Mum was cooking. [During], I laid the table.', 'Meanwhile', 'Meanwhile = at the same time, in a new sentence.']
     ]
   },
   ca: {
@@ -408,7 +489,16 @@ const TOPICS = {
       [3, 'Graz is ___ from here than Linz.', 'further', 'farer', 'more far', 'far – further – furthest.'],
       [3, 'It was the ___ day of the holiday – rain all day.', 'worst', 'baddest', 'worse', 'the + superlative: worst.'],
       [3, 'The more you practise, the ___ you get.', 'better', 'best', 'good', 'the + comparative, the + comparative.'],
-      [3, "My room is ___ than my sister's.", 'tidier', 'more tidier', 'tidyer', 'y → ier. Never "more" and "-er" together.']
+      [3, "My room is ___ than my sister's.", 'tidier', 'more tidier', 'tidyer', 'y → ier. Never "more" and "-er" together.'],
+      [1, 'A giraffe is ___ than a horse.', 'taller', 'tallest', 'more tall', 'Short adjective + er + than.'],
+      [1, 'This is the ___ ice cream in the shop.', 'cheapest', 'cheaper', 'most cheap', 'the + short adjective + est.'],
+      [1, 'Football is ___ than chess.', 'more exciting', 'excitinger', 'most exciting', 'Long adjective: more + adjective + than.'],
+      [2, 'Eva is the ___ girl in our class.', 'most intelligent', 'intelligentest', 'more intelligent', 'Long adjective: the most + adjective.'],
+      [2, 'It is getting ___ every day. Spring is coming.', 'warmer', 'more warm', 'warmest', 'Short adjective + er: warmer.'],
+      [2, 'This book is ___ than that one. It has 400 pages.', 'longer', 'more long', 'longest', 'Short adjective + er + than.'],
+      [3, 'My bag is twice as heavy ___ yours.', 'as', 'than', 'like', 'as + adjective + as, also after "twice".'],
+      [3, 'This phone is ___ better than my old one.', 'much', 'very', 'more', '"much" makes a comparative stronger. Not "very".'],
+      [3, 'My little sister is getting ___ every day.', 'taller and taller', 'tall and tall', 'more tall', 'Getting more and more: comparative and comparative.']
     ],
     order: [
       [1, 'My dog is faster than your cat .', 'Comparative', 'A + is + comparative + than + B.'],
@@ -419,7 +509,13 @@ const TOPICS = {
       [2, 'English is more interesting than maths .', 'Comparative', 'more + long adjective + than.'],
       [3, 'It was the most exciting game ever .', 'Superlative', 'the most + long adjective + noun.'],
       [3, "My phone isn't as new as yours .", 'Not the same', "isn't as + adjective + as."],
-      [3, 'This is the worst film of the year .', 'Superlative', 'the + worst + noun.']
+      [3, 'This is the worst film of the year .', 'Superlative', 'the + worst + noun.'],
+      [1, 'Snails are slower than mice .', 'Comparative', 'A + are + comparative + than + B.'],
+      [1, 'He is the funniest boy in class .', 'Superlative', 'the + superlative + noun.'],
+      [2, 'He is as tall as his father .', 'Same level', 'as + adjective + as.'],
+      [2, 'Mia is the best swimmer in our team .', 'Superlative', 'the + best + noun.'],
+      [3, 'Maths is less fun than art .', 'Not the same', 'less + adjective + than.'],
+      [3, 'This is the least boring lesson .', 'Superlative', 'the least + adjective + noun.']
     ],
     type: [
       [1, 'A cheetah is ___ (fast) than a lion.', ['faster'], 'Short adjective + er.'],
@@ -430,7 +526,13 @@ const TOPICS = {
       [2, 'Your joke was ___ (funny) than mine.', ['funnier'], 'y → ier.'],
       [3, 'That was the ___ (bad) goal of the season.', ['worst'], 'bad – worse – worst.'],
       [3, 'This exercise is ___ (difficult) than the last one.', ['more difficult'], 'Long adjective: more + adjective.'],
-      [3, 'The station is ___ (far) than I thought.', ['further', 'farther'], 'far → further (or farther).']
+      [3, 'The station is ___ (far) than I thought.', ['further', 'farther'], 'far → further (or farther).'],
+      [1, 'A mouse is ___ (small) than a cat.', ['smaller'], 'Short adjective + er.'],
+      [1, 'Lara is the ___ (young) girl in the group.', ['youngest'], 'the + short adjective + est.'],
+      [2, 'My shoes are ___ (dirty) than yours.', ['dirtier'], 'y → ier.'],
+      [2, 'This is the ___ (interesting) book in the library.', ['most interesting'], 'Long adjective: the most + adjective.'],
+      [3, 'Who is ___ (clever) at maths, you or your sister?', ['cleverer', 'more clever'], 'clever: both cleverer and more clever are fine.'],
+      [3, 'My little brother is as ___ (tall) as me now!', ['tall'], 'as + base adjective + as.']
     ],
     slip: [
       [1, 'My brother is [more tall] than me.', 'taller', 'Short adjective + er, no "more".'],
@@ -441,7 +543,13 @@ const TOPICS = {
       [2, 'It was the [baddest] day of the week.', 'worst', 'bad – worse – worst.'],
       [3, 'This game is [more better] than the old one.', 'better', 'Never "more" with better.'],
       [3, "It's the [most funniest] film ever.", 'funniest', 'Never "most" and "-est" together.'],
-      [3, 'Skiing is [dangerouser] than swimming.', 'more dangerous', 'Long adjective: more + adjective.']
+      [3, 'Skiing is [dangerouser] than swimming.', 'more dangerous', 'Long adjective: more + adjective.'],
+      [1, 'My sister is [youngest] than me.', 'younger', 'Two people: comparative + than.'],
+      [1, 'The elephant is the [more heavy] animal on land.', 'heaviest', 'the + superlative: heaviest.'],
+      [2, 'This film is [boringer] than the book.', 'more boring', 'Long adjective: more + adjective.'],
+      [2, 'He runs as fast [then] a leopard.', 'as', 'as + adjective + as.'],
+      [3, 'Of all the players in the team, Tom is the [better] one.', 'best', 'the + superlative: best.'],
+      [3, 'This is the [less] interesting book in the library.', 'least', 'the + least = the lowest level.']
     ]
   }
 };
@@ -475,9 +583,12 @@ const DOORC = [0xEC4899, 0xFACC15, 0x3B82F6];
 const CONF = [0xFACC15, 0x16A34A, 0xEC4899, 0xF97316, 0x9333EA, 0x2563EB];
 const SLIME = [0x84CC16, 0x65A30D, 0xA3E635];
 const THEMES = [
-  { name: 'Candy Meadow', sky: 'linear-gradient(#49b8ff 0%,#a6e3ff 45%,#ffe3f3 100%)', fog: 0xffe3f3, pal: [0xFF7EB6, 0xFFD166, 0x7AE7C7, 0x6ECBFF, 0xB28DFF] },
-  { name: 'Sunset Slide', sky: 'linear-gradient(#7b5cff 0%,#ff8fb1 45%,#ffe29a 100%)', fog: 0xffe2b0, pal: [0xFF9F5A, 0xFF6F91, 0xFFC75F, 0x9D7BFF, 0x4FD1C5] },
-  { name: 'Disco Night', sky: 'linear-gradient(#1b1464 0%,#6a2fb5 50%,#ff6ac1 100%)', fog: 0xb05ac0, pal: [0x00E5FF, 0xFF4FD8, 0xB6FF3B, 0xFFE14D, 0x8C7BFF] }
+  { name: 'Candy Meadow', ico: '🍬', sky: 'linear-gradient(#49b8ff 0%,#a6e3ff 45%,#ffe3f3 100%)', fog: 0xffe3f3, pal: [0xFF7EB6, 0xFFD166, 0x7AE7C7, 0x6ECBFF, 0xB28DFF], segs: ['gaps', 'spin', 'bump', 'move', 'bounce', 'pend'], D: 0, decor: 'meadow' },
+  { name: 'Sunset Slide', ico: '🌅', sky: 'linear-gradient(#7b5cff 0%,#ff8fb1 45%,#ffe29a 100%)', fog: 0xffe2b0, pal: [0xFF9F5A, 0xFF6F91, 0xFFC75F, 0x9D7BFF, 0x4FD1C5], segs: ['balls', 'pist', 'disc', 'updown', 'gaps', 'glove'], D: 0, decor: 'sunset' },
+  { name: 'Ice Peaks', ico: '❄️', sky: 'linear-gradient(#8fd0ff 0%,#cfeaff 50%,#ffffff 100%)', fog: 0xe8f6ff, gnd: 0xa9c8ea, pal: [0x7DB8F0, 0x5AA3E8, 0x9A94F0, 0x4FC3DC, 0xA27BF0], segs: ['ice', 'shrink', 'wind', 'spin', 'crumble', 'move'], D: 1, decor: 'ice' },
+  { name: 'Jungle', ico: '🌴', sky: 'linear-gradient(#17a99b 0%,#7fd38f 50%,#eaf0a0 100%)', fog: 0xcdeccb, pal: [0x6BBF59, 0xE9C46A, 0xF4A259, 0x9C6B3F, 0x3FA66B], segs: ['log', 'crumble', 'cannon', 'bounce', 'updown', 'pend'], D: 1, decor: 'jungle' },
+  { name: 'Volcano', ico: '🌋', sky: 'linear-gradient(#4d0b12 0%,#e2562a 55%,#ffc24a 100%)', fog: 0x8a3a2a, gnd: 0xff9a5a, pal: [0x4B5563, 0xF97316, 0xDC2626, 0xFBBF24, 0x6B7280], segs: ['geyser', 'pist', 'balls', 'disc', 'shrink', 'cannon'], D: 2, decor: 'volcano' },
+  { name: 'Disco Night', ico: '🪩', sky: 'linear-gradient(#1b1464 0%,#6a2fb5 50%,#ff6ac1 100%)', fog: 0xb05ac0, pal: [0x00E5FF, 0xFF4FD8, 0xB6FF3B, 0xFFE14D, 0x8C7BFF], segs: ['glove', 'wind', 'geyser', 'log', 'ice', 'spin'], D: 2, decor: 'disco' }
 ];
 const BOTS = [
   ['Sir Wobbelot', 0x60A5FA, 3], ['Pudding', 0xFDBA74, 1], ['Captain Oops', 0xF87171, 8], ['Noodle', 0xFDE047, 4],
@@ -528,7 +639,7 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0xffe3f3, 70, 230);
 const cam = new THREE.PerspectiveCamera(58, 1, 0.1, 500);
 cam.position.set(0, 6, 14);
-scene.add(new THREE.HemisphereLight(0xffffff, 0xffb6d9, 0.95));
+const hemi = new THREE.HemisphereLight(0xffffff, 0xffb6d9, 0.95); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(6, 12, 8); scene.add(sun);
 function resize() { renderer.setSize(window.innerWidth, window.innerHeight, false); cam.aspect = window.innerWidth / window.innerHeight; cam.updateProjectionMatrix(); }
 window.addEventListener('resize', resize); resize();
@@ -538,6 +649,7 @@ const GEO = {
   cone: new THREE.ConeGeometry(1, 1, 16), plane: new THREE.PlaneGeometry(1, 1), circ: new THREE.CircleGeometry(1, 20),
   tor: new THREE.TorusGeometry(1, 0.12, 8, 24, Math.PI)
 };
+GEO.torF = new THREE.TorusGeometry(1, 0.07, 8, 32); GEO.ico = new THREE.IcosahedronGeometry(1, 1); GEO.circ64 = new THREE.CircleGeometry(1, 64);
 const toon = c => new THREE.MeshToonMaterial({ color: c });
 const lam = c => new THREE.MeshLambertMaterial({ color: c });
 function shade(c, f) { const r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255; const m = v => Math.round(clamp(f <= 1 ? v * f : v + (255 - v) * (f - 1), 0, 255)); return (m(r) << 16) | (m(g) << 8) | m(b); }
@@ -583,7 +695,7 @@ function makeLabel(w, h, px) {
 // ===================================================================
 // WORLD state
 // ===================================================================
-let world = new THREE.Group(); scene.add(world);
+let world = new THREE.Group(); scene.add(world); const skyFollow = [];
 let plats = [], walls = [], obst = [], way = [], safes = [], spinny = [];
 let B = null; // course builder cursor
 const G = { active: false, paused: false, t: 0, state: 'menu', waiters: [], shake: 0, score: 0, ahs: false, topics: [] };
@@ -591,13 +703,13 @@ const G = { active: false, paused: false, t: 0, state: 'menu', waiters: [], shak
 function clearWorld() {
   world.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (m.map && m.map.__own) m.map.dispose(); m.dispose(); }); });
   scene.remove(world); world = new THREE.Group(); scene.add(world);
-  plats = []; walls = []; obst = []; way = []; safes = []; spinny = [];
+  plats = []; walls = []; obst = []; way = []; safes = []; spinny = []; skyFollow.length = 0;
 }
 
 function addPlat(x, top, z, w, d, o) {
   o = o || {}; const h = o.h || 1.4;
   const col = o.col !== undefined ? o.col : B.pal[(B.pi++) % B.pal.length];
-  const p = { x, y: top, z, hw: w / 2, hd: d / 2, h, bx: x, by: top, bz: z, vx: 0, vz: 0, move: o.move || null, conv: o.conv || 0, bounce: o.bounce || 0, safe: !!o.safe, gone: false, col };
+  const p = { x, y: top, z, hw: w / 2, hd: d / 2, h, bx: x, by: top, bz: z, vx: 0, vz: 0, move: o.move || null, conv: o.conv || 0, bounce: o.bounce || 0, safe: !!o.safe, gone: false, col, ice: !!o.ice, crumble: !!o.crumble, shrink: o.shrink || null, hw0: w / 2, hd0: d / 2 };
   const tt = patTex(col, o.pat || (o.conv ? 'arrow' : 'stripe')).clone(); tt.needsUpdate = true; tt.__own = true;
   tt.repeat.set(Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(d / 3)));
   if (o.conv < 0) tt.repeat.x *= -1;
@@ -607,6 +719,19 @@ function addPlat(x, top, z, w, d, o) {
   p.mesh = m; p.tex = tt; plats.push(p);
   if (!o.noWay) { if (d > 8) { way.push({ p, oz: p.hd - 1.5 }); way.push({ p, oz: -(p.hd - 1.5) }); } else way.push({ p, oz: 0 }); }
   if (p.safe) safes.push(p);
+  return p;
+}
+function addDisc(x, top, z, r, spin, o) {
+  o = o || {}; const h = 1.0;
+  const col = o.col !== undefined ? o.col : B.pal[(B.pi++) % B.pal.length];
+  const p = { x, y: top, z, hw: r, hd: r, h, bx: x, by: top, bz: z, vx: 0, vz: 0, move: null, conv: 0, bounce: 0, safe: false, gone: false, col, ice: false, crumble: false, shrink: null, hw0: r, hd0: r, disc: true, spin };
+  const tt = patTex(col, 'stripe').clone(); tt.needsUpdate = true; tt.__own = true;
+  const side = lam(shade(col, 0.72)), topM = new THREE.MeshLambertMaterial({ map: tt });
+  const m = new THREE.Mesh(GEO.cyl, [side, topM, side]); m.scale.set(r, h, r); m.position.set(x, top - h / 2, z); world.add(m);
+  mesh(GEO.cyl, lam(shade(col, 0.5)), 0.8, 0.9, 0.8, 0, -0.95, 0, m);
+  mesh(GEO.box, lam(0xF9FAFB), 1.8, 0.1, 0.1, 0, 0.54, 0, m);
+  mesh(GEO.box, lam(0xF9FAFB), 0.1, 0.1, 1.8, 0, 0.54, 0, m);
+  p.mesh = m; p.tex = tt; plats.push(p); way.push({ p, oz: 0 });
   return p;
 }
 // forward = -z. slab() lays a platform from the cursor forward.
@@ -621,7 +746,8 @@ function groundAt(x, z, feetY, m) {
   let best = null;
   for (let i = 0; i < plats.length; i++) {
     const p = plats[i]; if (p.gone) continue;
-    if (Math.abs(x - p.x) <= p.hw + m && Math.abs(z - p.z) <= p.hd + m && p.y <= feetY + 0.4 && (!best || p.y > best.y)) best = p;
+    const inside = p.disc ? Math.hypot(x - p.x, z - p.z) <= p.hw + m : (Math.abs(x - p.x) <= p.hw + m && Math.abs(z - p.z) <= p.hd + m);
+    if (inside && p.y <= feetY + 0.4 && (!best || p.y > best.y)) best = p;
   }
   return best;
 }
@@ -724,7 +850,8 @@ function stepEntity(e, inp, dt) {
   const sp = MOVE * e.spd * (e.boostT > 0 ? 1.55 : 1) * (e.slimeT > 0 ? 0.45 : 1);
   if (ctl || e.onGround) {
     const tx = ctl ? inp.x * sp : 0, tz = ctl ? inp.z * sp : 0;
-    const acc = (e.onGround ? (ctl ? 55 : 9) : 22) * dt;
+    const ice = e.onGround && e.ground && e.ground.ice;
+    const acc = (e.onGround ? (ice ? (ctl ? 9 : 2) : (ctl ? 55 : 9)) : 22) * dt;
     let dx = tx - e.vx, dz = tz - e.vz; const l = Math.hypot(dx, dz);
     if (l > acc) { dx *= acc / l; dz *= acc / l; } e.vx += dx; e.vz += dz;
   }
@@ -739,23 +866,28 @@ function stepEntity(e, inp, dt) {
   if (inp.boost && e.charges > 0 && e.boostT <= 0) { e.charges--; e.boostT = 2.4; if (e.isPlayer) snd.boost(); }
   e.vy -= GRAV * dt; if (e.vy < -40) e.vy = -40;
   const g0 = e.ground;
-  if (e.onGround && g0) { e.x += (g0.vx + g0.conv) * dt; e.z += g0.vz * dt; }
+  if (e.onGround && g0) {
+    e.x += (g0.vx + g0.conv) * dt; e.z += g0.vz * dt;
+    if (g0.spin) { const a = g0.spin * dt, dx = e.x - g0.x, dz = e.z - g0.z; e.x = g0.x + dx * Math.cos(a) + dz * Math.sin(a); e.z = g0.z - dx * Math.sin(a) + dz * Math.cos(a); }
+  }
   const py = e.y;
   e.x += e.vx * dt; e.z += e.vz * dt; e.y += e.vy * dt;
   const p = groundAt(e.x, e.z, py, 0.18);
+  const was = e.onGround;
   e.onGround = false;
-  if (p && e.vy <= 0 && e.y <= p.y) {
+  if (p && e.vy <= 0 && e.y <= p.y + (was ? 0.15 : 0)) {
     e.y = p.y;
     if (p.bounce) { e.vy = p.bounce; e.sq = -1; e.dived = false; e.diveT = 0; if (e.isPlayer) snd.boing(); burst(e.x, e.y, e.z, 5, [0xffffff], 3, 3, 0.14); }
     else {
       if (e.vy < -9) { e.sq = 1; if (e.isPlayer) snd.land(); }
       e.vy = 0; e.onGround = true; e.ground = p; e.dived = false;
+      if (p.crumble && p.crT === undefined) p.crT = 0;
       if (p.safe && e.respawn !== p) { e.respawn = p; if (e.ai) e.ai.falls = 0; }
     }
   }
   // sides of platforms
   for (let i = 0; i < plats.length; i++) {
-    const q = plats[i]; if (q.gone || e.y >= q.y - 0.4 || e.y + e.h <= q.y - q.h) continue;
+    const q = plats[i]; if (q.gone || q.disc || e.y >= q.y - 0.4 || e.y + e.h <= q.y - q.h) continue;
     const dx = e.x - q.x, dz = e.z - q.z, px = q.hw + e.r - Math.abs(dx), pz = q.hd + e.r - Math.abs(dz);
     if (px > 0 && pz > 0) { if (px < pz) { e.x += (dx < 0 ? -1 : 1) * px; e.vx = 0; } else { e.z += (dz < 0 ? -1 : 1) * pz; e.vz = 0; } }
   }
@@ -904,6 +1036,129 @@ function addPiston(p, z, side, sp, ph) {
   obst.push(o); return o;
 }
 
+function addWind(p, zc, dir, ph, D) {
+  const bm = new THREE.MeshBasicMaterial({ color: 0xBFEFFF, transparent: true, opacity: 0.22, depthWrite: false });
+  const strip = mesh(GEO.plane, bm, p.hw * 2, 5, 1, p.x, p.y + 0.04, zc, world); strip.rotation.x = -Math.PI / 2;
+  const fx = p.x - dir * (p.hw + 1.4), fy = p.y + 1.6;
+  mesh(GEO.cyl, lam(0x6B7280), 0.18, fy - p.y + 2, 0.18, fx, (fy + p.y - 2) / 2, zc, world);
+  const g = new THREE.Group(); g.position.set(fx, fy, zc); world.add(g);
+  const ring = mesh(GEO.torF, lam(0x374151), 1.6, 1.6, 1.6, 0, 0, 0, g); ring.rotation.y = Math.PI / 2;
+  mesh(GEO.sph, lam(0xFACC15), 0.3, 0.3, 0.3, 0, 0, 0, g);
+  const bl = new THREE.Group(); g.add(bl);
+  for (let k = 0; k < 4; k++) { const b = new THREE.Group(); b.rotation.x = k * Math.PI / 2; bl.add(b); mesh(GEO.box, lam(k % 2 ? 0xEF4444 : 0xF9FAFB), 0.08, 1.4, 0.45, 0, 0.75, 0, b); }
+  const o = {
+    kind: 'wind', on: false, dt: 0.016,
+    upd(t, dt) {
+      this.dt = dt; this.on = Math.sin(t * 1.3 + ph) > -0.2;
+      bm.opacity = this.on ? 0.22 : 0.05;
+      if (this.on) { bl.rotation.x += dt * 14; if (Math.random() < 0.3) { burst(fx + dir * 1.2, p.y + rnd(0.5, 2.5), zc + rnd(-2, 2), 1, [0xffffff], 0, 0, 0.14); const q = parts[pIdx]; q.vx = dir * 10; q.vz = 0; q.vy = 0; q.g = 0; q.life = 0.7; } }
+    },
+    hit(e) {
+      if (!this.on || e.y >= p.y + 3 || Math.abs(e.x - p.x) > p.hw || Math.abs(e.z - zc) > 2.5) return false;
+      e.x += dir * (4 + D) * this.dt * 0.5; return false;
+    }
+  };
+  obst.push(o); return o;
+}
+function addGeyser(p, x, z, ph) {
+  const ringM = new THREE.MeshBasicMaterial({ color: 0x7C2D12 });
+  const ring = mesh(GEO.torF, ringM, 1.1, 1.1, 1.1, x, p.y + 0.05, z, world); ring.rotation.x = Math.PI / 2;
+  const hole = mesh(GEO.circ, new THREE.MeshBasicMaterial({ color: 0x431407 }), 1.0, 1.0, 1, x, p.y + 0.03, z, world); hole.rotation.x = -Math.PI / 2;
+  const col = mesh(GEO.cyl, new THREE.MeshBasicMaterial({ color: 0xFB923C, transparent: true, opacity: 0.88 }), 0.95, 1, 0.95, x, p.y, z, world);
+  const core = mesh(GEO.cyl, new THREE.MeshBasicMaterial({ color: 0xFDE047 }), 0.5, 1, 0.5, 0, 0, 0, col);
+  col.visible = false;
+  const o = {
+    kind: 'geyser', erupt: false,
+    upd(t, dt) {
+      const c = (t + ph) % 2.8; this.erupt = c >= 0.9 && c < 1.6;
+      if (c < 0.9) { const k = 0.5 + 0.5 * Math.sin(c * 14); ringM.color.setHex(k > 0.5 ? 0xFDE047 : 0xF97316); const s = 1.1 * (1 + 0.15 * k); ring.scale.set(s, s, s); }
+      else { ringM.color.setHex(0x7C2D12); ring.scale.set(1.1, 1.1, 1.1); }
+      if (this.erupt) {
+        const u = (c - 0.9) / 0.7, hh = 4 * Math.sin(Math.min(1, u * 4) * Math.PI / 2) * (u > 0.85 ? (1 - u) / 0.15 : 1);
+        col.visible = true; col.scale.y = Math.max(0.05, hh); col.position.y = p.y + hh / 2;
+        if (Math.random() < 0.4) burst(x, p.y + rnd(1, 4), z, 1, [0xFB923C, 0xFDE047], 2, 3, 0.18);
+      } else col.visible = false;
+    },
+    hit(e) {
+      if (!this.erupt || e.y >= p.y + 3) return false;
+      if (Math.hypot(e.x - x, e.z - z) >= 1.1 + e.r) return false;
+      knock(e, rnd(-3, 3), 15, rnd(-2, 2), 0.7); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addLog(x, y, z, sp, ph) {
+  const L = 5, R = 0.7, top = y + L + 1.3, A = 1.0;
+  [-1, 1].forEach(s => { mesh(GEO.cyl, lam(0x92400E), 0.22, top - y + 2, 0.22, x + s * 5.6, (top + y - 2) / 2, z, world); mesh(GEO.sph, lam(0x16A34A), 0.4, 0.4, 0.4, x + s * 5.6, top, z, world); });
+  const beam = mesh(GEO.cyl, lam(0x92400E), 0.2, 11.2, 0.2, x, top, z, world); beam.rotation.z = Math.PI / 2;
+  const bar = mesh(GEO.cyl, lam(0x5C3A1A), 0.2, 4.8, 0.2, x, top, z, world); bar.rotation.x = Math.PI / 2;
+  const arm = new THREE.Group(); arm.position.set(x, top, z); world.add(arm);
+  [-1, 1].forEach(s => mesh(GEO.cyl, lam(0xD6B77A), 0.06, L, 0.06, 0, -L / 2, s * 1.6, arm));
+  const lg = mesh(GEO.cyl, lam(0x8B5A2B), R, 4.4, R, 0, -L, 0, arm); lg.rotation.x = Math.PI / 2;
+  [-1, 1].forEach(s => { const c = mesh(GEO.cyl, lam(0xE8C28A), R * 1.03, 0.12, R * 1.03, 0, -L, s * 2.2, arm); c.rotation.x = Math.PI / 2; const b = mesh(GEO.cyl, lam(0x4A2E14), R * 1.06, 0.3, R * 1.06, 0, -L, s * 1.2, arm); b.rotation.x = Math.PI / 2; });
+  const o = {
+    kind: 'log', th: 0, dir: 1,
+    upd(t) { this.th = A * Math.sin(t * sp + ph); this.dir = Math.cos(t * sp + ph) >= 0 ? 1 : -1; arm.rotation.z = this.th; },
+    hit(e) {
+      const bx = x + L * Math.sin(this.th), by = top - L * Math.cos(this.th);
+      const dx = e.x - bx, dy = e.y + 0.6 - by, dz0 = e.z - z, dz = dz0 - clamp(dz0, -2.2, 2.2);
+      if (dx * dx + dy * dy + dz * dz > (R + e.r) * (R + e.r)) return false;
+      knock(e, this.dir * 11, 6, 0, 0.6); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addGlove(p, z, side, sp, ph) {
+  const travel = p.hw * 2 - 2.2, rest = p.x + side * (p.hw + 0.6), wallX = p.x + side * (p.hw + 1.9), gy = p.y + 1.0;
+  mesh(GEO.box, lam(0x3B82F6), 1.8, 2.4, 2.4, wallX, p.y + 1.0, z, world);
+  mesh(GEO.box, lam(0xFACC15), 0.2, 0.6, 2.0, wallX - side * 0.95, p.y + 1.0, z, world);
+  const rod = mesh(GEO.cyl, lam(0x9CA3AF), 0.2, 1, 0.2, rest, gy, z, world); rod.rotation.z = Math.PI / 2;
+  const g = new THREE.Group(); g.position.set(rest, gy, z); world.add(g);
+  mesh(GEO.sph, lam(0xEF4444), 0.85, 0.85, 0.85, 0, 0, 0, g);
+  mesh(GEO.sph, lam(0xDC2626), 0.4, 0.4, 0.4, -side * 0.15, 0.6, 0.45, g);
+  const cf = mesh(GEO.cyl, lam(0xF9FAFB), 0.55, 0.5, 0.55, side * 0.85, 0, 0, g); cf.rotation.z = Math.PI / 2;
+  const o = {
+    kind: 'glove', ext: 0, gx: rest,
+    upd(t) {
+      const s = Math.sin(t * sp + ph); this.ext = clamp((s - 0.75) / 0.2, 0, 1);
+      let sh = 0; if (s > 0.5 && s <= 0.75) sh = Math.sin(t * 70) * 0.07;
+      this.gx = rest - side * this.ext * travel; g.position.set(this.gx + sh, gy, z + sh);
+      const a = wallX - side * 0.9, len = Math.abs(a - this.gx) + 0.1; rod.position.x = (a + this.gx) / 2; rod.scale.y = len;
+    },
+    hit(e) {
+      if (this.ext <= 0.2) return false;
+      const dx = e.x - this.gx, dy = e.y + 0.6 - gy, dz = e.z - z;
+      if (dx * dx + dy * dy + dz * dz > (0.85 + e.r) * (0.85 + e.r)) return false;
+      knock(e, -side * 13, 6, 0, 0.6); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+function addSideCannon(p, z, side, v, ph) {
+  const cx = p.x + side * (p.hw + 2.6), start = p.x + side * (p.hw + 1.4), L = p.hw * 2 + 8, far = p.x - side * p.hw;
+  mesh(GEO.box, lam(0x6B7280), 3, 0.6, 2.4, cx, p.y - 0.3, z, world);
+  const br = mesh(GEO.cyl, lam(0x1F2937), 0.55, 2.2, 0.55, cx - side * 0.3, p.y + 0.9, z, world); br.rotation.z = Math.PI / 2;
+  const mz = mesh(GEO.cyl, lam(0xEF4444), 0.62, 0.3, 0.62, cx - side * 1.3, p.y + 0.9, z, world); mz.rotation.z = Math.PI / 2;
+  [-1, 1].forEach(s => { const w = mesh(GEO.cyl, lam(0xD97706), 0.55, 0.3, 0.55, cx, p.y + 0.55, z + s * 0.95, world); w.rotation.x = Math.PI / 2; });
+  const ball = mesh(GEO.sph, lam(0xFF2D95), 0.6, 0.6, 0.6, start, p.y + 0.7, z, world);
+  mesh(GEO.sph, lam(0xFACC15), 0.62, 0.15, 0.62, 0, 0, 0, ball);
+  const o = {
+    kind: 'cannon', bx: start, vis: false,
+    upd(t) {
+      const u = (t * v + ph * 5) % L; this.bx = start - side * u;
+      this.vis = side * (this.bx - far) > 0;
+      ball.visible = this.vis; ball.position.x = this.bx; ball.rotation.z = u * 2;
+    },
+    hit(e) {
+      if (!this.vis) return false;
+      const dx = e.x - this.bx, dy = e.y + 0.6 - (p.y + 0.7), dz = e.z - z;
+      if (dx * dx + dy * dy + dz * dz > (0.6 + e.r) * (0.6 + e.r)) return false;
+      knock(e, -side * 10, 6, 0, 0.5); return true;
+    }
+  };
+  obst.push(o); return o;
+}
+
 // ===================================================================
 // COURSE BUILDER
 // ===================================================================
@@ -927,6 +1182,78 @@ function decor(zEnd) {
   }
   [0xEF4444, 0xFACC15, 0x22C55E, 0x3B82F6].forEach((c, i) => { const r = mesh(GEO.tor, new THREE.MeshBasicMaterial({ color: c }), 70 - i * 5, 70 - i * 5, 30, 0, -20, zEnd - 90, world); r.material.fog = false; });
 }
+const DECOR = {};
+DECOR.meadow = decor;
+const sideX = (a, b) => (Math.random() < 0.5 ? -1 : 1) * rnd(a, b);
+function cloudSet(zEnd, n, col, op) {
+  const cm = new THREE.MeshLambertMaterial({ color: col, transparent: true, opacity: op });
+  for (let i = 0; i < n; i++) {
+    const cx = sideX(16, 60), cy = rnd(-10, 24), cz = rnd(zEnd - 60, 30), k = rnd(1.5, 4);
+    for (let j = 0; j < 3; j++) mesh(GEO.sph, cm, k * rnd(0.8, 1.2), k * rnd(0.5, 0.8), k * rnd(0.7, 1.1), cx + (j - 1) * k * 0.9, cy + rnd(-0.3, 0.3) * k, cz + rnd(-1, 1), world);
+  }
+}
+DECOR.sunset = function (zEnd) {
+  cloudSet(zEnd, 14, 0xFFD3C0, 0.9);
+  const sm = new THREE.MeshBasicMaterial({ color: 0xFFE08A, fog: false }), gm = new THREE.MeshBasicMaterial({ color: 0xFF9A5A, transparent: true, opacity: 0.45, fog: false, depthWrite: false });
+  const glow = mesh(GEO.circ64, gm, 95, 95, 1, 0, 30, -320, world), sun = mesh(GEO.circ64, sm, 55, 55, 1, 0, 30, -318, world);
+  skyFollow.push([glow, 320, 0], [sun, 318, 0]);
+  for (let i = 0; i < 7; i++) {
+    const s = i % 2 ? -1 : 1, bx = s * rnd(12, 30), by = rnd(7, 20), bz = rnd(zEnd, -10), c = pick([0xEF4444, 0xFACC15, 0x3B82F6, 0xEC4899]);
+    mesh(GEO.sph, lam(c), 2.4, 2.9, 2.4, bx, by, bz, world); mesh(GEO.sph, lam(0xF9FAFB), 2.45, 0.5, 2.45, bx, by + 0.3, bz, world);
+    mesh(GEO.box, lam(0x92400E), 1.1, 0.8, 1.1, bx, by - 4.4, bz, world);
+    [[-1, -1], [1, 1], [-1, 1], [1, -1]].forEach(q => mesh(GEO.cyl, lam(0xD6B77A), 0.03, 2.2, 0.03, bx + q[0] * 0.45, by - 3.1, bz + q[1] * 0.45, world));
+  }
+};
+DECOR.ice = function (zEnd) {
+  for (let i = 0; i < 14; i++) {
+    const x = sideX(26, 70), z = rnd(zEnd - 40, 10), H = rnd(40, 70), r = H * 0.42, y0 = -32;
+    mesh(GEO.cone, lam(0x9FB8DE), r, H, r, x, y0 + H / 2, z, world);
+    mesh(GEO.cone, lam(0xFFFFFF), r * 0.47, H * 0.43, r * 0.47, x, y0 + H * 0.785, z, world);
+  }
+  const im = new THREE.MeshLambertMaterial({ color: 0x8FE3FF, transparent: true, opacity: 0.8 }), im2 = new THREE.MeshLambertMaterial({ color: 0xB8A7FF, transparent: true, opacity: 0.8 });
+  for (let i = 0; i < 20; i++) { const x = sideX(13, 28), z = rnd(zEnd, 10), h = rnd(3, 9), c = mesh(GEO.cone, i % 5 ? im : im2, h * 0.28, h, h * 0.28, x, rnd(-6, 4) + h / 2, z, world); c.rotation.z = rnd(-0.25, 0.25); }
+  for (let i = 0; i < 9; i++) {
+    const x = sideX(13, 24), z = rnd(zEnd, 10), y = rnd(-3, 1);
+    mesh(GEO.cyl, lam(0xE6F4FF), 2.6, 1.2, 2.6, x, y - 0.6, z, world);
+    mesh(GEO.sph, lam(0xFFFFFF), 1.0, 1.0, 1.0, x, y + 0.8, z, world); mesh(GEO.sph, lam(0xFFFFFF), 0.75, 0.75, 0.75, x, y + 2.1, z, world); mesh(GEO.sph, lam(0xFFFFFF), 0.55, 0.55, 0.55, x, y + 3.1, z, world);
+    const cr = mesh(GEO.cone, lam(0xF97316), 0.1, 0.5, 0.1, x, y + 3.1, z + 0.6, world); cr.rotation.x = Math.PI / 2;
+    mesh(GEO.cyl, lam(0x1F2937), 0.5, 0.1, 0.5, x, y + 3.6, z, world);
+  }
+};
+DECOR.jungle = function (zEnd) {
+  for (let i = 0; i < 6; i++) {
+    const s = i % 2 ? -1 : 1, x = s * rnd(13, 28), z = rnd(zEnd, 10), y = rnd(-4, 1);
+    mesh(GEO.cyl, lam(0x65A30D), 3.2, 0.7, 3.2, x, y, z, world); mesh(GEO.cone, lam(0x78350F), 3.0, 2.6, 3.0, x, y - 1.6, z, world).rotation.x = Math.PI;
+    let tx = x, ty = y + 0.35; const lean = -s * 0.35;
+    for (let k = 0; k < 4; k++) { mesh(GEO.cyl, lam(k % 2 ? 0x92400E : 0xA16207), 0.34 - k * 0.03, 1.8, 0.34 - k * 0.03, tx, ty + 0.9, z, world); tx += lean; ty += 1.8; }
+    for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3, l = mesh(GEO.cone, lam(k % 2 ? 0x16A34A : 0x22C55E), 0.35, 3.2, 0.35, tx + Math.cos(a) * 1.4, ty - 0.1, z + Math.sin(a) * 1.4, world); l.rotation.z = -Math.cos(a) * 1.15; l.rotation.x = Math.sin(a) * 1.15; }
+    mesh(GEO.sph, lam(0x78350F), 0.3, 0.3, 0.3, tx, ty - 0.3, z, world);
+  }
+  for (let i = 0; i < 6; i++) {
+    const s = i % 2 ? -1 : 1, x = s * rnd(10, 22), z = rnd(zEnd, 10), y = rnd(15, 22);
+    mesh(GEO.sph, lam(0x15803D), 4, 2.4, 4, x, y, z, world); mesh(GEO.sph, lam(0x4ADE80), 2.6, 1.6, 2.6, x + 1, y + 1.2, z, world);
+    for (let k = 0; k < 3; k++) mesh(GEO.cyl, lam(k % 2 ? 0x22C55E : 0x166534), 0.08, rnd(6, 12), 0.08, x + rnd(-2, 2), y - 5, z + rnd(-1.5, 1.5), world);
+  }
+};
+DECOR.volcano = function (zEnd) {
+  const len = Math.max(400, -zEnd + 160), lava = mesh(GEO.plane, new THREE.MeshLambertMaterial({ color: 0xFF5A1F, emissive: 0xFF4500 }), 300, len, 1, 0, -16, zEnd / 2, world); lava.rotation.x = -Math.PI / 2;
+  for (let i = 0; i < 18; i++) {
+    const x = sideX(18, 60), z = rnd(zEnd - 30, 10), H = rnd(14, 46), r = rnd(3, 6.5);
+    mesh(GEO.cone, lam(pick([0x2F2A3A, 0x3A3340, 0x453B4C])), r, H, r, x, -16 + H / 2 - 2, z, world);
+  }
+  const em = [0xFF7A1A, 0xFFD23F].map(c => new THREE.MeshBasicMaterial({ color: c }));
+  for (let i = 0; i < 22; i++) mesh(GEO.sph, em[i % 2], rnd(0.2, 0.55), rnd(0.2, 0.55), rnd(0.2, 0.55), sideX(9, 45), rnd(-12, 24), rnd(zEnd - 20, 20), world);
+};
+DECOR.disco = function (zEnd) {
+  const sm = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, fog: false });
+  for (let i = 0; i < 80; i++) { const k = rnd(0.12, 0.45); mesh(GEO.sph, sm, k, k, k, sideX(6, 110), rnd(4, 80), rnd(zEnd - 60, 40), world); }
+  for (let i = 0; i < 6; i++) {
+    const s = i % 2 ? -1 : 1, x = s * rnd(12, 26), y = rnd(10, 20), z = zEnd * (i + 0.5) / 6, r = rnd(1.6, 2.4);
+    mesh(GEO.cyl, lam(0x9CA3AF), 0.04, 30, 0.04, x, y + 15, z, world);
+    mesh(GEO.ico, new THREE.MeshLambertMaterial({ color: 0xE5E7EB, emissive: 0x6B7280, flatShading: true }), r, r, r, x, y, z, world);
+  }
+  [0x00E5FF, 0xFF4FD8, 0xB6FF3B, 0xFFE14D].forEach((c, i) => [-1, 1].forEach(s => { const r = 7 + i * 1.5; mesh(GEO.torF, new THREE.MeshBasicMaterial({ color: c }), r, r, r, s * (22 + i * 6), 9 + i * 3, zEnd * (i * 2 + (s > 0 ? 1 : 2)) / 9, world); }));
+};
 function doorWall(z, y) {
   const row = { z, doors: [] };
   const pw = 0.525, dw = 3.3; let x = -6;
@@ -950,7 +1277,7 @@ function barrier(z, y, w) {
   return out;
 }
 function arena(type) {
-  const th = THEMES[B.ci % 3], cp = { type };
+  const th = THEMES[B.ci], cp = { type };
   cp.entry = slab(12, 14, { safe: true, col: 0xFFF4E0, pat: 'check' });
   cp.arch = arch(cp.entry.z + cp.entry.hd - 0.6, B.y, 14, 'CHECKPOINT', 0x9333EA, 8.4);
   cp.goalZ = cp.entry.z + cp.entry.hd - 3;
@@ -991,20 +1318,37 @@ const SEGS = {
   pend(D) { const p = slab(26, 3.8, { pat: 'check' }); for (let i = 0; i < 3; i++) addPendulum(0, p.y, p.z + p.hd - 5.5 - i * 7.5, 1.7 + 0.3 * D, i * 1.3); },
   bounce(D) { slab(6, 8); slab(3, 4, { bounce: 16, col: 0xEF4444, pat: 'dots', h: 0.8 }); B.z -= 1.2; B.y += 2.6; slab(13, 8, { safe: true }); },
   balls(D) { const p = slab(30, 8, { pat: 'arrow' }), n = 3 + D; for (let k = 0; k < n; k++) addBall(p, k, n, 6 + 1.5 * D); mesh(GEO.box, lam(0x9333EA), 9, 3.2, 1.2, 0, p.y + 4.4, p.z - p.hd + 0.6, world); [-1, 1].forEach(s => mesh(GEO.box, lam(0x9333EA), 0.8, 2.8, 1.2, s * 4.1, p.y + 1.4, p.z - p.hd + 0.6, world)); },
-  pist(D) { const p = slab(24, 6.5); for (let i = 0; i < 4; i++) addPiston(p, p.z + p.hd - 4 - i * 5.3, i % 2 ? 1 : -1, 1.4 + 0.3 * D, i * 1.4); }
+  pist(D) { const p = slab(24, 6.5); for (let i = 0; i < 4; i++) addPiston(p, p.z + p.hd - 4 - i * 5.3, i % 2 ? 1 : -1, 1.4 + 0.3 * D, i * 1.4); },
+  ice(D) { const p = slab(26, 8, { ice: true, col: 0x6FCBF0, pat: 'check' }); for (let r = 0; r < 3; r++) (r === 1 ? [0] : [-2.5, 2.5]).forEach(x => addBumper(x + rnd(-0.4, 0.4), p.y, p.z + p.hd - 5 - r * 5)); },
+  crumble(D) {
+    const c1 = B.pal[0], c2 = B.pal[2];
+    for (let r = 0; r < 6; r++) { [-2.85, 0, 2.85].forEach((x, c) => addPlat(x, B.y, B.z - 1.35, 2.7, 2.7, { crumble: true, h: 0.6, col: (r + c) % 2 ? c1 : c2, pat: 'check', noWay: c !== 1 })); B.z -= r < 5 ? 2.85 : 2.7; }
+  },
+  wind(D) { const p = slab(24, 6.5); for (let i = 0; i < 3; i++) addWind(p, p.z + p.hd - 4 - i * 8, i % 2 ? -1 : 1, i * 2.1, D); },
+  disc(D) {
+    slab(4, 8); B.z -= 1.2;
+    for (let i = 0; i < 3; i++) { addDisc(0, B.y, B.z - 3.2, 3.2, (1.0 + 0.3 * D) * (i % 2 ? -1 : 1)); B.z -= 6.4 + 1.2; }
+    slab(4, 8);
+  },
+  updown(D) { slab(4, 8); const n = D > 1 ? 4 : 3; for (let i = 0; i < n; i++) { B.z -= 1.5; const m = slab(4.4, 4.4, { move: { ax: 'y', amp: 1.4, sp: 1.1 + 0.25 * D, ph: i * 2.1 }, pat: 'dots' }); m.dyn = true; } B.z -= 1.5; slab(4, 8); },
+  geyser(D) { const p = slab(26, 8), n = D > 0 ? 6 : 5, xs = [-2.4, 2.4, 0, -2.6, 2.6, 0]; for (let i = 0; i < n; i++) addGeyser(p, xs[i] + rnd(-0.4, 0.4), p.z + p.hd - 3 - i * (20 / (n - 1)), i * 0.9); },
+  log(D) { const p = slab(26, 6, { pat: 'check' }); for (let i = 0; i < 3; i++) addLog(0, p.y, p.z + p.hd - 5.5 - i * 8, 1.3 + 0.2 * D, i * 1.5); },
+  glove(D) { const p = slab(24, 7); for (let i = 0; i < 5; i++) addGlove(p, p.z + p.hd - 3 - i * 4.2, i % 2 ? 1 : -1, 1.6 + 0.3 * D, i * 1.7); },
+  cannon(D) { const p = slab(26, 7.5); for (let i = 0; i < 4; i++) addSideCannon(p, p.z + p.hd - 3.5 - i * 5.5, i % 2 ? 1 : -1, 9 + 2 * D, i * 1.3); },
+  shrink(D) { const n = D > 1 ? 5 : 4; for (let i = 0; i < n; i++) { B.z -= 2.2; slab(5.5, 5.5, { x: (i % 2 ? 1 : -1) * 1.5, shrink: { sp: 1.5 + 0.3 * D, ph: i * 1.6, min: 0.35 }, pat: 'dots' }); } B.z -= 2.2; }
 };
 function buildCourse(ci) {
   clearWorld();
-  const th = THEMES[ci % 3]; document.body.style.background = th.sky; scene.fog.color.setHex(th.fog);
+  const th = THEMES[ci]; document.body.style.background = th.sky; scene.fog.color.setHex(th.fog); hemi.groundColor.setHex(th.gnd || 0xffb6d9);
   B = { z: 5, y: 0, pal: th.pal, pi: ci, ci };
   const start = slab(10, 12, { safe: true, col: 0xFFF4E0, pat: 'check' });
-  arch(-4.4, 0, 12, 'COURSE ' + (ci + 1) + ' · ' + th.name.toUpperCase(), 0xEC4899);
-  const order = shuffle(Object.keys(SEGS)), split = [3, 3, 2]; let k = 0;
+  arch(-4.4, 0, 12, 'LEVEL ' + (ci + 1) + ' · ' + th.name.toUpperCase(), 0xEC4899);
+  const order = shuffle(th.segs.slice()), split = [2, 2, 2]; let k = 0;
   G.secs = []; G.startPlat = start;
   for (let si = 0; si < 3; si++) {
     for (let j = 0; j < split[si]; j++) {
       const pad = slab(5, 9, { safe: true }); flag(-4, B.y, pad.z, pick(CONF)); flag(4, B.y, pad.z, pick(CONF));
-      SEGS[order[k++]](ci);
+      SEGS[order[k++]](th.D);
     }
     if (si < 2) { const cp = arena(G.cpTypes[ci * 2 + si]); G.secs.push({ goalZ: cp.goalZ, goalPlat: cp.entry, cp }); }
     else {
@@ -1013,7 +1357,7 @@ function buildCourse(ci) {
       G.secs.push({ goalZ: fin.z + fin.hd - 3, goalPlat: fin, cp: null });
     }
   }
-  G.endZ = B.z; decor(B.z);
+  G.endZ = B.z; DECOR[th.decor](B.z);
 }
 // ===================================================================
 // INPUT
@@ -1119,7 +1463,7 @@ function updHud(dt) {
   if (G.state === 'run') { let r = 1; for (const b of bots) if (b.ai.mode === 'idle' || b.z < player.z) r++; G.livePos = r; }
   $('hPos').textContent = ord(G.livePos || 1) + ' / 9';
   const frac = clamp((5 - player.z) / (5 - G.endZ), 0, 1);
-  $('footFill').style.width = ((G.ci + frac) / 3 * 100).toFixed(1) + '%';
+  $('footFill').style.width = ((G.ci + frac) / 6 * 100).toFixed(1) + '%';
 }
 function leaderboard() { return ents.slice().sort((a, b) => b.score - a.score); }
 function lbHTML() {
@@ -1359,8 +1703,8 @@ async function onGoal() {
     G.si++; setGoal(); lineup(sec.cp.exit); await countdown();
   } else {
     snd.fanfare();
-    const last = G.ci === 2;
-    await card('🏁 Course ' + (G.ci + 1) + ' complete!', lbHTML(), last ? 'See my results 🏆' : 'Next course ▶');
+    const last = G.ci === 5;
+    await card('🏁 Level ' + (G.ci + 1) + ' complete!', lbHTML() + (last ? '' : '<div class="fred" style="font-size:22px;margin-top:16px">Next: ' + THEMES[G.ci + 1].ico + ' ' + THEMES[G.ci + 1].name + '</div>'), last ? 'See my results 🏆' : 'Next level ▶');
     if (last) return showResults();
     startCourse(G.ci + 1);
   }
@@ -1370,8 +1714,8 @@ async function checkpoint(cp) {
   const n = G.cpN++, topic = G.cpTopics[n], type = cp.type, T = TOPICS[topic], tasks = drawTasks(topic, type, 3);
   const rec = { n: n + 1, type, topic, res: [], pts: 0 }; G.cpLog.push(rec);
   cp.arch.visible = false;
-  $('hSub').textContent = 'Checkpoint ' + (n + 1) + '/6 · ' + T.name;
-  await card('🚩 Checkpoint ' + (n + 1) + ' of 6',
+  $('hSub').textContent = 'Checkpoint ' + (n + 1) + '/12 · ' + T.name;
+  await card('🚩 Checkpoint ' + (n + 1) + ' of 12',
     '<div class="fred" style="font-size:26px">' + MINI[type].icon + ' ' + MINI[type].name + '</div><div>' + MINI[type].how + '</div>' +
     '<div class="tip"><b>' + T.icon + ' ' + T.name + '</b>' + T.tip.map(t => '<p>' + t + '</p>').join('') + '</div>', "Let's go!");
   if (type === 'doors') await playDoors(cp, tasks, rec);
@@ -1381,21 +1725,26 @@ async function checkpoint(cp) {
   const c = rec.res.filter(Boolean).length; toast(c + '/3 correct' + (c === 3 ? ' – perfect!' : '')); if (c === 3) snd.fanfare();
   setSub(); await sleep(0.8);
 }
-function setSub() { $('hSub').textContent = 'Course ' + (G.ci + 1) + '/3 · ' + (G.ahs ? 'AHS' : 'Standard'); }
+function setSub() { $('hSub').textContent = 'Level ' + (G.ci + 1) + '/6 · ' + (G.ahs ? 'AHS' : 'Standard'); }
 async function startCourse(ci) {
   G.ci = ci; G.si = 0; G.waiters = []; G.t = 0; setBanner('');
   buildCourse(ci); setGoal(); setSub();
   bots.forEach(b => { b.ai.wi = 0; });
   lineup(G.startPlat);
-  toast(THEMES[ci % 3].name + '!');
+  toast(THEMES[ci].ico + ' ' + THEMES[ci].name + '!');
   await countdown();
 }
 function startGame() {
   initEnts();
   G.ahs = $('lvA').classList.contains('on');
   G.topics = [...document.querySelectorAll('.chip.on')].map(c => c.dataset.t);
-  const tp = shuffle(G.topics.slice()); G.cpTopics = []; for (let i = 0; i < 6; i++) G.cpTopics.push(tp[i % tp.length]);
-  const ty = shuffle(['doors', 'tiles', 'order', 'type', 'slip']); ty.push(pick(ty.slice(0, 4))); G.cpTypes = ty;
+  const tp = shuffle(G.topics.slice()); G.cpTopics = []; for (let i = 0; i < 12; i++) G.cpTopics.push(tp[i % tp.length]);
+  const TY = ['doors', 'tiles', 'order', 'type', 'slip']; let ty = null;
+  for (let tries = 0; tries < 500; tries++) {
+    ty = shuffle(TY.slice()).concat(shuffle(TY.slice())); for (let k = 0; k < 2; k++) ty.splice(Math.floor(Math.random() * (ty.length + 1)), 0, pick(TY));
+    if (ty.every((v, i) => i === 0 || v !== ty[i - 1])) break;
+  }
+  G.cpTypes = ty;
   G.decks = {}; G.cpLog = []; G.secLog = []; G.mistakes = []; G.cpN = 0; G.correct = 0; G.slimeDebt = 0; G.noInput = false; G.livePos = 1;
   ents.forEach(e => { e.score = 0; e.charges = 0; });
   ['menu', 'results', 'card'].forEach(id => $(id).classList.remove('show'));
@@ -1412,13 +1761,13 @@ function toMenu() {
 function showResults() {
   G.active = false; G.state = 'results'; setBanner('');
   $('hud').classList.remove('show'); $('foot').classList.remove('show'); document.body.classList.remove('play');
-  const lb = leaderboard(), pos = lb.indexOf(player) + 1, pct = Math.round(G.correct / 18 * 100);
+  const lb = leaderboard(), pos = lb.indexOf(player) + 1, pct = Math.round(G.correct / 36 * 100);
   const verdict = pct >= 90 ? 'Grammar legend!' : pct >= 70 ? 'Strong grammar!' : pct >= 50 ? 'Good start – one more run!' : 'Keep wobbling – read the review below!';
   let h = '<div class="medal">' + (pos === 1 ? '👑' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '🎉') + '</div><h1 class="fred" style="font-size:36px;color:var(--purple)">You finished ' + ord(pos) + ' of 9!</h1>' +
-    '<div class="sub">⭐ ' + player.score + ' points · Grammar: <b>' + G.correct + ' / 18</b> correct (' + pct + '%) · ' + verdict + '<br>' + (G.ahs ? 'AHS' : 'Standard') + ' · ' + G.topics.map(t => TOPICS[t].name).join(' · ') + '</div>';
+    '<div class="sub">⭐ ' + player.score + ' points · Grammar: <b>' + G.correct + ' / 36</b> correct (' + pct + '%) · ' + verdict + '<br>' + (G.ahs ? 'AHS' : 'Standard') + ' · ' + G.topics.map(t => TOPICS[t].name).join(' · ') + '</div>';
   h += '<div class="grid2"><div><div class="lbl">🚩 Checkpoints</div><table><tr><th>#</th><th>Minigame</th><th>Topic</th><th class="n">Right</th><th class="n">Pts</th></tr>' +
     G.cpLog.map(r => '<tr><td>' + r.n + '</td><td>' + MINI[r.type].icon + ' ' + MINI[r.type].name + '</td><td>' + TOPICS[r.topic].name + '</td><td class="n">' + r.res.map(x => x ? '✔' : '✘').join(' ') + '</td><td class="n">' + r.pts + '</td></tr>').join('') + '</table>' +
-    '<div class="lbl">🏃 Race sections</div><table><tr><th>Course</th><th>Section</th><th class="n">Place</th><th class="n">Pts</th></tr>' +
+    '<div class="lbl">🏃 Race sections</div><table><tr><th>Level</th><th>Section</th><th class="n">Place</th><th class="n">Pts</th></tr>' +
     G.secLog.map(s => '<tr><td>' + (s.ci + 1) + '</td><td>' + (s.si + 1) + '</td><td class="n">' + ord(s.rank) + '</td><td class="n">' + s.pts + '</td></tr>').join('') + '</table></div>' +
     '<div><div class="lbl">🏆 Leaderboard</div>' + lbHTML() + '</div></div>';
   if (G.mistakes.length) h += '<div class="lbl">🔎 Review your slips</div><div class="rev">' + G.mistakes.map(m => '<p>✘ ' + esc(m.q) + ' → <b>' + esc(m.yours) + '</b><br>✔ <b>' + esc(m.right) + '</b><br>💡 ' + esc(m.ex) + '</p>').join('') + '</div>';
@@ -1442,6 +1791,7 @@ function updCam(dt) {
   const k = camSnap ? 1 : Math.min(1, dt * 6); cam.position.lerp(camT, k);
   camL.x += (player.x * 0.85 - camL.x) * k; camL.y += (camY + 1.2 - camL.y) * k; camL.z += (player.z - 4.5 - camL.z) * k;
   if (G.shake > 0 && !RM) { G.shake -= dt; const s = G.shake * 0.6; cam.position.x += rnd(-s, s); cam.position.y += rnd(-s, s); }
+  for (let i = 0; i < skyFollow.length; i++) { const f = skyFollow[i]; f[0].position.z = cam.position.z - f[1]; f[0].position.x = cam.position.x * 0.9; }
   cam.lookAt(camL); camSnap = false;
 }
 const ZERO = { x: 0, z: 0, jump: false, boost: false };
@@ -1449,8 +1799,20 @@ function update(dt) {
   G.t += dt;
   for (let i = 0; i < plats.length; i++) {
     const p = plats[i];
-    if (p.move) { const m = p.move, a = G.t * m.sp + m.ph; p.x = p.bx + Math.sin(a) * m.amp; p.vx = Math.cos(a) * m.sp * m.amp; p.mesh.position.x = p.x; }
+    if (p.move) {
+      const m = p.move, a = G.t * m.sp + m.ph;
+      if (m.ax === 'y') { p.y = p.by + Math.sin(a) * m.amp; p.mesh.position.y = p.y - p.h / 2; }
+      else { p.x = p.bx + Math.sin(a) * m.amp; p.vx = Math.cos(a) * m.sp * m.amp; p.mesh.position.x = p.x; }
+    }
     if (p.conv) p.tex.offset.x -= Math.abs(p.conv) * dt / 3;
+    if (p.crT !== undefined) {
+      p.crT += dt;
+      if (p.crT >= 3.6) { p.gone = false; p.mesh.position.set(p.x, p.y - p.h / 2, p.z); p.crT = undefined; }
+      else if (p.crT >= 0.6) { p.gone = true; p.mesh.position.y -= 14 * dt; }
+      else p.mesh.position.x = p.x + Math.sin(p.crT * 70) * 0.05;
+    }
+    if (p.shrink) { const sh = p.shrink, s = sh.min + (1 - sh.min) * (0.5 + 0.5 * Math.sin(G.t * sh.sp + sh.ph)); p.hw = p.hw0 * s; p.hd = p.hd0 * s; p.mesh.scale.x = 2 * p.hw; p.mesh.scale.z = 2 * p.hd; }
+    if (p.spin) p.mesh.rotation.y += p.spin * dt;
   }
   for (let i = 0; i < obst.length; i++) obst[i].upd(G.t, dt);
   for (const s of spinnyChars) s.rotation.y += dt * 14;
@@ -1500,10 +1862,22 @@ $('sndBtn').onclick = () => { $('sndBtn').textContent = snd.toggle() ? '🔊' : 
 $('psyBtn').onclick = () => { psy = !psy; document.documentElement.dataset.theme = psy ? 'psychedelic' : 'standard'; snd.boost(); };
 
 // menu backdrop: a little showcase course
-G.cpTypes = ['doors', 'tiles', 'order', 'type', 'slip', 'doors']; buildCourse(0);
+G.cpTypes = ['doors', 'tiles', 'order', 'type', 'slip', 'doors', 'tiles', 'order', 'type', 'slip', 'doors', 'tiles']; buildCourse(0);
 $('menu').classList.add('show');
 setTimeout(() => $('splash').classList.add('hide'), 1000);
-window.WR = { G, get player() { return player; }, get bots() { return bots; }, get plats() { return plats; }, TOPICS };
+function testSeg(name, D, ti) {
+  initEnts(); clearWorld(); G.waiters = []; G.t = 0; setBanner(''); hideCard(); G.paused = false; G.noInput = false;
+  const th = THEMES[ti || 0]; document.body.style.background = th.sky; scene.fog.color.setHex(th.fog); hemi.groundColor.setHex(th.gnd || 0xffb6d9);
+  B = { z: 5, y: 0, pal: th.pal, pi: ti || 0, ci: ti || 0 };
+  const start = slab(10, 12, { safe: true, col: 0xFFF4E0, pat: 'check' });
+  slab(5, 9, { safe: true }); SEGS[name](D);
+  const fin = slab(14, 14, { safe: true, col: 0xFFF4E0, pat: 'check' });
+  arch(fin.z + fin.hd - 0.6, B.y, 14, 'FINISH', 0x16A34A, 8.4);
+  G.secs = [{ goalZ: fin.z + fin.hd - 3, goalPlat: fin, cp: null }]; G.startPlat = start; G.ci = ti || 0; G.si = 0;
+  G.endZ = B.z; DECOR[th.decor](B.z); setGoal();
+  G.active = true; bots.forEach(b => { b.ai.wi = 0; }); lineup(start); countdown();
+}
+window.WR = { G, get player() { return player; }, get bots() { return bots; }, get plats() { return plats; }, TOPICS, testSeg };
 frame();
 </script>
 <!-- lernspiele:stats-start -->
